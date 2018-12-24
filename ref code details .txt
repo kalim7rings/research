@@ -1,0 +1,60 @@
+file	606288169
+
+if($("#orgn_mode").val()=="MKTG" && $('#orgn_branch').val()=="508" && $.inArray( $('#orgn_place').val(), ["LDN","SGP"] ) != -1 && $('#src_place').val() == $('#orgn_place').val() ){
+
+626207497
+626207497
+
+start application button hide
+
+			From Online_Lead_Regn t,
+                 application_master m,
+                 Refcode_Data_Entry e
+			Where m.lead_ref_no(+) = t.Srno
+			AND E.LEAD_REG_SRNO(+)=T.SRNO
+            --and e.application_id(+) = m.application_id
+
+
+
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Generate Tags, Title and Description based on metrics
+
+Keywords in the title, description and tags are very important in YouTube SEO. Using the YouTube suggest API we show you the most searched for terms, along with the number of searches per month and what customers are paying for (cost per click). Use this data to optimize the tags, titles and descriptions of your videos.
+
+
+Research topics before creating the video
+Research topics before creating the first frame
+
+Before investing a lot of time and effort into creating a YouTube video you can now research the keywords that will get you the most number of targeted customers. You can tweak your existing content idea or generate new ones based on the keyword search data.

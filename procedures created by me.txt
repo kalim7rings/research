@@ -1,0 +1,1032 @@
+=> Get master data from survey_cd_master table
+
+PROCEDURE P_GET_SURVEY_MASTER_DATA
+( 
+   O_CURSOR_MODE               OUT TY_CURSOR,
+   O_CURSOR_CATEGORY           OUT TY_CURSOR ,
+   O_CURSOR_FEEDBACK           OUT TY_CURSOR 
+)
+AS
+
+BEGIN
+  
+   OPEN O_CURSOR_MODE FOR  
+        Select S.CD_VAL,S.CD_DESC from SURVEY_CD_MASTER  S  Where S.CD_TYPE='MODE';
+        
+   OPEN O_CURSOR_CATEGORY FOR
+        Select S.CD_VAL,S.CD_DESC from SURVEY_CD_MASTER  S  Where S.CD_TYPE='CATEGORY_CODE';
+        
+   OPEN O_CURSOR_FEEDBACK FOR
+        Select S.CD_VAL,S.CD_DESC  from SURVEY_CD_MASTER  S  Where S.CD_TYPE='FEEDBACK_URL';
+        
+END P_GET_SURVEY_MASTER_DATA;
+=============================================================================================
+
+=> Get master data from survey_cd_master table
+
+PROCEDURE P_GET_SURVEY_MASTER_DATA
+(
+   O_CURSOR                 OUT TY_CURSOR,
+   O_CURSOR1                OUT TY_CURSOR,
+   O_CURSOR2                OUT TY_CURSOR,
+   O_CURSOR3                OUT TY_CURSOR
+)
+AS
+BEGIN
+    OPEN O_CURSOR FOR
+         SELECT 1 TABLE_NO,'CATEGORY' TABLE_NAME FROM DUAL  
+  UNION  SELECT 2 TABLE_NO,'MODE' TABLE_NAME FROM DUAL
+  UNION  SELECT 3 TABLE_NO,'FEEDBACK_URL' TABLE_NAME FROM DUAL;
+  
+   OPEN O_CURSOR1 FOR
+     select C.CD_VAL, C.CD_DESC from SURVEY_CD_MASTER c
+     where C.cd_type = 'CATEGORY_CODE' ORDER BY C.CD_VAL;
+
+   OPEN O_CURSOR2 FOR
+        select M.CD_VAL, M.CD_DESC from SURVEY_CD_MASTER m
+        where M.cd_type = 'MODE' ORDER BY M.CD_VAL;
+
+   OPEN O_CURSOR3 FOR
+        select M.CD_VAL, M.CD_DESC from SURVEY_CD_MASTER m
+        where M.cd_type = 'FEEDBACK_URL' ORDER BY M.CD_VAL;        
+        
+  
+EXCEPTION
+  WHEN OTHERS THEN
+   OPEN O_CURSOR FOR
+   'SELECT 10 RETURN_CD,' || SQLERRM || ' RETURN_MSG FROM DUAL';
+    
+   OPEN O_CURSOR1 FOR SELECT 1 FROM DUAL;
+   OPEN O_CURSOR2 FOR SELECT 1 FROM DUAL;       
+   OPEN O_CURSOR3 FOR SELECT 1 FROM DUAL;
+END P_GET_SURVEY_MASTER_DATA;
+
+=============================================================================================
+
+==>  Get survey list  || dynamic query for filter option
+	/* All survey list */
+
+PROCEDURE P_GET_SURVEY_LIST
+( 
+   I_CATEGORY_CD            IN VARCHAR2,
+   I_FROM_DT                IN VARCHAR2,
+   I_TO_DT                  IN VARCHAR2,
+   I_STATUS                 IN VARCHAR2,
+   I_MODE                   IN VARCHAR2,
+   I_FILE_NO                IN VARCHAR2,
+   I_FEEDBACK_RESPONSE      IN VARCHAR2,
+   O_Cursor_Quest           OUT TY_CURSOR 
+)
+AS
+LV_QUERY                    VARCHAR2(1000); 
+BEGIN                 
+           LV_QUERY := ' SELECT  
+                 s.status,    
+                 s.survey_mode, 
+                 s.survey_category_cd,
+		 PKG_SURVEY_ADMIN.F_GET_SURVEY_desc(s.survey_category_cd) as CATEGORY_VAL, 
+                 s.cust_name, 
+                 s.survey_id,
+                 to_char(nvl(s.created_dt,sysdate) ,''DD-Mon-YYYY'') as CREATED_DT
+           FROM survey_list s 
+           WHERE 1=1';
+           
+ IF I_FROM_DT IS NOT NULL AND I_TO_DT IS NOT NULL  THEN 
+    LV_QUERY := LV_QUERY || ' AND to_date(to_char(nvl(s.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DT || ''' AND ''' || I_TO_DT || ''''; 
+  END IF;
+  
+  IF I_FROM_DT IS NOT NULL AND I_TO_DT IS NULL THEN 
+    LV_QUERY := LV_QUERY || ' AND to_char(nvl(s.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DT || ''' '; 
+  END IF;
+  
+  IF I_TO_DT IS NOT NULL AND I_FROM_DT IS NULL  THEN 
+    LV_QUERY := LV_QUERY || ' AND to_char(nvl(s.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DT || ''' '; 
+  END IF;
+  
+  
+  IF I_CATEGORY_CD IS NOT NULL THEN 
+    LV_QUERY := LV_QUERY || ' AND s.survey_category_cd  = ''' || I_CATEGORY_CD || ''''; 
+  END IF;
+  
+   IF I_STATUS IS NOT NULL THEN 
+    LV_QUERY := LV_QUERY || ' AND s.STATUS  = ''' || I_STATUS || ''''; 
+  END IF;
+  
+   IF I_MODE IS NOT NULL THEN 
+    LV_QUERY := LV_QUERY || ' AND s.survey_mode  = ''' || I_MODE || ''''; 
+  END IF;
+   
+   DBMS_OUTPUT.PUT_LINE(LV_QUERY);    /*  this will print full query */
+   
+   OPEN O_Cursor_Quest FOR LV_QUERY;           
+
+EXCEPTION
+   WHEN OTHERS THEN
+     open O_Cursor_Quest for
+      select -1 as RETURN_CODE,'' AS MESSAGE from dual;
+  
+END P_GET_SURVEY_LIST;
+
+
+=============================================================================================
+
+==>  OUTput query 
+	 DBMS_OUTPUT.PUT_LINE(LV_QUERY);    /*  this will print full query */
+	 
+	 
+	 
+=================================================
+
+=>  store value o/P of query into a variable | 
+	here 'N' or 'P' will be store into 'lv_negative_flag'
+
+	Ex1. 
+	select a.flag
+             into lv_negative_flag
+             from (select Case
+                            when q.cc_min_rating_flag <= I_Resp_Rating1 then
+                             'N'
+                            else
+                             'P'
+                          end as flag
+                     from survey_response s, survey_questions_mst q
+                    where s.survey_id = I_SURVEY_ID
+                      and s.srno = I_Resp_Srno1
+                      and q.question_no = s.question_no) a; 
+					  
+			***************  OR ***********************
+
+	Ex2.
+	
+	select Case when CAST(q.cc_min_rating_flag as INT) <= 2 then  'Y' else 'N' end            
+            into lv_negative_flag from survey_response s, survey_questions_mst q
+            where s.survey_id = 'xvtUxcdmjd' and s.srno = I_Resp_Srno1 and q.question_no=103 				
+					  
+					  
+					  
+=> how to use conditions in query | also use CAST() for change datatype
+
+	 select Case when CAST(q.cc_min_rating_flag as INT) <= CAST(I_Resp_Rating1 as INT) then 'N' else 'P' end  as flag            
+             from survey_response s, survey_questions_mst q
+            where s.survey_id = I_SURVEY_ID and s.srno = I_Resp_Srno1 and q.question_no=s.question_no
+			
+			
+			
+============================================================================
+
+=> pass whole query as input and execute
+
+
+PROCEDURE P_UPDATE_SURVEY_REMARK
+( 
+   I_SURVEY_QUERY                  IN VARCHAR2,
+   I_RESPONSE_QUERY                IN VARCHAR2,
+   O_CURSOR                        OUT TY_CURSOR   
+)
+AS
+LV_QUERY_servey                      VARCHAR2(1000);
+BEGIN  
+           
+           -- UPDATE SURVEY_LIST set REMARKS = ' 4444444444' WHERE SURVEY_ID = 'iyznlhtIDH';         
+            --DBMS_OUTPUT.PUT_LINE(''|| I_SURVEY_QUERY||'');   
+          -- EXECUTE IMMEDIATE ''|| I_SURVEY_QUERY||''; --into lv_msg;
+       --  commit ;
+        --EXECUTE IMMEDIATE '{I_SURVEY_QUERY}';
+                                                    
+
+          LV_QUERY_servey := I_SURVEY_QUERY;
+                       
+            IF I_RESPONSE_QUERY IS NOT NULL THEN 
+               LV_QUERY_servey := LV_QUERY_servey || I_RESPONSE_QUERY; 
+            END IF; 
+            
+            EXECUTE IMMEDIATE ''|| LV_QUERY_servey||''; 
+            commit ;
+            
+        --LV_QUERY_servey := LV_QUERY_servey || ' commit ;'   ;        
+       -- LV_QUERY_servey := q'{LV_QUERY_servey};        
+
+       -- DBMS_OUTPUT.PUT_LINE(LV_QUERY_servey);          
+       -- EXECUTE IMMEDIATE '{LV_QUERY_servey}';
+        
+        OPEN O_CURSOR FOR
+        SELECT 0 AS RETURN_CODE, 'Updated Successfully' AS MESSAGE FROM DUAL;
+        
+      --  O_Return_Cd:=0; 
+     -- O_Return_Msg:= 'Updated Successfully';
+      
+        
+EXCEPTION
+/*   WHEN OTHERS THEN  
+     O_Return_Cd:=-100; 
+     O_Return_Msg:= 'ERROR!- '||SQLERRM;*/
+     
+       
+     
+       WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT -10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);    
+     
+
+END P_UPDATE_SURVEY_REMARK;			
+					
+
+
+
+
+
+
+
+PROCEDURE P_GET_DASHBOARD
+( 
+  I_LOGINID                    IN VARCHAR2,
+  I_FROM_DATE                  IN VARCHAR2,
+  I_TO_DATE                    IN VARCHAR2,  
+  O_PENDING_CALL               OUT NUMBER,
+  O_TOTAL_CALL                 OUT NUMBER,
+  O_COMPLETED                  OUT NUMBER,
+  O_SENT                       OUT NUMBER,
+  O_CURSOR                     OUT TY_CURSOR   
+)
+AS
+
+BEGIN  
+                               
+          SELECT  
+
+                 s.status,                                      
+                 s.cust_name,
+                 s.cust_mobile_no,
+                 s.survey_category_cd, 
+                 s.CC_NEXT_ACTION_BY as cc_updated_by,
+                 s.CC_REMARKS,
+                 s.CC_NEXT_ACTION_DT as cc_date,                 
+                 s.survey_id                 
+           FROM survey_list s;                      
+
+
+EXCEPTION    
+            
+       WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT -10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+      --DBMS_OUTPUT.PUT_LINE(SQLERRM);   
+
+END P_GET_DASHBOARD;
+
+	
+================ 	create function and use on many places 		==================================
+
+
+FUNCTION F_GET_SURVEY_desc
+(
+I_CD_VAL      IN VARCHAR2
+) RETURN VARCHAR2
+AS
+LV_NAME        VARCHAR2(500);
+BEGIN
+  select T.Cd_Desc INTO LV_NAME from SURVEY_CD_MASTER T WHERE t.cd_val = I_CD_VAL;
+  RETURN LV_NAME;
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN NULL;
+END F_GET_SURVEY_desc;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				
+					
+===================================================================================
+
+=>  count no within a category     |  feedback dashboard 
+
+PROCEDURE P_GET_DASHBOARD
+( 
+  I_LOGINID                    IN VARCHAR2,
+  I_FROM_DATE                  IN VARCHAR2,
+  I_TO_DATE                    IN VARCHAR2,  
+  O_PENDING_CALL               OUT TY_CURSOR,
+  O_TOTAL_CALL                 OUT TY_CURSOR,
+  O_COMPLETED                  OUT TY_CURSOR,
+  O_CURSOR                     OUT TY_CURSOR   
+)
+AS
+PENDING_QUERY                  VARCHAR2(1000);
+TOT_QUERY                      VARCHAR2(1000);
+COMPLETED_QUERY                VARCHAR2(1000);
+LIST_QUERY                     VARCHAR2(1000);
+BEGIN  
+               
+             IF I_LOGINID IS NOT NULL THEN              
+                 -- PENDING_CALL
+               PENDING_QUERY := 'SELECT count(*) as tot
+                 FROM survey_list p 
+                 WHERE p.status = ''RESPONDED'' AND p.cc_action_type = ''TELECALL''';
+                 
+                 -- TOTAL_CALL 
+                TOT_QUERY := 'SELECT count(*) as tot
+                 FROM survey_list t 
+                 WHERE 1=1';
+                 
+                --  COMPLETED
+                 COMPLETED_QUERY := 'SELECT count(*) as tot
+                 FROM survey_list c 
+                 WHERE c.status = ''CC_DONE''';   
+                
+                 --  Check Date condition 
+                
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NOT NULL  THEN 
+                    PENDING_QUERY := PENDING_QUERY || ' AND to_date(to_char(nvl(p.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || ''''; 
+                    TOT_QUERY := TOT_QUERY || ' AND to_date(to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || '''';
+                    COMPLETED_QUERY := COMPLETED_QUERY || ' AND to_date(to_char(nvl(c.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || '''';
+                 END IF;
+
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NULL THEN 
+                    PENDING_QUERY := PENDING_QUERY || ' AND to_char(nvl(p.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' '; 
+                    TOT_QUERY := TOT_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' ';
+                    COMPLETED_QUERY := COMPLETED_QUERY || ' AND to_char(nvl(c.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' ';
+                 END IF;
+                 
+                 IF I_TO_DATE IS NOT NULL AND I_FROM_DATE IS NULL  THEN 
+                    PENDING_QUERY := PENDING_QUERY || ' AND to_char(nvl(p.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' '; 
+                    TOT_QUERY := TOT_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' ';
+                    COMPLETED_QUERY := COMPLETED_QUERY || ' AND to_char(nvl(c.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' ';
+                 END IF;
+                               
+               OPEN O_PENDING_CALL FOR PENDING_QUERY;
+               OPEN O_TOTAL_CALL FOR TOT_QUERY;
+               OPEN O_COMPLETED FOR COMPLETED_QUERY;
+                           
+            
+                    
+            --  Summery List    
+             LIST_QUERY := 'SELECT t.survey_category_cd,
+                       count(t.survey_category_cd) nos,
+                       sum(DECODE(t.status, ''RESPONDED'', 1, 0)) AS RESPONDED,
+                       sum(DECODE(t.status, ''PENDING'', 1, 0)) AS not_RESPONDED,
+                       sum(DECODE(t.negative_flag, ''P'', 1, 0)) AS POSITIVE_,
+                       sum(DECODE(t.negative_flag, ''N'', 1, 0)) AS NEGATIVE                
+                  FROM SURVEY_LIST t WHERE 1=1';
+                  
+                   --  Check Date condition 
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NOT NULL  THEN 
+                    LIST_QUERY := LIST_QUERY || ' AND to_date(to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || ''''; 
+                 END IF;
+
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NULL THEN 
+                    LIST_QUERY := LIST_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' '; 
+                 END IF;
+                 
+                 IF I_TO_DATE IS NOT NULL AND I_FROM_DATE IS NULL  THEN 
+                    LIST_QUERY := LIST_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' '; 
+                 END IF;     
+                  
+                 LIST_QUERY := LIST_QUERY || 'GROUP BY t.survey_category_cd';
+
+                 DBMS_OUTPUT.PUT_LINE(LIST_QUERY);
+                 
+                 OPEN O_CURSOR FOR LIST_QUERY;   
+                             
+               END IF;    
+
+EXCEPTION    
+            
+       WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT -10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+
+END P_GET_DASHBOARD;					
+					
+					
+Ex 2 ===> without if condition  --------------------------	see above also -----------------------------
+
+PROCEDURE P_GET_DASHBOARD
+( 
+  I_LOGINID                    IN VARCHAR2,
+  I_FROM_DATE                  IN VARCHAR2,
+  I_TO_DATE                    IN VARCHAR2,  
+  O_PENDING_CALL               OUT TY_CURSOR,
+  O_TOTAL_CALL                 OUT TY_CURSOR,
+  O_COMPLETED                  OUT TY_CURSOR,
+  O_CURSOR                     OUT TY_CURSOR   
+)
+AS
+PENDING_QUERY                  VARCHAR2(1000);
+TOT_QUERY                      VARCHAR2(1000);
+COMPLETED_QUERY                VARCHAR2(1000);
+LIST_QUERY                     VARCHAR2(1000);
+BEGIN  
+               
+             IF I_LOGINID IS NOT NULL THEN              
+                 -- PENDING_CALL
+               PENDING_QUERY := 'SELECT count(*) as tot
+                 FROM survey_list p 
+                 WHERE p.status = ''RESPONDED'' AND p.cc_action_type = ''TELECALL''';
+                 
+                 -- TOTAL_CALL 
+                TOT_QUERY := 'SELECT count(*) as tot
+                 FROM survey_list t 
+                 WHERE 1=1';
+                 
+                --  COMPLETED
+                 COMPLETED_QUERY := 'SELECT count(*) as tot
+                 FROM survey_list c 
+                 WHERE c.status = ''CC_DONE''';   
+                
+                  PENDING_QUERY := PENDING_QUERY || ' AND to_date(to_char(nvl(p.created_dt,sysdate) ,''DD-Mon-YYYY'')) BETWEEN nvl('''||I_FROM_DATE||''',sysdate-1000)  AND   nvl('''||I_TO_DATE||''',sysdate)';
+				  
+				  
+                  TOT_QUERY := TOT_QUERY || ' AND to_date(to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')) BETWEEN nvl('''||I_FROM_DATE||''',sysdate-1000)  AND   nvl('''||I_TO_DATE||''',sysdate)';
+				  
+                  COMPLETED_QUERY := COMPLETED_QUERY || ' AND to_date(to_char(nvl(c.created_dt,sysdate) ,''DD-Mon-YYYY'')) BETWEEN nvl('''||I_FROM_DATE||''',sysdate-1000)  AND   nvl('''||I_TO_DATE||''',sysdate)';                
+                  
+                
+                /* --  Check Date condition                 
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NOT NULL  THEN 
+                    PENDING_QUERY := PENDING_QUERY || ' AND to_date(to_char(nvl(p.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || ''''; 
+                    TOT_QUERY := TOT_QUERY || ' AND to_date(to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || '''';
+                    COMPLETED_QUERY := COMPLETED_QUERY || ' AND to_date(to_char(nvl(c.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || '''';
+                 END IF;
+
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NULL THEN 
+                    PENDING_QUERY := PENDING_QUERY || ' AND to_char(nvl(p.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' '; 
+                    TOT_QUERY := TOT_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' ';
+                    COMPLETED_QUERY := COMPLETED_QUERY || ' AND to_char(nvl(c.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' ';
+                 END IF;
+                 
+                 IF I_TO_DATE IS NOT NULL AND I_FROM_DATE IS NULL  THEN 
+                    PENDING_QUERY := PENDING_QUERY || ' AND to_char(nvl(p.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' '; 
+                    TOT_QUERY := TOT_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' ';
+                    COMPLETED_QUERY := COMPLETED_QUERY || ' AND to_char(nvl(c.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' ';
+                 END IF;*/
+                               
+               OPEN O_PENDING_CALL FOR PENDING_QUERY;
+               OPEN O_TOTAL_CALL FOR TOT_QUERY;
+               OPEN O_COMPLETED FOR COMPLETED_QUERY;
+                           
+            
+                    
+            --  Summery List    
+             LIST_QUERY := 'SELECT t.survey_category_cd,
+                       count(t.survey_category_cd) nos,
+                       sum(DECODE(t.status, ''RESPONDED'', 1, 0)) AS RESPONDED,
+                       sum(DECODE(t.status, ''PENDING'', 1, 0)) AS not_RESPONDED,
+                       sum(DECODE(t.negative_flag, ''P'', 1, 0)) AS POSITIVE_,
+                       sum(DECODE(t.negative_flag, ''N'', 1, 0)) AS NEGATIVE                
+                  FROM SURVEY_LIST t WHERE 1=1';
+                  
+             LIST_QUERY := LIST_QUERY || ' AND to_date(to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')) BETWEEN nvl('''||I_FROM_DATE||''',sysdate-1000)  AND   nvl('''||I_TO_DATE||''',sysdate)';
+ 
+
+             /* --  Check Date condition 
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NOT NULL  THEN 
+                    LIST_QUERY := LIST_QUERY || ' AND to_date(to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || ''''; 
+                 END IF;
+
+                 IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NULL THEN 
+                    LIST_QUERY := LIST_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  >= ''' || I_FROM_DATE || ''' '; 
+                 END IF;
+                 
+                 IF I_TO_DATE IS NOT NULL AND I_FROM_DATE IS NULL  THEN 
+                    LIST_QUERY := LIST_QUERY || ' AND to_char(nvl(t.created_dt,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' '; 
+                 END IF;   */  
+  
+                
+                 LIST_QUERY := LIST_QUERY || 'GROUP BY t.survey_category_cd';
+
+                -- DBMS_OUTPUT.PUT_LINE(LIST_QUERY);
+                 
+                 OPEN O_CURSOR FOR LIST_QUERY;   
+                             
+               END IF;    
+
+EXCEPTION    
+            
+       WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT -10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+
+END P_GET_DASHBOARD;
+
+					
+					
+=============================================================================
+
+==> get list for admin tool module (ENABLE_ONLINE)
+
+CREATE OR REPLACE PROCEDURE P_GET_ENABLE_ONLINE_LIST
+(
+ I_USER_ID           IN VARCHAR2,
+ I_FILE_NO           IN NUMBER,
+ O_CURSOR            OUT SYS_REFCURSOR -- TY_CURSOR
+)
+AS
+LV_QUERY                   VARCHAR2(1000);
+BEGIN
+
+   IF I_USER_ID IS NOT NULL THEN
+
+         LV_QUERY := 'SELECT u.file_no, u.user_id, u.branch, u.crt_dt FROM CUSTWEB.WEB_APPLY_ONLINE_LOAN_USER u
+                      WHERE 1=1';
+
+         IF I_FILE_NO IS NOT NULL THEN
+              LV_QUERY := LV_QUERY || 'AND u.file_no = '''|| I_FILE_NO ||'''';
+         END IF;
+
+         LV_QUERY := LV_QUERY || ' ORDER BY u.crt_dt DESC';
+
+          --DBMS_OUTPUT.PUT_LINE(LV_QUERY);
+         OPEN O_CURSOR FOR LV_QUERY;
+
+   ELSE
+        OPEN O_CURSOR FOR
+        SELECT 20 AS RETURN_CODE, 'USER NOT LOGGED IN' AS MESSAGE
+        FROM DUAL;
+   END IF;
+
+EXCEPTION
+  WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT 10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+END P_GET_ENABLE_ONLINE_LIST;
+
+
+			
+=============================================================================
+
+==> Admin tool (Enable Online )	  || insert data from select without using loop  
+			
+			
+CREATE OR REPLACE PROCEDURE P_ENABLE_ONLINE_CHECK_VALIDITY
+(
+ I_FILE_NO           IN VARCHAR2,
+ O_CURSOR            OUT SYS_REFCURSOR -- TY_CURSOR
+)
+AS
+LV_CNT                           NUMBER;
+LoanUser_CNT                     NUMBER;
+BEGIN
+
+   IF I_FILE_NO IS NOT NULL THEN
+
+         SELECT COUNT(1) INTO LV_CNT
+         FROM CUSTWEB.WEB_USER_ACCOUNTS T
+         WHERE T.ACNO = I_FILE_NO;
+
+             IF LV_CNT > 0 THEN
+
+                --check if file no already there in WEB_APPLY_ONLINE_LOAN_USER table
+                
+                 SELECT COUNT(1) INTO LoanUser_CNT FROM CUSTWEB.WEB_APPLY_ONLINE_LOAN_USER U
+                 WHERE U.FILE_NO = I_FILE_NO;
+                 
+                 IF LoanUser_CNT = 0 THEN
+
+                           -- insert code here
+                              INSERT INTO CUSTWEB.WEB_APPLY_ONLINE_LOAN_USER
+                                (USER_ID, FILE_NO, BRANCH, CRT_DT)
+                                SELECT A.USER_ID, A.FILE_NO, A.BRANCH, SYSDATE
+                                  FROM CUSTWEB.WEB_USER_ACCOUNTS A
+                                 WHERE A.ACNO = I_FILE_NO
+                                   AND A.file_no not in
+                                       (select l.file_no
+                                          from CUSTWEB.WEB_APPLY_ONLINE_LOAN_USER l
+                                         where l.file_no = I_FILE_NO);
+
+                                OPEN O_CURSOR FOR
+                                SELECT 0 AS RETURN_CODE, 'Data Added Successfully.' AS MESSAGE FROM DUAL;
+                                
+                    ELSE
+                      OPEN O_CURSOR FOR
+                           SELECT 0 AS RETURN_CODE, 'File No. Already EXISTS.' AS MESSAGE FROM DUAL;
+                    END IF;      
+
+             ELSE
+               OPEN O_CURSOR FOR
+                SELECT 404 AS RETURN_CODE, 'File No. Not EXISTS. ' AS MESSAGE FROM DUAL;
+             END IF;
+
+          --DBMS_OUTPUT.PUT_LINE(LV_QUERY);
+
+   ELSE
+        OPEN O_CURSOR FOR
+        SELECT -10 AS RETURN_CODE, 'PLEASE ENTER FILE NO.' AS MESSAGE FROM DUAL;       
+   END IF;
+
+EXCEPTION
+  WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT 10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+END P_ENABLE_ONLINE_CHECK_VALIDITY;
+
+		
+----------------------------------------- ONLINE REPORT  | TOOLS ADMIN
+
+
+
+PROCEDURE P_ONLINE_REPORT
+(
+ I_USER_ID           IN VARCHAR2,
+ O_CURSOR            OUT TY_CURSOR  --SYS_REFCURSOR
+)
+AS
+BEGIN
+
+   IF I_USER_ID IS NOT NULL THEN
+         OPEN O_CURSOR FOR
+      select month,
+       sum(check_eligibility) as check_eligibility,
+       sum(application_form) as application_form,
+       sum(FEE_PAIED) as FEE_PAIED,
+       sum(SANCTION) as SANCTION,
+       sum(DISB) as DISB
+  from (select to_char(t.created_dt, 'MM-YY') month,
+               count(distinct t.lms_lead_no) check_eligibility,
+               0 as application_form,
+               0 as FEE_PAIED,
+               0 as SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t
+         where t.request_through = 'WEB'
+           and trunc(t.created_dt) >= '01-MAR-2016'
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               ('ASHISHL@HDFC.COM', 'NIMMIOITC@HDFCSUPPORT.CO.IN')
+         group by rollup(to_char(t.created_dt, 'MM-YY'))
+
+        union
+        select to_char(t.created_dt, 'MM-YY'),
+               0,
+               count(distinct t.lms_lead_no) as application_form,
+               0,
+               0 as SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t, application_master m
+         where t.request_through = 'WEB'
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and trunc(t.created_dt) >= '01-MAR-2016'
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               ('ASHISHL@HDFC.COM', 'NIMMIOITC@HDFCSUPPORT.CO.IN')
+         group by rollup(to_char(t.created_dt, 'MM-YY'))
+
+        union
+        select to_char(t.created_dt, 'MM-YY'),
+               0,
+               0,
+               count(distinct t.lms_lead_no) as FEE_PAIED,
+               0 as SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t, application_master m
+         where t.request_through = 'WEB'
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and m.payment_flag in ('C', 'Y')
+           and trunc(t.created_dt) >= '01-MAR-2016'
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               ('ASHISHL@HDFC.COM', 'NIMMIOITC@HDFCSUPPORT.CO.IN')
+         group by rollup(to_char(t.created_dt, 'MM-YY'))
+
+         union
+
+         select to_char(t.created_dt, 'MM-YY'),
+               0,
+               0,
+               0 as FEE_PAIED,
+               count(distinct t.lms_lead_no) SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t, application_master m,sy_loan_master lm,sy_loan_summary ls
+         where t.request_through = 'WEB'
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and lm.file_no=m.serial_no
+           and ls.file_no=lm.file_no
+           and ls.set_type='S'
+           and m.payment_flag in ('C', 'Y')
+           and trunc(t.created_dt) >= '01-MAR-2016'
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               ('ASHISHL@HDFC.COM', 'NIMMIOITC@HDFCSUPPORT.CO.IN')
+         group by rollup(to_char(t.created_dt, 'MM-YY'))
+
+         union
+
+         select to_char(t.created_dt, 'MM-YY'),
+               0,
+               0,
+               0 as FEE_PAIED,
+               0 SANCTION,
+               count(distinct t.lms_lead_no) DISB
+          from INSTA_DETAIL t, application_master m,sy_loan_master lm,sy_loan_summary ls
+         where t.request_through = 'WEB'
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and lm.file_no=m.serial_no
+           and ls.file_no=lm.file_no
+           and ls.set_type='S'
+           and nvl(ls.tot_disb_made,0) > 0
+           and m.payment_flag in ('C', 'Y')
+           and trunc(t.created_dt) >= '01-MAR-2016'
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               ('ASHISHL@HDFC.COM', 'NIMMIOITC@HDFCSUPPORT.CO.IN')
+         group by rollup(to_char(t.created_dt, 'MM-YY'))
+
+         )
+		 where  to_date(month, 'MM-YY') between to_date('03-16','MM-YY')and to_date('05-16','MM-YY')
+ group by month
+ order by 1 nulls last;
+
+   ELSE
+        OPEN O_CURSOR FOR
+        SELECT 20 AS RETURN_CODE, 'USER NOT LOGGED IN' AS MESSAGE
+        FROM DUAL;
+   END IF;
+
+EXCEPTION
+  WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT 10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+END P_ONLINE_REPORT;
+
+____________________________________________________+++++++++++++++++++++++
+
+#########################		ONLINE REPORT  	| NOTICE : dd-MM-RRRR	#############################					  
+
+PROCEDURE P_ONLINE_REPORT
+(
+ I_USER_ID           IN VARCHAR2,
+ I_FROM_DATE                  IN VARCHAR2,
+ I_TO_DATE                    IN VARCHAR2,  
+ O_CURSOR            OUT TY_CURSOR  --SYS_REFCURSOR
+)
+AS
+LIST_QUERY                     VARCHAR2(6000);
+BEGIN
+
+   IF I_USER_ID IS NOT NULL THEN
+     
+      LIST_QUERY := 'select month,
+       sum(check_eligibility) as check_eligibility,
+       sum(application_form) as application_form,
+       sum(FEE_PAIED) as FEE_PAIED,
+       sum(SANCTION) as SANCTION,
+       sum(DISB) as DISB
+  from (select t.created_dt,to_char(t.created_dt, ''MM-YY'') month,
+               count(distinct t.lms_lead_no) check_eligibility,
+               0 as application_form,
+               0 as FEE_PAIED,
+               0 as SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t
+         where t.request_through = ''WEB''
+           and trunc(t.created_dt) >= ''01-MAR-2016''
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               (''ASHISHL@HDFC.COM'', ''NIMMIOITC@HDFCSUPPORT.CO.IN'')
+         group by rollup(to_char(t.created_dt, ''MM-YY'')),t.created_dt
+        
+        union
+        select t.created_dt,to_char(t.created_dt, ''MM-YY''),
+               0,
+               count(distinct t.lms_lead_no) as application_form,
+               0,
+               0 as SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t, application_master m
+         where t.request_through = ''WEB''
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and trunc(t.created_dt) >= ''01-MAR-2016''
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               (''ASHISHL@HDFC.COM'', ''NIMMIOITC@HDFCSUPPORT.CO.IN'')
+         group by rollup(to_char(t.created_dt, ''MM-YY'')),t.created_dt
+        
+        union
+        select t.created_dt,to_char(t.created_dt, ''MM-YY''),
+               0,
+               0,
+               count(distinct t.lms_lead_no) as FEE_PAIED,
+               0 as SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t, application_master m
+         where t.request_through = ''WEB''
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and m.payment_flag in (''C'', ''Y'')
+           and trunc(t.created_dt) >= ''01-MAR-2016''
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               (''ASHISHL@HDFC.COM'', ''NIMMIOITC@HDFCSUPPORT.CO.IN'')
+         group by rollup(to_char(t.created_dt, ''MM-YY'')),t.created_dt
+         
+         union
+         
+         select t.created_dt,to_char(t.created_dt, ''MM-YY''),
+               0,
+               0,
+               0 as FEE_PAIED,
+               count(distinct t.lms_lead_no) SANCTION,
+               0 as DISB
+          from INSTA_DETAIL t, application_master m,sy_loan_master lm,sy_loan_summary ls
+         where t.request_through = ''WEB''
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and lm.file_no=m.serial_no
+           and ls.file_no=lm.file_no
+           and ls.set_type=''S''
+           and m.payment_flag in (''C'', ''Y'')
+           and trunc(t.created_dt) >= ''01-MAR-2016''
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               (''ASHISHL@HDFC.COM'', ''NIMMIOITC@HDFCSUPPORT.CO.IN'')
+         group by rollup(to_char(t.created_dt, ''MM-YY'')),t.created_dt
+         
+         union
+         
+         select t.created_dt,to_char(t.created_dt, ''MM-YY''),
+               0,
+               0,
+               0 as FEE_PAIED,
+               0 SANCTION,
+               count(distinct t.lms_lead_no) DISB
+          from INSTA_DETAIL t, application_master m,sy_loan_master lm,sy_loan_summary ls
+         where t.request_through = ''WEB''
+           and m.source_refno = t.insta_id
+           and t.serial_no is not null
+           and lm.file_no=m.serial_no
+           and ls.file_no=lm.file_no
+           and ls.set_type=''S''
+           and nvl(ls.tot_disb_made,0) > 0
+           and m.payment_flag in (''C'', ''Y'')
+           and trunc(t.created_dt) >= ''01-MAR-2016''
+           and t.lead_mobile not in
+               (8446336250, 7208151599, 9890582020, 9833521053, 9890778429)
+           and t.lead_email not in
+               (''ASHISHL@HDFC.COM'', ''NIMMIOITC@HDFCSUPPORT.CO.IN'')
+         group by rollup(to_char(t.created_dt, ''MM-YY'')),t.created_dt         
+         ) where 1=1 ' ;
+		 
+		 
+		 
+                IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NOT NULL  THEN                    
+                   --LIST_QUERY := LIST_QUERY || ' AND to_date(to_char(nvl(month,sysdate) ,''DD-Mon-YYYY''))  BETWEEN ''' || I_FROM_DATE || ''' AND ''' || I_TO_DATE || ''''; 
+                   LIST_QUERY := LIST_QUERY || ' AND  to_date(created_dt,''dd-MM-RRRR'')  BETWEEN to_date(''' || I_FROM_DATE || ''' ,''dd/mm/RRRR'') AND to_date(''' || I_TO_DATE || ''' ,''dd/mm/RRRR'') AND month IS NOT NULL';                   
+                END IF;
+
+                IF I_FROM_DATE IS NOT NULL AND I_TO_DATE IS NULL THEN 
+                  LIST_QUERY := LIST_QUERY || ' AND  to_date(created_dt,''dd-MM-RRRR'')  >= to_date(''' || I_FROM_DATE || ''' ,''dd/mm/RRRR'') AND month IS NOT NULL'; 
+                END IF;
+                 
+               IF I_TO_DATE IS NOT NULL AND I_FROM_DATE IS NULL THEN 
+                  LIST_QUERY := LIST_QUERY || ' AND  to_date(created_dt,''dd-MM-RRRR'')  <= to_date(''' || I_FROM_DATE || ''' ,''dd/mm/RRRR'') AND month IS NOT NULL'; 
+               END IF;
+                 
+              --   IF I_TO_DATE IS NOT NULL AND I_FROM_DATE IS NULL  THEN 
+              --      LIST_QUERY := LIST_QUERY || ' AND to_char(nvl(month,sysdate) ,''DD-Mon-YYYY'')  <= ''' || I_TO_DATE || ''' ';  
+              --   END IF;
+			  
+				LIST_QUERY := LIST_QUERY || ' group by month order by 1 nulls last';				 
+				DBMS_OUTPUT.PUT_LINE(LIST_QUERY);
+				OPEN O_CURSOR FOR LIST_QUERY;
+				
+   ELSE
+        OPEN O_CURSOR FOR
+        SELECT 20 AS RETURN_CODE, 'USER NOT LOGGED IN' AS MESSAGE
+        FROM DUAL;
+   END IF;
+
+EXCEPTION
+  WHEN OTHERS THEN
+  
+   
+       OPEN O_CURSOR FOR
+       'SELECT 10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+END P_ONLINE_REPORT;					  
+					  
+
+
+
+
+
+#########################		Add salary slip	| NOTICE :	#############################	
+
+
+
+PROCEDURE P_ADD_SALARY_SLIP
+( 
+	I_CATEGORY					IN VARCHAR2,
+	I_DESCRIPTION				IN VARCHAR2,
+	I_EMPLOYER_ID				IN VARCHAR2,
+	O_CURSOR                    OUT TY_CURSOR   
+)
+AS
+
+BEGIN  
+                      
+                --DBMS_OUTPUT.PUT_LINE();
+				
+                       INSERT INTO SALARY_SLIP_ITEMS
+                       (CATEGORY,
+                        DESCRIPTION,
+						EMPLOYER_ID,
+						CREATED_DT)
+                     values
+                       (I_CATEGORY,
+                        I_DESCRIPTION,
+                        I_EMPLOYER_ID,
+                        sysdate);
+                     commit;
+                                       
+                  OPEN O_CURSOR FOR
+                   SELECT 0 AS RETURN_CODE, 'Data Added Successfully' AS MESSAGE FROM DUAL;
+
+EXCEPTION    
+            
+       WHEN OTHERS THEN
+       OPEN O_CURSOR FOR
+       'SELECT -10 AS RETURN_CODE,  ''' || SQLERRM ||''' AS MESSAGE FROM DUAL';
+      --DBMS_OUTPUT.PUT_LINE(SQLERRM);        
+
+END P_ADD_SALARY_SLIP;
+
+
+
+
+#########################	insert json value into table	| NOTICE :	#############################	
+
+
+
+CREATE OR REPLACE Procedure p_Ins_Salslp_Items(i_Salslp_Items_Json In Varchar2,
+                                               i_Created_By        In Varchar,
+                                               i_Employer_Id       In Varchar2,
+                                               o_Return_Msg        Out Varchar2) As
+Begin
+  For j In (Select Regexp_Replace(Regexp_Substr(i_Salslp_Items_Json,
+                                                '"FIELD_LABEL":\s*("(\w| )*")',
+                                                1,
+                                                Level),
+                                  '"FIELD_LABEL":\s*"((\w| )*)"',
+                                  '\1',
+                                  1,
+                                  1) As Field_Label,
+                   Regexp_Replace(Regexp_Substr(i_Salslp_Items_Json,
+                                                '"FIELD_VALUE":\s*("(\w| )*")',
+                                                1,
+                                                Level),
+                                  '"FIELD_VALUE":\s*"((\w| )*)"',
+                                  '\1',
+                                  1,
+                                  1) As Field_Value
+              From Dual
+            Connect By Regexp_Substr(i_Salslp_Items_Json,
+                                     '"FIELD_VALUE":\s*("(\w| )*")',
+                                     1,
+                                     Level) Is Not Null) Loop
+  
+    Insert Into Salary_Slip_Items
+      (Srno, Category, Description, Created_Dt, Created_By, Employer_Id)
+    Values
+      (Seq_Salslp_Item_No.Nextval,
+       j.Field_Label,
+       j.Field_Value,
+       Sysdate,
+       i_Created_By,
+       i_Employer_Id);
+  
+  End Loop;
+  o_Return_Msg := 'OK';
+
+Exception
+  When Others Then
+    o_Return_Msg := Sqlerrm;
+End p_Ins_Salslp_Items;
+
+

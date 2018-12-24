@@ -1,0 +1,35 @@
+var text = "";
+
+function getSelectionText() {   
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text;
+    }
+  //  return text;
+  console.log(text);
+}
+
+
+
+$('#showSelected').on('click', function(){
+
+		var text = "";
+		if (window.getSelection) {
+			text = window.getSelection().toString();
+		} else if (document.selection && document.selection.type != "Control") {
+			text = document.selection.createRange().text;
+		}
+
+		alert(text);       
+});
+	
+	
+
+<div id="showSelected">
+	<p>If you click on me, I will disappear.</p>
+	<p>Click me away!</p>
+	<p>Click me too!</p>
+	copy me
+	
+</div>	

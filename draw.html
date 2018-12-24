@@ -1,0 +1,220 @@
+<html><head>
+  <title>You are not connected to the Internet</title>
+  <!-- <meta property="og:url" content="https://dev.to/offline.html">
+  <meta property="og:title" content="Looks like you've lost your Internet connection">
+  <meta property="og:image" content="https://thepracticaldev.s3.amazonaws.com/i/aio6nc08tpcqavej512d.png">
+  <meta property="og:description" content="Maybe you could go outside and get some fresh air.">
+  <meta property="og:site_name" content="The DEV Community">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ThePracticalDev">
+  <meta name="twitter:title" content="Looks like you've lost your Internet connection">
+  <meta name="twitter:description" content="Maybe you could go outside and get some fresh air.">
+  <meta name="twitter:image:src" content="https://thepracticaldev.s3.amazonaws.com/i/aio6nc08tpcqavej512d.png"> -->
+
+  <style>
+    html,
+    body,
+    canvas {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      font-family: Helvetica;
+      user-select: none;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #444444;
+    }
+
+    h2,
+    h3 {
+      font-weight: 400;
+    }
+
+    h2 {
+      font-size: 2em;
+    }
+
+    h3 {
+      font-size: 1.3em;
+    }
+
+    canvas {
+     /* position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100vh;*/
+    }
+
+    path {
+      opacity: 50%;
+    }
+
+    .content {
+      text-align: center;
+      margin: 40px 20px;
+    }
+
+    .colors {
+      z-index: 2;
+      margin: 0 40px;
+      text-align: center;
+    }
+
+    .color {
+      height: 50px;
+      width: 50px;
+      margin-right: 10px;
+      border-radius: 50%;
+      border: none;
+    }
+
+    .color:hover {
+      opacity: .7;
+    }
+
+    .color:focus {
+      outline: 0;
+    }
+
+    .rainbow-logo {
+      border-radius: 10%;
+      max-width: 50%;
+    }
+
+    .signature {
+      margin-top: 40px;
+    }
+
+    @media only screen and (max-height: 700px) {
+      h2 {
+        font-size: 1.5em;
+      }
+
+      h3 {
+        font-size: 1.0em;
+      }
+
+      .color {
+        height: 30px;
+        width: 30px;
+      }
+
+      .signature {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .content {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas width="1366" height="150"></canvas>
+  
+    <div class="colors">
+     <!--  <button class="color" style="background-color: rgb(244, 144, 142);"></button>
+      <button class="color" style="background-color: rgb(242, 240, 151);"></button>
+      <button class="color" style="background-color: rgb(136, 176, 220);"></button>
+      <button class="color" style="background-color: rgb(247, 181, 209);"></button>
+      <button class="color" style="background-color: rgb(83, 196, 175);"></button>
+      <button class="color" style="background-color: rgb(253, 227, 140);"></button> -->
+    </div>
+  
+  <script type="text/javascript">
+    const canvas = document.querySelector('canvas');
+    const context = canvas.getContext('2d');
+    const colors = ["#F4908E", "#F2F097", "#88B0DC", "#F7B5D1", "#53C4AF", "#FDE38C"];
+    const colorDiv = document.querySelector(".colors")
+
+    colors.forEach(color => {
+      const button = document.createElement("button")
+      button.classList.add("color")
+      button.style.backgroundColor = color
+      colorDiv.appendChild(button)
+      button.addEventListener('click', () => context.strokeStyle = color)
+    })
+
+    const setSize = () => {
+      // set dimensions on the canvas
+      canvas.setAttribute('width', window.innerWidth)
+      canvas.setAttribute('height', window.innerHeight)
+      context.strokeStyle = colors[0]
+      context.lineJoin = "round"
+      context.lineWidth = 5
+    }
+
+    setSize()
+
+    window.addEventListener("resize", setSize)
+
+    let firstX, firstY, secondX, secondY, paint
+
+    function getCoordinates(event) {
+      // check to see if mobile or desktop
+      if (["mousedown", "mousemove"].includes(event.type)) {
+        // click events 
+        return [event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop]
+      } else {
+        // touch coordinates
+        return [event.touches[0].pageX - canvas.offsetLeft, event.touches[0].pageY - canvas.offsetTop]
+      }
+    }
+
+    function addClick(event, canvas) {
+      let [x, y] = getCoordinates(event)
+
+      secondX = firstX
+      secondY = firstY
+      firstX = x
+      firstY = y
+    }
+
+    function draw() {
+      context.beginPath()
+      context.moveTo(secondX, secondY)
+      context.lineTo(firstX, firstY)
+      context.closePath()
+      context.stroke()
+    }
+
+    function startPaint(event) {
+      addClick(event, this)
+      paint = true
+    }
+
+    function endPaint(event) {
+      if (paint) {
+        addClick(event, this)
+        draw()
+      }
+    }
+
+    canvas.addEventListener('mousedown', startPaint)
+    canvas.addEventListener('touchstart', startPaint)
+
+    const exit = _ => {
+      paint = false
+      firstX = null
+      firstY = null
+    }
+
+    canvas.addEventListener('mouseup', exit)
+    canvas.addEventListener('mouseleave', exit)
+    canvas.addEventListener('touchend', exit)
+
+    canvas.addEventListener('mousemove', endPaint)
+    canvas.addEventListener('touchmove', endPaint)
+
+  </script>
+
+
+</body></html>

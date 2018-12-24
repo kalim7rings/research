@@ -1,0 +1,1934 @@
+For any logic that requires more than one expression, you should use a computed property.
+
+
+
+==>  use of props
+
+	HTML :
+
+		<div id='app'>
+		    <person-container v-bind:greeting='greeting'></person-container>
+		</div>
+
+		OR
+
+		<person-container :greeting="greeting"></person-container>
+
+		OR  - pass value to "greeting" variable
+
+			<person-container greeting="hi"></person-container>			
+
+
+	vue.js
+
+		var vm = new Vue({
+		   el: '#app',
+		   data:{
+		       greeting: 'hi'
+		   },
+		   components:{
+		        'person-container':{
+		            props:['greeting'],
+		            data: function (){
+		                return { name: 'Chris' };
+		            },
+		            template: '<div> {{ greeting }}, {{ name }}</div>'
+		        }
+		   }
+		});
+
+
+==>  To stops the page from jumping when a link is clicked we use the "prevent" modifier (short for preventDefault).
+
+	
+	<nav v-bind:class="active" v-on:click.prevent>
+
+		<!-- When a link in the menu is clicked, we call the makeActive method, defined in the JavaScript Vue instance. -->
+
+		<a href="#" class="home" @click="makeActive('home')">Home</a>
+		<a href="#" class="projects" @click="makeActive('projects')">Projects</a>
+		<a href="#" class="services" @click="makeActive('services')">Services</a>
+		<a href="#" class="contact" @click="makeActive('contact')">Contact</a>
+
+	</nav>
+
+
+==> v-cloak hides any un-compiled data bindings until the Vue instance is ready.
+	
+	v-cloak  -> hides {{}} while running
+
+
+	[v-cloak] {
+      display: none;
+    }
+
+	
+		<div id="main" v-cloak >
+			    
+			<input type="text" v-model="text_content" />
+			{{text_content}}
+
+		</div>
+	
+
+==>  v-on:click.stop  | don not allowed click event
+	
+	 v-on:click.stop
+
+
+==>  
+
+	data: {
+    	// Define the model properties. The view will loop
+        // through the services array and genreate a li
+        // element for every one of its items.
+        services: [
+        	{
+        		name: 'Web Development',
+        		price: 300,
+        		active:true
+        	},{
+        		name: 'Design',
+        		price: 400,
+        		active:false
+        	},{
+        		name: 'Integration',
+        		price: 250,
+        		active:false
+        	},{
+        		name: 'Training',
+        		price: 220,
+        		active:false
+        	}
+        ]
+    },
+
+==>  filter | currency | 2 decimal point value 
+
+	
+		// Define a custom filter called "currency". 
+
+		Vue.filter('currency', function (value) {
+		    return 'Rs ' + value.toFixed(2);    
+		}); 
+
+
+==>  how to use filter |  use pipe(|) then filter name
+
+	<div class="total">
+		Total: <span>{{total() | currency}}</span>        
+	</div>
+
+
+==>  for loop | click event inside for loop
+
+
+		<li v-for="service in services" v-on:click="toggleActive(service)" v-bind:class="{ 'active': service.active}">
+
+			{{service.name}} <span>{{service.price | currency}}</span>
+
+		</li>
+
+	Js
+
+		toggleActive: function(s){
+            s.active = !s.active;
+    	}
+
+
+    Ex. 2	
+
+    	<li v-for="article in filteredArticles">
+            
+            <a v-bind:href="article.url"><img v-bind:src="article.image" /></a>
+
+            <p>{{article.title}}</p>
+
+        </li>
+
+
+ Ex. 3  - use of index
+
+ 		<tr v-for="(task, index) in tasks">
+            <td>{{ index + 1 }}</td>
+            <td>{{ task.name }}</td>
+            <td>{{ task.description }}</td>
+            <td>
+            	<button @click="initUpdate(index)" class="btn btn-success btn-xs">Edit</button>
+                <button @click="deleteTask(index)" class="btn btn-danger btn-xs">Delete</button>
+            </td>
+        </tr>
+
+
+
+==> forEach() 
+
+			total: function(){
+
+	        	var total = 0;
+
+	        	this.services.forEach(function(s){
+	        		if (s.active){
+	        			total+= s.price;
+	        		}
+	        	});
+
+	    	   return total;
+	        }
+
+
+
+==> how search works | how filter works
+
+    Ex. 1
+
+	HTML:
+
+        	<input type="text" v-model="searchString" placeholder="Enter your search terms" />    
+
+		    <ul>     
+		        <li v-for="article in filteredArticles">		            
+		            <a v-bind:href="article.url"><img v-bind:src="article.image" /></a>
+		            <p>{{article.title}}</p>
+		        </li>
+		    </ul>
+
+
+	JS: 
+	
+		computed: {
+        
+		        filteredArticles: function () {
+		            var articles_array = this.articles,
+		                searchString = this.searchString;               
+
+		            if(!searchString){
+		                return articles_array;
+		            }
+
+		            searchString = searchString.trim().toLowerCase();           
+
+		            articles_array = articles_array.filter(function(item){
+		                if(item.title.toLowerCase().indexOf(searchString) !== -1){
+		                    return item;
+		                }
+		            })
+
+		            // Return an array with the filtered data.
+		            return articles_array;;
+		        }
+		}	    
+
+
+    Ex. 2
+
+        <input class="input is-small" type="text" placeholder="search" v-model="searchQuery">
+
+
+        data(){
+            return{                           
+                lists:{},             
+                searchQuery:'',
+                temp:''
+            }
+        },
+
+        watch:{
+            searchQuery(){
+                if (this.searchQuery.length > 0) {
+                    this.temp = this.lists.filter((item) => {
+                        return Object.keys(item).some((key)=>{
+                            let string = String(item[key]) 
+                            return string.toLowerCase().indexOf(this.searchQuery.toLowerCase())>-1
+                            // console.log(string)
+                        })
+                    });
+                    // console.log(result)
+                }else{
+                    this.temp = this.lists
+                }
+            }
+        },    
+
+
+
+==> apply active class | change variable values on click without function
+
+
+	1 - apply 'active' class if layout = list  |   v-on:click="layout = 'list'"
+
+		<a class="list-icon" v-bind:class="{ 'active': layout == 'list'}" v-on:click="layout = 'list'"></a>
+
+
+	2 - apply 'active' class if layout = grid  |   v-on:click="layout = 'grid'"
+
+		<a class="grid-icon" v-bind:class="{ 'active': layout == 'grid'}" v-on:click="layout = 'grid'"></a>
+
+
+	3 - show this if layout = grid 
+
+		<ul v-if="layout == 'grid'" class="grid">		
+			<li v-for="a in articles">
+				<a v-bind:href="a.url" target="_blank"><img v-bind:src="a.image.large" /></a>
+			</li>
+		</ul>
+
+
+	4 - show this if layout = grid 	
+
+		<ul v-if="layout == 'list'" class="list">   	
+			<li v-for="a in articles">
+				<a v-bind:href="a.url" target="_blank"><img v-bind:src="a.image.small" /></a>
+				<p>{{a.title}}</p>
+			</li>
+		</ul>
+
+	JS :	
+
+		data: {            	
+    			layout: 'grid',  //default
+    		}
+
+
+
+==> how to apply class on condition
+
+    Ex. if 'showThankYouIcon' is true then class 'text-success' will apply otherwise no class will apply
+
+    <div class="msg" :class="[showThankYouIcon ? 'text-success' : '']"> {{ errorMessage }} </div>
+
+    Ex.  if showThankYouIcon is true then 'active' class will apply
+
+        <div class="thankyou_icon" :class="{active:showThankYouIcon}">
+
+
+    
+
+=> click event like jquery trigger('click') |  fire click event on an element in vuejs
+
+        <div @click="openDropzone">
+            Add More
+        </div>
+
+    Js:    
+
+        props:['type','dropzone'],
+        methods : {
+            openDropzone : function() {
+
+                this.dropzone.$el.click();
+                
+                   // OR core js way
+
+                document.getElementsByClassName('dropzone')[0].click();
+            },
+        }
+
+
+
+
+==>  File upload with dropzone  start --------------------------------------------------------------------
+
+
+=> install dropzone vue 
+
+    npm install vue2-dropzone
+
+
+
+==>   give custom component name
+
+<script>
+
+    import vueDropzone from "vue2-dropzone";
+    //Vue.component('dropzone', vueDropzone);  // custom component name
+
+    import 'vue2-dropzone/dist/vue2Dropzone.css';
+
+
+</script>
+
+
+
+==> component name tricks
+
+	vueDropzone  (will become) ->  vue-dropzone
+	
+	HTML :
+
+		<vue-dropzone
+                ref="dropzone"
+                id="drop1"
+                :options="dropOptions"
+                @vdropzone-complete="afterComplete"
+        ></vue-dropzone>
+
+    JS:    
+
+		components : {
+		    vueDropzone
+		},
+
+
+==>  dropzone options | dropOptions  | also set _token csrf() in header
+
+        data : function () {
+                return {
+                    dropOptions: {
+                        url: "https://httpbin.org/post",
+	                    maxFilesize: 2, // MB
+	                    maxFiles: 4,
+	                    //chunking: true,    // it will chunk post request in many request
+	                    //chunkSize: 500, // Bytes
+	                    thumbnailWidth: 150, // px
+	                    thumbnailHeight: 150,
+	                    addRemoveLinks: true,
+	                    dictDefaultMessage: "<i class='fa fa-cloud-upload'></i>UPLOAD ME",
+	                    //previewTemplate: getTemplate(),
+                        headers: {
+                            "X-CSRF-TOKEN": document.head.querySelector("[name=csrf-token]").content
+                        }
+                    },
+                }
+            },
+
+
+==> send extra parameter with dropzone using sendingEvent() function
+
+	1 -	methods : {
+            removeAllFiles : function() {
+                this.$refs.dropzone.removeAllFiles();
+            },
+            sendingEvent : function(file, xhr, formData) {
+                console.log('im in sendingEvent');
+                formData.append('paramName', 'some value or other');
+                formData.append('sr_no', '12345');
+                formData.append('mobile_no', '9865748525');
+            },
+            afterComplete: function (file) {
+                console.log('im in afterComplete');
+                console.log(file);
+            },
+        },
+
+
+    
+    2 - send whole object with form data :
+        
+        Ex.     sendingEvent : function(file, xhr, formData) {                
+
+                    for (var data in this.documentExtraParameter)
+                        formData.append(data, this.documentExtraParameter[data]);
+                }        
+
+        Ex.     
+                var item = {
+                   description: 'Some Item',
+                   price : '0.00',
+                   srate : '0.00',
+                   color : 'red',
+                   ...
+                   ...
+                }
+
+                var form_data = new FormData();
+
+                for ( var key in item ) {
+                    form_data.append(key, item[key]);
+                }    
+
+
+
+
+
+
+==>  laravel upload code
+
+	In laravel controller
+
+		public function uploadDocs()
+	    {
+	       print_r(request()->file('files'));
+
+	       return request()->file('file')->store('/');  // it will store file in store/app directory
+	    }
+
+
+==>  File upload with dropzone  End  --------------------------------------------------------------------
+
+
+
+
+
+-------------- implement content-loader start -----------------
+
+
+==>  npm install vue-content-loader
+
+
+<template>
+    <div class="content-wrapper">
+
+        <facebook-loader v-if="!myData"
+                         :primaryColor = '"#444"'
+                         :secondaryColor = '"green"'
+                         :speed="2"
+        ></facebook-loader>
+        <div v-else class="my-real-content">
+            <p>{{myData}}</p>
+        </div>
+
+        <instagram-loader
+                v-if="!myData"
+                :speed="2"
+                :animate="true"
+        >
+        </instagram-loader>
+
+        <bullet-listLoader
+                v-if="!myData"
+                :speed="2"
+                :animate="true"
+        >
+        </bullet-listLoader>
+
+        <code-loader
+                v-if="!myData"
+                :speed="2"
+                :animate="true"
+        ></code-loader>
+
+        <list-loader
+                v-if="!myData"
+                :speed="2"
+                :animate="true"
+        ></list-loader>
+
+        <div v-if="myData" class="my-real-content">
+            <p>{{myData}}</p>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    
+    import { FacebookLoader, InstagramLoader, BulletListLoader, CodeLoader, ListLoader } from 'vue-content-loader';
+    // Or: InstagramLoader | CodeLoader | ListLoader | BulletListLoader
+
+    export default{
+        data : function () {
+            return {
+                myData : '',
+            }
+        },
+        components: {
+            FacebookLoader,
+            InstagramLoader,
+            BulletListLoader,
+            CodeLoader,
+            ListLoader
+        },
+        mounted : function(){
+            // Just pretend this is an AJAX call. Use your imagination.
+            setTimeout(() => {
+                this.myData = 'Example Data';
+            }, 5000);
+
+        }
+    }
+</script>
+
+-------- implement content-loader END ------
+
+
+
+-------- Route implement  Start | vue router ------
+
+    install -    npm install vue-router --save
+
+    app.js 
+
+            import VueRouter from 'vue-router';
+            Vue.use(VueRouter)
+
+
+==> 
+
+ 		<p>
+            <router-link to = "/route1" tag='span' event = "mouseover">Router Link 1</router-link>
+            <router-link to = "/route2" tag='div' event = "mouseover">Router Link 2</router-link>
+			
+			 // same as above | active-class added
+
+            <router-link v-bind:to = "{path:'/route4'}" active-class = "_active">Router Link 4</router-link>
+        </p>
+         
+        <router-view></router-view>
+
+
+-> pass query string in url
+
+	<router-link v-bind:to ="{path:'/route3', query: { name: 'Tery', id: '123', path: 'my_path' }}">Router Link 3</router-link>
+
+    <router-link :to="{ name: 'Page2', params: { id: 1234 } }"> Navigate to Page2 </router-link>
+
+
+-> list of attributes
+
+    to = '/path'
+
+    tag = 'span'  - render it as some other tag,  like span, div, 
+    
+    event = "mouseover"    
+
+    active-class = "_active"
+
+    exact-active-class
+
+    append - If we want to go from the router link with path /route1 to router link path /route2, it will show the path in the 	
+    		 browser as /route1/route2.
+
+    replace - With replace, the navigation history is not stored.
+
+
+
+
+
+==> give link page name not path |
+
+	<router-link :to="{name: 'createCompany'}" class="btn btn-success">Create new company</router-link>
+
+
+
+Ex. for parameters
+
+
+        routes: [
+            {
+                path: "/",
+                redirect: {
+                    name: "Page1"
+                }
+            },
+            {
+                path: '/page1',
+                name: 'Page1',
+                component: Page1
+            },
+            {
+                path: '/page2/:id',
+                name: 'Page2',
+                component: Page2
+            }
+        ];
+
+
+        <router-link :to="{ name: 'Page2', params: { id: 1234 } }">Navigate to Page2</router-link>
+
+
+ex.  get parameters from route (URL)  on page load
+
+       created() {
+            this.id = this.$route.params.id;
+        }, 
+
+
+    use query :        
+
+            <router-link :to="{ name: 'Page2', params: { id: 1234 }, query: { debug: true }}">Navigate to Page2</router-link>
+
+      -get values from url on page load
+      
+            created() {
+                this.id = this.$route.params.id;
+                if(this.$route.query.debug) {
+                    this.debug = this.$route.query.debug;
+                }
+            },      
+
+
+
+
+--> navigate to previous page
+
+        methods: {
+            navigate() {
+                router.go(-1);
+            },
+            goBack () {
+                  window.history.length > 1
+                    ? this.$router.go(-1)
+                    : this.$router.push('/')
+                }
+        }
+
+
+==> current route inside of any component:
+    
+     this.$route 
+
+==> redirect to base url
+
+    1 - this.$router.push('/');
+
+    2 -    // literal string path
+            router.push('home')
+
+    3 -    // object
+            router.push({ path: 'home' })
+
+    4 -     // named route
+            router.push({ name: 'user', params: { userId: 123 }})
+
+    5 -    // with query, resulting in /register?plan=private
+            router.push({ path: 'register', query: { plan: 'private' }})
+
+    Ex.
+    
+        const userId = 123
+        router.push({ name: 'user', params: { userId }})        // -> /user/123
+        router.push({ path: `/user/${userId}` })                // -> /user/123
+
+        // This will NOT work  (params will not work if path given )
+        router.push({ path: '/user', params: { userId }})       // -> /user        
+
+
+    Ex.
+    
+        // Redirect to login.
+        this.$router.push({ name: 'login' })    
+
+
+-------- Route implement  END ------
+
+
+
+
+
+==> access parent feilds 
+
+	Ex. this.$parent.myPassword  OR  this.$parent.user_id
+
+
+	Ex.  if(this.user_id == this.$parent.user_id && this.password == this.$parent.myPassword){
+
+	 	}
+		
+
+==> use of @ symbol
+
+
+	// @ is an alias to /src
+    import HelloWorld from '@/components/HelloWorld.vue';
+
+
+
+==>   call one function within another function | use this.function_name();
+
+
+<script>
+    export default {
+        data(){
+            return {
+                task: {
+                    name: '',
+                    description: ''
+                },
+                errors: []
+            }
+        },
+        methods: {
+            initAddTask()
+            {
+                this.errors = [];
+                $("#add_task_model").modal("show");
+            },
+            createTask()
+            {
+                axios.post('/task', {
+                    name: this.task.name,
+                    description: this.task.description,
+                })
+                    .then(response => {
+
+                        this.resetFeilds();
+
+                        $("#add_task_model").modal("hide");
+
+                    })
+                    .catch(error => {
+                        
+                        this.errors = [];
+                        
+                        if (error.response.data.errors.name) {
+                            this.errors.push(error.response.data.errors.name[0]);
+                        }
+
+                        if (error.response.data.errors.description) {
+                            this.errors.push(error.response.data.errors.description[0]);
+                        }
+                    });
+            },
+            resetFeilds()
+            {
+                this.task.name = '';
+                this.task.description = '';
+            },
+        }
+    }
+</script>
+
+
+==> call ajax patch method with parameter  for update data
+
+				axios.patch('http://localhost/laravel_test/crud_vue/public/task/' + this.update_task.id, {
+                    name: this.update_task.name,
+                    description: this.update_task.description,
+                })
+                .then(response => {
+                    $("#update_task_model").modal("hide");
+                })
+                .catch(error => {
+                        //this.errors = [];
+                        /*if (error.response.data.errors.name) {
+                            this.errors.push(error.response.data.errors.name[0]);
+                        }
+
+                        if (error.response.data.errors.description) {
+                            this.errors.push(error.response.data.errors.description[0]);
+                        }*/
+                });
+
+
+
+==>  call ajax post method with  parameter
+
+Ex. 1
+		
+	axios.post('/task', {
+                    name: this.task.name,
+                    description: this.task.description,
+                })
+                    .then(response => {
+
+                        //this.reset();
+
+                        $("#add_task_model").modal("hide");
+
+                    })
+                    .catch(error => {
+                        this.errors = [];
+                        if (error.response.data.errors.name) {
+                            this.errors.push(error.response.data.errors.name[0]);
+                        }
+
+                        if (error.response.data.errors.description) {
+                            this.errors.push(error.response.data.errors.description[0]);
+                        }
+                    });	
+
+Ex. 2
+
+			axios.get(this.route).then((response) => {
+                this.isLoading = false;
+                this.products = response.data.data;
+            }).catch(function (error) {
+                this.isLoading = false;
+                console.log(error);
+            });
+
+
+Ex. 3       axios.get('http://localhost/laravel_test/crud_vue/public/task')
+                    .then(response => {
+                        console.log(response);
+                        this.tasks = response.data.tasks;
+                    });            
+
+
+
+==> delete function 
+	
+	<tr v-for="(task, index) in tasks">
+        <td>{{ index + 1 }}</td>
+        <td>{{ task.name }}</td>
+		<td>{{ task.description }}</td>
+		<td>
+			<button @click="initUpdate(index)" class="btn btn-success btn-xs">Edit</button>
+            <button @click="deleteTask(index)" class="btn btn-danger btn-xs">Delete</button>
+        </td>
+    </tr>
+
+
+	deleteTask(index)
+            {
+                let conf = confirm("Do you ready want to delete this task?");
+                if (conf) {
+                    axios.delete('http://localhost/laravel_test/crud_vue/public/task/' + this.tasks[index].id)
+                        .then(response => {
+                            this.tasks.splice(index, 1);
+                        })
+                        .catch(error => {
+
+                        });
+                }
+            }
+
+
+==>  update function
+
+
+		<button type="button" @click="updateTask" class="btn btn-primary">Submit</button>
+
+		updateTask()
+            {
+                this.form.patch('http://localhost/laravel_test/crud_vue/public/task/' + this.update_task.id, {
+                    name: this.update_task.name,
+                    description: this.update_task.description,
+                })
+                .then(response => {
+                    $("#update_task_model").modal("hide");
+                })
+                .catch(error => {
+                        //this.errors = [];
+                        /*if (error.response.data.errors.name) {
+                            this.errors.push(error.response.data.errors.name[0]);
+                        }
+
+                        if (error.response.data.errors.description) {
+                            this.errors.push(error.response.data.errors.description[0]);
+                        }*/
+                });
+            },
+
+
+
+==>  back button in vue js
+
+	<router-link to="/" class="btn btn-default">Back</router-link>
+
+
+==> show if length > 0 |  v-if | length
+
+	<table v-if="completed.length > 0">
+
+	</table>
+
+
+==> get ID from url
+
+	let app = this;
+	let id = app.$route.params.id;
+    app.companyId = id;
+
+    OR
+
+    let companyId = this.$route.params.id;
+
+==> on submit form
+
+        <form v-on:submit="saveForm()">
+            <button class="btn btn-success">Update</button>
+        </form>    
+
+
+    JS:
+
+            saveForm()
+            {
+                event.preventDefault();
+
+                var app = this;
+                var newCompany = app.company;
+                
+                axios.patch('http://localhost/laravel_test/crud_vue/public/api/v1/companies/' + app.companyId, newCompany)
+                    .then(function (resp) {
+                        app.$router.replace('/');
+                    })
+                    .catch(function (resp) {
+                        console.log(resp);
+                        alert("Could not create your company");
+                    });
+            }
+
+
+
+==> add values in array with key pair value
+
+     data: {
+               fname:'',
+               lname:'',
+               addr : '',
+               custdet:[],
+           }   
+
+
+    method:
+    
+                this.custdet.push({
+                     fname: this.fname,
+                     lname: this.lname,
+                     addr : this.addr
+                  });       
+
+
+
+
+==>  send hidden values in vue | send values in function as parameter not in hidden | we can also pass whole object
+
+
+    1 -  pass whole object in parameter 
+
+        <form @submit.prevent="checkPassword(docs)">   // docs is a object
+        </form>   
+
+
+    2 - pass some values in parameter 
+    
+        <form @submit.prevent="checkPassword(docs.DTL_SRNO,'kalim', 'mobile_no')">
+        </form>
+
+
+
+        methods: {
+            checkPassword : function (sr_no, name, mobile_no) {
+
+                            axios.post(route('api.password.update'), {password:this.password, sr_no : sr_no})
+                                .then( (resp) => {
+
+                                    console.log(resp.data);
+
+                                })
+                                .catch( (e)  => {
+                                    this.msg = e.response.data.message;
+                                });
+            }
+        }
+
+    3 - pass whole data object  |  this.data
+    
+        data: function(){
+            return {
+                formdata : {
+                    name : 'kalim',
+                    email : 'abc@gmail.com',
+                    mobile_no : '9874563210',
+                    city : 'Mumbai',
+                    country : 'India',
+                }
+            }
+        },
+        methods : {
+                submit : function(){
+
+                    console.log(this.$data.formdata);
+
+                    axios.post(route('api.password.update'), this.$data.formdata)
+                                .then( (resp) => {
+
+                                    console.log(resp.data);
+
+                                })
+                                .catch( (e)  => {
+                                    this.msg = e.response.data.message;
+                                });
+                },
+        }
+
+
+    Ex. 
+    
+                list:{
+                    name:'',
+                    phone:'',
+                    email:''
+                },
+
+
+            onSubmit :        
+
+                    console.log(this.$data.list);    
+
+
+
+
+==> custom function to remove element |  use $emit() function
+
+
+    In Html component :
+            v-on:removeelement = "custdet.splice(index, 1)"
+
+    in Js component :
+
+            <button v-on:click = "$emit(\'removeelement\')">X</button>
+
+            
+    -------------------------------------------
+
+    <customercomponent
+            v-for = "(item, index) in custdet"
+            v-bind:item = "item"
+            v-bind:index = "index"
+            v-bind:itr = "item"
+            v-bind:key = "item.fname"
+            v-on:removeelement = "custdet.splice(index, 1)">
+         </customercomponent>
+
+
+    Vue.component('customercomponent',{
+            template : '<div class = "Table"><div class = "Row"  v-bind:style = "styleobj"><div class = "Cell"><p>{{itr.fname}}</p></div><div class = "Cell"><p>{{itr.lname}}</p></div><div class = "Cell"><p>{{itr.addr}}</p></div><div class = "Cell"><p><button v-on:click = "$emit(\'removeelement\')">X</button></p></div></div></div>',
+            props: ['itr', 'index'],
+            data: function() {
+               return {
+                  styleobj : {
+                     //backgroundColor:this.getcolor(),
+                     fontSize : 20
+                  }
+               }
+            },
+            methods:{
+               getcolor : function() {
+                  if (this.index % 2) {
+                     return "#FFE633";
+                  } else {
+                     return "#D4CA87";
+                  }
+               }
+            }
+         });     
+
+
+
+==>  --------------------------------------------
+
+    
+event.js
+
+    import Vue from 'vue';
+    export default new Vue();
+
+
+Component - 1
+
+        import Event from '../event.js';    
+
+        methods: {
+            sendMessage() {              
+                let messageObj = { id: Date.now(),body: this.body, user: 'kalim' };
+                Event.$emit('added_message', messageObj);
+               body: this.body,
+            },
+        }    
+
+
+
+Component - 2
+            
+            import Event from '../event.js';
+
+        mounted() {
+            Event.$on('added_message', (message) => {
+                this.messages.unshift(message);
+            });
+        }    
+
+
+
+
+==> remove elements
+
+    
+    vue-js way :
+
+               if(this.$refs.myVueDropzone.$el.getElementsByClassName('add-more-btn').length)      // check if element exits    
+                    this.$refs.myVueDropzone.$el.getElementsByClassName('add-more-btn')[0].remove();
+
+
+    js way
+
+                let btns = document.getElementsByClassName('add-more-btn');
+
+                for (let i = 0; i < btns.length; i++) {
+                    btns[i].remove();
+                }
+
+
+
+==> bind select option | use v-for
+
+        <select v-model = "convertfrom" style = "width:300px;font-size:17px;">
+                <option v-for = "(a, index) in currencyfrom"  v-bind:value = "a.name">{{a.desc}}</option>
+        </select>
+
+
+    JS:
+
+        currencyfrom : [
+                  {name : "USD", desc:"US Dollar"},
+                  {name:"EUR", desc:"Euro"},
+                  {name:"INR", desc:"Indian Rupee"},
+                  {name:"BHD", desc:"Bahraini Dinar"}
+               ],
+
+
+==>  object with key value pair example
+
+        var valuesData = {
+                    'INR' : [
+                            { to : "USD", amnt : 0.016 },
+                            { to : "EUR", amnt : 0.013 },
+                            { to : "INR", amnt : 1 },
+                            { to : "BHD", amnt : 0.0059 },
+                          ],
+                    'USD' : [
+                            { to : "USD", amnt : 1 },
+                            { to : "EUR", amnt : 0.84 },
+                            { to : "INR", amnt : 70.32 },
+                            { to : "BHD", amnt : 0.38 },
+                          ],
+                    'EUR' : [
+                            { to : "USD", amnt : 1.19 },
+                            { to : "EUR", amnt : 1 },
+                            { to : "INR", amnt : 76.22 },
+                            { to : "BHD", amnt : 0.45 },
+                          ],
+                    'BHD' : [
+                            { to : "USD", amnt : 2.65 },
+                            { to : "EUR", amnt : 2.22 },
+                            { to : "INR", amnt : 169.44 },
+                            { to : "BHD", amnt : 1 },
+                          ],
+                  };  
+
+
+==>  loop on objects
+
+     
+     const fruits = {
+                      apple: 28,
+                      orange: 17,
+                      pear: 54,
+                    }
+
+
+    Ex. 1  - Object.keys
+
+              const keys = Object.keys(fruits)
+              console.log(keys)                     O/P-> [apple, orange, pear]  
+
+
+    Ex. 2  - Object.values
+
+              const values = Object.values(fruits)
+              console.log(values)                     O/P-> [28, 17, 54]
+
+
+    Ex. 3  - Object.entries
+
+              const entries = Object.entries(fruits)
+              console.log(entries)                     
+
+              O/P-> 
+
+                     [
+                       [apple, 28],
+                       [orange, 17],
+                       [pear, 54]
+                     ]
+
+
+
+==> life cycle  | beforeCreate(), created(), mounted(), updated() 
+
+    1st called - beforeCreate()
+    2nd called - created()
+    3rd called - mounted()
+    4th called - updated()   // on click
+
+
+
+==> fetch data from server on load
+
+
+
+HTML :
+    
+        <div v-if="gifs" v-for="gif in gifs">
+            <img :src="gif.images.original.url">
+        </div>
+        
+
+JS:
+
+    const app = new Vue({
+      el: '#app',
+
+      data: {
+        // test giphy api key
+        // if the usage limit has been hit, visit https://developers.giphy.com to get a new one
+        // 80bfcbf357864cd18518c324f47a7098
+        apiUrl: 'http://api.giphy.com/v1/gifs',
+        apiKey: '80bfcbf357864cd18518c324f47a7098',
+        gifs: null
+      },
+
+      methods: {
+        fetchGifs: function() {
+          const url = `${this.apiUrl}/trending?api_key=${this.apiKey}`;
+
+          fetch(url)
+            .then(response => response.json())
+            .then(data => this.gifs = data.data);
+        }
+      },
+
+      created: function() {
+        this.fetchGifs();
+      }
+    });    
+
+
+
+********************  form validation start ****************************************
+
+1- install  vee-validate
+    npm install vee-validate --save 
+
+
+2 - import vee-validate in JS file
+    
+    import VeeValidate from '.vee-validate';
+    Vue.use(VeeValidate);
+
+
+3 -  use 'v-validate' Rule in HTML file | also use 'name' attribute for form validation
+
+        <input v-validate="'required'" name="myinput" type="text">                
+        <span>{{ errors.first('myinput') }}</span>
+
+
+        <input type="password" name="password" v-validate="'required|min:6|max:15'"  ref="password">
+        <span v-show="errors.has('password')" class="help text-danger">{{ errors.first('password') }}</span>
+
+
+Rules:
+        required
+        min:6
+        max:15        
+        url    
+        numeric             -  for numeric values 
+        digits:3            - it will accept only 3 digits value      
+        
+        included:M,F  -  for radio button on specific value (Male/Female)  |  for dropdown select included:1,2,3
+
+        after
+        alpha               -  for alphabets only
+        alpha_dash
+        alpha_num           -  for text and number | no special character and spaces 
+        alpha_spaces
+        before
+        between
+        confirmed
+        credit_card
+        date_between
+        date_format
+        decimal        
+        dimensions
+        email               -  for email
+        ext
+        image
+        in
+        ip
+        max
+        
+        min_value:10            - min value 10 
+        max_value:99            - max value 99
+        mimes
+        min
+        min_value
+        not_in
+        
+        regex
+        required
+        size
+
+
+
+->  call validation on blur event | for checking email format
+
+    v-validate.disable="'required|alpha_num'"
+
+
+
+-> password and confirm password validation   *******************************
+
+    
+    Password:    use - ref="password"
+                    
+        <input type="password" name="password" v-validate="'required|min:6|max:15'" ref="password" >
+        <span v-show="errors.has('password')" class="help text-danger">{{ errors.first('password') }}</span>
+                    
+                    
+                  
+    Confirm Password:   
+        
+        <input type="password" name="confirm_password" v-model="confirm_password" v-validate="'required|confirmed:password'" data-vv-as="password" >
+        <span v-show="errors.has('confirm_password')" class="help text-danger">{{ errors.first('confirm_password') }}</span>
+
+
+->  radio button for Gender | use v-validate in only one radio button  *******************************
+
+    Male   : <input type="radio" v-validate="'required|included:M,F'" value="M" name="gender"> 
+    Female : <input type="radio" name="gender" value="F"> 
+
+             <span v-show="errors.has('gender')" class="help text-danger">{{ errors.first('gender') }}</span>
+
+
+
+
+->  custom msg for specific feilds 
+
+
+        const dict = {
+          custom: {
+            email: {
+              required: 'Your email is empty'
+            },
+            name: {
+              required: () => 'Your name is empty'
+            }
+          }
+        };
+
+
+    put this in mounted();
+        
+        this.$validator.localize('en', dict);
+
+
+
+-> disable submit button till form is valid | :disabled="errors.any()"    
+
+    <button :disabled="errors.any()" type="submit">Submit</button>
+
+
+
+--> show all error msgs in alert div in one place | use  errors.all()
+
+                        <div v-for="err in errors.all()">
+                           <li> {{ err }} </li>
+                        </div>
+
+
+
+--> show only some specific error in alert |  has()   first()
+
+    
+    <div v-if="errors.has('password')">
+            {{ errors.first('password') }}
+    </div>
+
+
+    <div v-if="errors.has('password_confirmation')">
+        {{ errors.first('password_confirmation') }}
+    </div>
+
+
+
+=> The errors object exposes simple methods to help you render errors:
+
+    - first('field')Fetches the first error message related to that field.
+
+    - collect('field')Fetches all error messages related to that field. Alternatively, you can pass nothing, and it will return 
+      errors grouped by areas.
+
+    - has('field') Checks if there are any errors related to that field.
+
+    - all() Gets all error messages.
+
+    - any()  checks if there are any errors.
+
+
+
+=> call validation method on submit
+
+Ex. 1
+
+    validateBeforeSubmit()
+    {
+                this.$validator
+                    .validateAll()
+                    .then(function(response) {
+                        // Validation success if response === true
+                    })
+                    .catch(function(e) {
+                        // Catch errors
+                    });
+
+
+                --------------- OR ------------ Always use below syntex for response:
+
+                this.$validator
+                    .validateAll()
+                    .then((response) => {                   //Note : (response, kalim)  use this if  more than 1 parameter
+
+                        console.log(response);
+
+                        if (response) {
+                            alert('Form Submitted!');
+                            return;
+                        }
+
+                        if (!this.errors.any()) {
+                            console.log('Correct these errors!');
+                            // call form submission logic
+                        }
+
+                    console.log('Correct these errors!');
+                    //alert('Correct them errors!');
+                });
+
+
+
+    }     
+
+
+
+==>      get all form values form data after form submit
+
+
+        <form @submit.prevent="validateOtp" id="frmOTP" name="frmOTP" method="post">
+
+            <input type="password" v-model="record.otp">
+            <input type="email" v-model="record.email">
+            <input type="text" v-model="record.mobile_no">
+
+            <button :disabled="errors.any()" type="submit">Submit</button>
+
+        </form>
+
+
+
+        data : function () {
+            return {
+                records: [
+                    {
+                        otp : '',
+                        email : '',
+                        mobile_no : '',
+                    }
+                ]
+            }
+        },
+
+
+
+
+
+            validateOtp : function () {
+                this.$validator
+                    .validateAll()
+                    .then( response => {                    // if no validation
+
+                        console.log(this.records);                        
+                        
+                    })
+                    .catch(function (e) {                        
+                        console.log(e);
+
+                    });
+            },
+
+
+
+==>  assign server side error message to errors object and show in front end
+
+    - in catch() block
+
+       this.errors.add({ field : 'password', msg: e.response.data.message});
+
+
+    - with scope for multiple form  | use `${scope}.password`
+    
+       this.errors.add({ field : `${scope}.password`, msg: e.response.data.message});   
+
+
+
+
+==> how to validate multiple form which is in loop  | use scope  | use data-vv-scope  in form tag Ex. form_1, form_2
+    
+
+    <div v-for="(docs, index) in passwordDocList">
+
+        <form @submit.prevent="checkPassword(docs.DTL_SRNO, 'form'+index, index)" method="post" :data-vv-scope="'form'+index">
+
+            <div class="col-lg-8 col-sm-12 col-md-8">
+
+                <input type="password" v-validate="'required'" name="password" v-model="password[index]" >
+
+                <span v-show="errors.has('form'+index+'.password')" class="help text-danger">
+                        {{ errors.first('form'+index+'.password') }}
+                </span>
+            </div>
+
+            <button class="btn btn-primary btn-save" type="submit" >Save</button>
+        </form>
+
+    </div>
+
+
+    JS:-----
+
+        data: function () {
+            return {
+                    password: [],
+                   }
+        },
+        methods: {
+             checkPassword: function (sr_no, scope, index) {        // Note:scope
+
+                this.$validator
+                    .validateAll(scope)                             // Note:scope
+                    .then((response) => {
+
+                        if (!response) {
+                            return;
+                        }
+
+                        console.log(this.password[index]);
+
+                        axios.post(route('api.password.update'), {password: this.password[index], sr_no: sr_no})
+                            .then((resp) => {
+
+                                if (resp.data.status) {
+                                    this.getAllDocument();
+                                }
+
+                            })
+                            .catch((e) => {
+                               this.errors.add({ field : `${scope}.password`, msg: e.response.data.message});
+                            });
+
+
+                    })
+                    .catch((e) => {
+                        console.log('error');
+                        console.log(e);
+                    });
+            },
+
+
+
+
+
+==> dynamic model name and access its value in submit() function  | use index
+        
+
+        <div v-for="(docs, index) in passwordDocList">
+
+            <form @submit.prevent="checkPassword(index)" method="post" :data-vv-scope="'form'+index">
+
+                <div class="col-lg-8 col-sm-12 col-md-8">
+
+                    <input type="password" v-validate="'required'" name="password" v-model="password[index]" >
+
+                    <span v-show="errors.has('form'+index+'.password')" class="help text-danger">
+                            {{ errors.first('form'+index+'.password') }}
+                    </span>
+                </div>
+
+                <button class="btn btn-primary btn-save" type="submit" >Save</button>
+            </form>
+
+        </div>
+
+
+        data: function () {
+            return {
+                    password: [],
+                   }
+        },
+        methods: {
+             checkPassword: function (index) {   
+
+                console.log(this.password[index]);      // access model 
+
+                  //  ajax call
+
+             }
+
+
+==>  hide server side error after some time |  this.errors.clear();
+
+        
+                            .catch((e) => {
+                                this.errors.add({ field : `${scope}.password`, msg: e.response.data.message});
+
+                                setTimeout(() => {
+                                    this.errors.clear();
+                                }, 3000);
+
+                            });
+
+********************  form validation End ****************************************
+
+
+==> call a parent method from child component  | use $parent
+
+    this.$parent.getAllDocument();
+
+
+==> bootstrap modal pop up close event in vue js | use ref
+
+    HTML:
+
+        <div id="mod-reply" tabindex="-1" role="dialog" style="" class="modal fade" ref="uploadVueModalRef">
+
+        </div>
+
+    JS:
+        
+        mounted: function () {           
+            $(this.$refs.uploadVueModalRef).on("hidden.bs.modal", this.closeUploadModalPopUp);           
+        },
+
+        methods :{
+            closeUploadModalPopUp : function () {
+                this.uploadBtnHideShow = true;
+                this.showThankYouIcon = false;
+                this.errorMessage = '';
+            },       
+        }
+
+==> append html to an elemnt in vue js
+
+    Ex.1
+
+    <button @click="renderHtml">click to append html</button>
+        <div class="flex">
+            <div class="message" @focusout="updateHtml" v-html="html" contenteditable="true"></div>
+            <br>
+            <div class="message">{{ html }}</div>
+        </div>
+
+
+            updateHtml: function(e) {
+                this.html = e.target.innerHTML;
+            },
+
+            renderHtml: function(){
+                this.html += '<img src="https://cdn-images-1.medium.com/max/853/1*FH12a2fX61aHOn39pff9vA.jpeg" alt="" width=200px>';
+            },
+
+    Ex. 2
+
+        <div id="app">
+              <my-form v-for="n in range"></my-form>
+              
+              <button type="button" v-on:click="addForm()">Add Form</button>
+        </div>
+
+            <script type="x-template" id="my-form">
+                <div>
+                <labe>Text</labe>
+                <input type="text">
+              </div>
+            </script>
+
+    JS:      
+
+            Vue.component('my-form', {
+                template: '#my-form'
+            });
+
+            new Vue({
+              el: '#app',
+              data: {
+                range:0
+              },
+              
+              methods: {
+                addForm: function() {
+                    this.range += 1;
+                }
+              }
+            })
+
+
+
+    Ex. 3  vue js way  | add to last element
+
+
+                var AddMoreBtnComponentClass = Vue.extend(AddMoreButton);
+
+                var addBtnInstance = new AddMoreBtnComponentClass({
+                    propsData: {toggleAddMoreBtn: this.uploadBtnHideShow, dropzone : this.$refs.myVueDropzone}
+                });
+
+                addBtnInstance.$slots.default = ['+']
+                addBtnInstance.$mount();
+
+
+                //remove all element    
+                if(this.$refs.myVueDropzone.$el.getElementsByClassName('add-more-btn').length)
+                    this.$refs.myVueDropzone.$el.getElementsByClassName('add-more-btn')[0].remove();
+
+
+                    //     append to last element | use after()
+
+                let appendTo = this.$refs.modalBody.getElementsByClassName('dz-preview');
+                appendTo[appendTo.length - 1].after(addBtnInstance.$el);
+
+
+
+==>  filter(), map(), reduce() | functions on array
+
+
+    filter() -> produce another (new) array (depends upon condition) | creates a new array with all elements that pass the test 
+
+    map() ->  creates same array but different values 
+
+    reduce() -> return in a single output value 
+
+
+==> send values to child component using $children |
+
+
+    : parent component js
+
+        this.$children[1].myvar = this.temp[key];     //[1] in component index in case multiple component
+        this.$children[1].list  = this.temp[key];    // list will be in child component data property
+
+
+    : child component js
+
+                data() {
+                    return {
+                        list: {},
+                        myvar : '',
+                    }
+                },
+
+
+
+==> send values from child to parent component
+
+    
+    parent component :
+            data: () {
+                list : {},
+            }    
+
+
+
+    child component :
+
+        this.$parent.lists.push(response.data);   // it will push data to list object in parent component    
+
+
+
+
+==>   Draggable  drag elements in vue js | use Draggable    
+
+        $ npm install vuedraggable --save
+
+        https://github.com/SortableJS/Vue.Draggable
+
+
+==> use of beforeRouteEnter in vue route
+
+    Ex. 1
+
+      methods: {
+
+        initializeSearch(){    
+          setTimeout(() => {
+            this.searchInitialized = true;
+          }, 1000)
+        }
+
+      },
+      beforeRouteEnter (to, from, next) {
+
+        next(vm => {         
+            // access to component's instance using `vm` . this is done because this navigation guard is called before the component is created.
+
+            vm.initializeSearch();
+            next();
+        });
+
+      }  
+
+
+      to   -> to url
+      from -> from url
+
+
+    Ex. 2
+        
+            beforeRouteEnter (to, from, next) { 
+
+                if (localStorage.getItem('jwt')) {
+                    return next('board');
+                }
+
+                next();
+            }    
+
+
+==>  pass api token in header in js for axios call |  axios.defaults.headers.common
+
+        
+           mounted() {
+                let token = localStorage.getItem('jwt')
+
+                axios.defaults.headers.common['Content-Type'] = 'application/json'
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+
+                    axios.get('api/category').then(response => {
+                        response.data.forEach((data) => {
+                            this.categories.push({
+                                id : data.id,
+                                name : data.name,
+                                tasks : []
+                            })
+                        })
+                        this.loadTasks()
+                    })
+            },
+
+
+
+
+==>  this.$root.$emit and  this.$root.$on
+
+        
+    this.$root.$emit - send event and data to root component fron child         
+    this.$root.$on  - receive event and data to root component fron child component
+
+
+    Ex.1
+            // send an event from child to root element 
+
+            this.$root.$emit('productFiltered', {
+                  id: this.category.id,
+                  checked: this.checked
+            });    
+
+
+            // accept an event from child to root element  also get data from that event
+
+            this.$root.$on('productFiltered', (data) => {
+                data.checked
+                    ? this.filterBy.push(data.id)
+                    : this.filterBy.remove(data.id)
+            });
+
+
+
+    Ex. 2
+    
+            this.$root.$on('access-token', this.setAccessToken);
+
+            this.$root.$emit('access-token', accessToken);
+            

@@ -1,0 +1,281 @@
+npm config set proxy http://proxy.hdfc.com:80
+npm config set https-proxy http://proxy.hdfc.com:80
+
+
+
+
+npm config set proxy http://hdfcproxy2:80
+npm config set https-proxy http://hdfcproxy2:80
+
+
+
+
+npm config set proxy 10.3.1.228:80
+npm config set https-proxy 10.3.1.228:80
+
+10.3.1.228
+
+
+
+npm config set proxy http://10.3.1.229:80
+npm config set https-proxy http://10.3.1.229:80
+
+
+C:\Users\kalimMitc
+
+proxy=http://10.3.1.229:80
+https-proxy=http://10.3.1.229:80
+
+
+run as admin and hit 
+
+npm set registry http://registry.npmjs.org/
+
+
+
+
+
+
+npm install socket.io --save
+
+npm install express
+$ npm install express
+$ npm install mysql
+
+
+
+npm install express.io
+
+
+
+
+
+
+
+
+$ npm install -g cordova
+npm uninstall -g cordova
+
+
+npm uninstall -g ionic
+npm cache clean
+
+npm install -g ionic
+
+
+npm install -g typescript
+
+
+
+ionic start githubIonic tutorial --v2
+
+ionic start githubIonic tutorial --ts
+
+
+$ ionic serve -l
+
+
+ionic g page users 				-> g is an alias for generate
+ionic g page repos
+ionic g page organisations
+
+ionic g page movie-info
+ionic g page movie-list
+ionic g page services
+
+
+npm config set strict-ssl false   		 it works
+npm config set strict-ssl true
+
+
+
+ionic g page home
+ionic g page services
+ionic g page about
+ionic g page contact
+
+So after adding C:\Users\XXXXX\AppData\Roaming\npm to my PATH variable my problem solved :-)
+
+
+C:\Users\kalimMitc\AppData\Roaming\npm
+
+
+
+
+
+The ionViewDidLoad() method is an ionic life cycle hook. It's fired once an ionic view has load. 
+
+
+
+
+
+
+
+
+
+Running Windows 7 and ran into this issue myself. I ensured that I was running my command line as Administrator, cleaned the cache as suggested but continued to get the error that 'ionic' is not recognized...
+
+After trying several other suggestions, I finally browsed to my nodejs location: C:\Program Files\nodejs
+
+I ran the nodevars.bat to open the nodejs command prompt, ran the ionic command and everything worked as expected. I'm not sure what the issue is but running command from that .bat file appears to fix it.
+
+
+
+
+
+I get the following output when I run $ ionic info and $ionic lib
+
+
+[ERROR] Sorry! ionic serve can only be run in an Ionic project directory.
+
+
+https://scotch.io/tutorials/build-a-mobile-app-with-angular-2-and-ionic-2
+
+http://10.0.4.53/feedback/EEDMuDaVqQ
+
+
+C:\Users\kalimMitc\AppData\Roaming\npm>ionic info
+[WARN] You are not in an Ionic project directory. Project context may be missing
+.
+
+global packages:
+
+    @ionic/cli-utils : 1.3.0
+    Ionic CLI        : 3.3.0
+
+System:
+
+    Node       : v6.10.3
+    OS         : Windows 7
+    Xcode      : not installed
+    ios-deploy : not installed
+    ios-sim    : not installed
+
+
+C:\Users\kalimMitc\AppData\Roaming\npm>
+
+
+
+
+
+
+\\hdfcjognas2\SW_prodcn\ORANT
+
+
+
+
+
+
+
+C:\Users\hdfconline\AppData\Roaming\npm>ionic start myApp
+? What starter would you like to use: tabs
+? Creating directory .\myApp - done!
+[INFO] Fetching app base (https://github.com/ionic-team/ionic2-app-base/archive/
+master.tar.gz)
+? Downloading - done!
+[INFO] Fetching starter template tabs (https://github.com/ionic-team/ionic2-star
+ter-tabs/archive/master.tar.gz)
+? Downloading - done!
+? Updating package.json with app details - done!
+? Creating configuration file ionic.config.json - done!
+[INFO] Installing dependencies may take several minutes!
+> npm install
+? Running command - done!
+> npm install --save-dev --save-exact @ionic/cli-plugin-ionic-angular@latest
+? Running command - done!
+> git init
+? Running command - done!
+> git add -A
+? Running command - done!
+> git commit -m "Initial commit" --no-gpg-sign
+? Running command - done!
+
+
+Run your app in the browser (great for initial development):
+  ionic serve
+
+Run on a device or simulator:
+  ionic cordova run ios
+
+Test and share your app on a device with the Ionic View app:
+  http://view.ionic.io
+
+? Link this app to your Ionic Dashboard to use tools like Ionic View? No
+
+Go to your newly created project: cd .\myApp
+
+C:\Users\hdfconline\AppData\Roaming\npm>cd .\myApp
+
+C:\Users\hdfconline\AppData\Roaming\npm\myApp>ionic serve
+'ionic' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\hdfconline\AppData\Roaming\npm\myApp>ionic info
+'ionic' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\hdfconline\AppData\Roaming\npm\myApp>cd..
+
+C:\Users\hdfconline\AppData\Roaming\npm>ionic info
+[WARN] You are not in an Ionic project directory. Project context may be missing
+.
+
+global packages:
+
+    @ionic/cli-utils : 1.3.0
+    Ionic CLI        : 3.3.0
+
+System:
+
+    Node       : v7.5.0
+    OS         : Windows 7
+    Xcode      : not installed
+    ios-deploy : not installed
+    ios-sim    : not installed
+
+
+C:\Users\hdfconline\AppData\Roaming\npm>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+tpcindia.com
+
+VPL508915764
+
+
+
+
+D:\ng4\QUICK_setup>npm install
+npm ERR! Windows_NT 6.1.7601
+npm ERR! argv "D:\\apps\\nodejs\\node.exe" "D:\\apps\\nodejs\\node_modules\\npm\
+\bin\\npm-cli.js" "install"
+npm ERR! node v6.10.3
+npm ERR! npm  v3.10.10
+npm ERR! code EAI_AGAIN
+npm ERR! errno EAI_AGAIN
+npm ERR! syscall getaddrinfo
+
+npm ERR! getaddrinfo EAI_AGAIN registry.npmjs.org:443
+npm ERR!
+npm ERR! If you need help, you may report this error at:
+npm ERR!     <https://github.com/npm/npm/issues>
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     D:\ng4\QUICK_setup\npm-debug.log
+
+D:\ng4\QUICK_setup>

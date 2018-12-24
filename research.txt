@@ -1,0 +1,4064 @@
+=>  Add extra parameter in serialize() jquery  | add 2 form with serialize()
+
+    use +'&'+$.param({ 'LOAN_TYPE': LOAN_TYPE });
+
+	Ex. 1
+		var form_data = $('#frmCheck').serialize()+'&'+$.param({ 'LOAN_TYPE': LOAN_TYPE });
+
+	Ex. 2	
+	
+data : $('#frmUploadExtraData').serialize()+'&'+$.param({ 'doc_status_remark':decodeURI($(form).serialize().split('=')[1]) }),
+	
+
+ let form_params = $('#frmUploadExtraData').serializeArray();
+     form_params[form_params.length] = { name: "perfios_trxn_no", value: perfios_trxn_no };
+
+--------------------------------------------------------------------------
+
+=>  Redirect to page with POST data without using a form in js
+
+	var location = 'selectproperty.php'; 
+	var args = {accno: accno, loan_type: loan_type, exp_loan_amt: exp_loan_amt};
+	var form = '';
+			$.each( args, function( key, value ) {
+				form += '<input type="hidden" name="'+key+'" value="'+value+'">';
+			});
+			$('<form action="'+location+'" method="POST">'+form+'</form>').appendTo('body').submit(); 
+			
+--------------------------------------------------------------------------
+			
+=>   Set hidden values on change of select tag using jquery
+
+	$('.LOAN_PURPOSE').change(function(){             
+		$("#LOAN_TYPE_OG_VAL_1").val($('option:selected', this).attr('data-org-val')); 
+	});			
+	
+--------------------------------------------------------------------------
+		
+=>   How to convert an array to object in PHP?
+		$prop is multidimentional array
+		
+		$prop = json_decode (json_encode ($prop), FALSE);
+		
+--------------------------------------------------------------------------
+		
+=>  Replace multiple values from a strinf using php   |  strtr(string, arr replace)
+
+		// $string = 'blah blarh bleh bleh blarh';
+		//$trans = array("blah" => "repl1", "bleh" => "repl2");
+		//$result = strtr($string,$trans); 
+		
+		$url = strtr($url,array($value['ADDININFO_FLAG'] => "", $value['DOCSRNO'] => "")); ?>
+
+		
+--------------------------------------------------------------------------
+		
+=>	generate form and field using jquery 
+
+$('.view-anchor-document').click(function(){
+    $('#viewDoc').remove();
+	var doc_id = $(this).attr('doc-id');
+		$form = $("<form method='post' id='viewDoc'></form>");
+		var input = $("<input>").attr("type", "hidden").attr("name", "viewdocsrno").val(doc_id);
+		$form.append($(input));
+		$form.attr('target','_blank');
+	    $form.attr('action','view-document.php');
+		$form.appendTo('body').submit();
+	
+});
+
+--------------------------------------------------------------------------
+
+=>	get file extension in php | pathinfo() 
+
+	$exe = pathinfo($filename, PATHINFO_EXTENSION);
+
+--------------------------------------------------------------------------	
+
+=> closest() in jquery
+		$(selector).closest(filter)
+		 $("span").closest("ul").css({"color": "red", "border": "2px solid red"});
+		
+
+=> after() in jquery
+		$(selector).after(content,function(index))
+		 $("p").after("<p>Hello world!</p>");
+			
+
+=> parents() in jquery
+		$(selector).parents(filter)
+		
+		
+	 $(document).on('click', '.bootstrap-select .dropdown-menu li', function (e) {
+        var text = e.target.innerText;
+        if(text != buttonText) {
+          var val = $(this).parents('.bank-st-container').find('.ammount span').text().trim();
+          val = val.replace (/,/g, "");
+          val = parseFloat(val);
+          var remark = $(this).parents('.bank-st-container').find('.remarks').text().trim();
+          $(this).parents('.bank-st-container').find('.bank-st-box .complete-box.variable textarea').val(remark);
+          $(this).parents('.bank-st-container').find('.bank-st-box .complete-box.variable input').val(val);
+          $(this).parents('.bank-st-container').find('.bank-st-box .complete-box').hide();
+          $(this).parents('.bank-st-container').find('.bank-st-box .complete-box.variable').show();
+        }
+    })
+	
+		
+		
+--------------------------------------------------------------------------
+
+=>  check whether checkbox checked or not
+
+	alert($('input:checkbox[name=checkme]').is(':checked')); 							//using name
+	if($('#checkbox_id').is(':checked')){ alert('checked'); }else{ alert('uncheck'); }	// using id
+	
+	$("input[name='payment_type[]']").is(':checked')
+	
+	
+--------------------------------------------------------------------------
+
+=>  get value of selected radio button 
+
+	alert($('input[name=customer_type]:checked').val()); 							//using name	
+	
+	
+--------------------------------------------------------------------------
+	
+=> open url in new tap in js
+
+	window.open('<? echo $random_link; ?>', '_blank');
+
+--------------------------------------------------------------------------
+	
+=> New tab but not every time in js
+
+		window.open('url', '_blank');		//Every time new tab will open
+		window.open('url', 'randomTab');	//1st time new tab will open  and then after will open in that same tab
+		
+--------------------------------------------------------------------------
+		
+=>  Location attributes in JS
+
+	var href = window.location.href;                       //   http://10.0.4.53/mpocket-uat3/getting-started.php
+	var hostname = window.location.hostname;               //   10.0.4.53
+	var pathname= window.location.pathname;                //   /mpocket-uat3/getting-started.php
+	var protocol = window.location.protocol;               //   http:	
+	
+	var	top.location.href  								   //http://10.0.4.53/mpocket-uat3/getting-started.php
+	
+	
+-------------------------------------------------------------------------------------------------
+	
+=> which one is faster .hide()/ .addClass() / .css({display:"none"})
+
+	cache element then use .css({display:"none"}) | this one is faster than other
+	
+	// 100000 iterations
+
+	$("p").hide()/$("p").show()											: 6136ms
+	$("p").css({display:"none"})/$("p").css({display:""})				: 4617ms
+
+	// cached: $p =  $("p")
+	$p.hide()/$p.show()													: 4056ms
+
+	$p.css({display:"none"})/$p.css({display:""})						: 2745ms	
+		
+	$p.addClass("hide")/$p.removeClass("hide")							: 293.120ms	
+	
+---------------------------------------------------------------------------------------------	
+	
+=>	use of inArray() in jquery 	|  Search for a specified value within an array and return its index (or -1 if not found).
+
+		<div>"John" found at <span></span></div>
+		<div>4 found at <span></span></div>
+		<div>"Karl" not found, so <span></span></div>
+		<div>"Pete" is in the array, but not at or after index 2, so <span></span></div>
+
+		<script>
+				var arr = [ 4, "Pete", 8, "John" ];
+				var $spans = $( "span" );
+				$spans.eq( 0 ).text( jQuery.inArray( "John", arr ) );
+				$spans.eq( 1 ).text( jQuery.inArray( 4, arr ) );
+				$spans.eq( 2 ).text( jQuery.inArray( "Karl", arr ) );
+				$spans.eq( 3 ).text( jQuery.inArray( "Pete", arr, 2 ) );
+		</script>	
+	
+O/P  
+
+		"John" found at 3
+		4 found at 0
+		"Karl" not found, so -1
+		"Pete" is in the array, but not at or after index 2, so -1
+	
+---------------------------------------------------------------------------------------------------
+
+
+=> get tns string for connection with oracle with codeigniter | type in cmd
+	
+	tnsping dbloanuat3   (tnsping name_of_network_server)
+
+	tnsping  net_service_name
+	tnsping net_service_name count
+
+
+	tnsping dbloans
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (COMMUNITY = tcp.world)(PROTOCOL = TCP)(Host = DCORA1DB1)(Port = 1513)) (ADDRESS = (COMMUNITY = tcp.world)(PROTOCOL = TCP)(Host = DCORA1DB1)(Port = 1521))) (CONNECT_DATA = (SID = loans)(server=dedicated)))
+OK (60 msec)	
+
+
+---------------------------------------------------------------------------------------------------
+
+
+
+=> 	LDAP -> Lightweight Directory Access Protocol.	
+
+
+=> set session data while login  codeigniter
+
+		   $sess_array = array(
+                        'login_state' => TRUE,
+                        'userid' => $data['list'][0]['USER_ID'],
+                        'username'=> $data['list'][0]['NAME'],
+                        'userrole'=>$data['list'][0]['ROLE'],
+                        'usersession'=>$this->session->userdata('session_id')
+                    );
+
+                    $this->session->set_userdata($sess_array);
+                    return TRUE;
+
+---------------------------------------------------------------------------------------------------
+
+=> 	To set your own custom message you can use the following function:
+
+	$this->form_validation->set_message('rule', 'Error Message');    
+
+Ex. 	$this->form_validation->set_message('email_check', 'Please provide an acceptable email address.');   //email_check - function name
+	    $this->form_validation->set_message('check_database', 'Invalid username or password'); 				 //check_database - function name
+
+
+---------------------------------------------------------------------------------------------------
+	    
+=>  Reset modal form in bootstrap in js
+
+	 var myBackup = $('#composeMailModal').clone();				// composeMailModal is form modal ID
+	 $('body').on('click','.action-close-btn',function() {
+	        $('#composeMailModal').modal('hide').remove();
+	        var myClone = myBackup.clone();
+	        $('body').append(myClone);
+	});	    
+
+---------------------------------------------------------------------------------------------------
+
+=> Reload after 1 sec in js  || call a function after 1 seconds in js
+	
+	window.setTimeout(function(){location.reload()},1000);	
+	
+    setTimeout(function () {                      
+          get_bank_stmt(file_no,cust_no);   //in use           
+    },1000);
+
+---------------------------------------------------------------------------------------------------
+
+
+=> submit a form using js and ajax   ||  post all form data using serialize() in js
+
+
+	$("#frmActionUpdate").submit(function(e){              // frmActionUpdate is form ID
+        event.preventDefault();
+        $('#action-update-msg').html('<i class="ion fa fa-spinner fa-spin" style="font-size:27px;color:red"></i> Please Wait...');
+
+        $.ajax({
+            type: "POST",
+            url: base_url+'/action-update',                             //the script to call to get data          
+            data: $("#frmActionUpdate").serialize(),
+            dataType: 'json',                                           //data format 
+            success: function(data)                                     //on receive of reply
+            {   
+                $('#action-update-msg').html(data['message']);
+                $('#frmActionUpdate').html('<div class="cen mt15"> <button class="btn btn-primary mr5 mt5 waves-effect waves-effect action-close-btn" data-dismiss="modal" > Close </button></div>');
+                    //window.setTimeout(function(){location.reload()},1000);
+            }
+        });
+
+    });
+
+---------------------------------------------------------------------------------------------------
+
+=>  Loading glyphican in bootstrap
+
+	<i class="ion fa fa-spinner fa-spin"></i>
+
+---------------------------------------------------------------------------------------------------
+
+
+=>  Desire tab selection | active tab from url  | write anywhere in file 	
+
+	jQuery(function(){
+               var url = document.location.toString()+'#tab-flip-one-1'; 			// #active tab that will be active
+               if (url.match('#')) {
+                    $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
+                } 
+               
+                // Change hash for page-reload
+                $('.nav-tabs a').on('shown', function (e) {
+                    window.location.hash = e.target.hash;
+                });
+	});
+
+	
+	
+
+	
+---------------------------------------------------------------------------------------------------
+
+
+=>  Order By date  in Data table |  column index starting from 0  |  no of records per page
+
+
+	$(document).ready(function() {
+ 	$.fn.dataTable.moment('DD-MMM-YY HH:mm');
+    // DataTable
+    var table = $('#pendingCallTbl').DataTable({
+		                "bLengthChange": false,
+		                "bFilter": false,
+		                /*"pageLength": 2,*/   // for no of records per page
+		                "order": [[ 3, "desc" ]],   //column index starting from 0
+		                "ordering": true
+		            });
+	});	
+
+---------------------------------------------------------------------------------------------------
+
+=>  For soring and pagination  use below files
+
+	<link rel="stylesheet" href="<?php echo base_url();?>public/styles/jquery.dataTables.css">
+	
+	<script src="http://10.0.4.204/Feedback_management_system/public/scripts/jquery.dataTables.min.js"></script> 
+	<script src="http://10.0.4.204/Feedback_management_system/public/scripts/moment.min.js"></script> 
+	<script src="http://10.0.4.204/Feedback_management_system/public/scripts/datetime-moment.js"></script> 
+
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+=> ternary operator in Angular js
+
+{{
+	(l.NEGATIVE_FLAG == "P") ? 'add' :
+		((l.NEGATIVE_FLAG == "N") ? 'remove' : 'error')
+                                                         
+}}
+
+----------------------------------------------------------------------------
+
+=> check null value |  null keyword  in Angular js
+
+	<i ng-show="l.NEGATIVE_FLAG === null" class='material-icons' style="border-radius: 50%;color: grey;"> info </i>
+
+-------------------------------------------------------
+
+
+=>   multiple filter (search) option in Angular js
+
+<tr ng-repeat="l in surveyList | 
+                                filter:{SURVEY_CATEGORY_CD:category} |
+                                filter:{STATUS:status} |
+                                filter:{REQUEST_KEY1:REQUEST_KEY} |
+                                filter:{SURVEY_MODE:mode} |                                
+                                filter:{NEGATIVE_FLAG:feedback_response} |
+                                filter:{CREATED_DT:from_date} |
+                                filter:{CREATED_DT:to_date}
+
+                                 ">
+
+
+
+
+---------------------------------------------------------------------------------------------------
+
+=>	do not accept special characters in input text in  jquery | do not allow space button
+
+	$('input').on('keypress', function (event) {
+		var regex = new RegExp("^[a-zA-Z0-9]+$");
+		var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+		if (!regex.test(key)) {
+		   event.preventDefault();
+		   return false;
+		}
+	});
+
+
+---------------------------------------------------------------------------------------------------
+
+==> do not allow copy paste also  |  allow space button
+
+  $('input').on('keypress cut copy paste', function (event) {
+      var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+      var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+      
+      if (!regex.test(key)) {
+         event.preventDefault();
+         return false;
+      }
+  });
+
+
+---------------------------------------------------------------------------------------------------
+
+==> close bootstrap modal after 3 seconds
+
+setTimeout(function(){
+	$('#notify').modal('hide')
+}, 3000);
+
+
+
+==> open bootstrap modal 
+$('#notify').modal({show: 'true'}); 
+
+==> reset a form
+$('#frmSalarySlip')[0].reset();
+
+
+
+---------------------------------------------------------------------------------------------------
+
+-->  accept no and decimal points only
+
+
+function isNumber(evt) {
+           var charCode = (evt.which) ? evt.which : event.keyCode
+
+           if (charCode == 46) {
+               var inputValue = $("#inputfield").val()
+               if (inputValue.indexOf('.') < 1) {
+                   return true;
+               }
+               return false;
+           }
+           if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+               return false;
+           }
+           return true;
+}
+
+
+==> allow only numbers not string
+
+		<input type="text" class="numeric">
+
+		$(document).on("keypress blur",".numeric",function(event){
+			var regex = new RegExp("^[0-9\b\t]+$");
+			if(event.type=="keypress"){
+				var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+				if(regex.test(key) || event.keyCode=="9"){
+
+				}else{
+				  event.preventDefault();
+				  return false; 
+				}
+			}else{
+			  if($(this).val().match(regex)){
+				return;
+			  }else{
+				$(this).val("");
+			  }
+			}
+		});
+		
+
+==> allow decimal alphabet not string
+
+			$(document).on("input",".allow_decimal",function(event){
+			//$(".allow_decimal").on("input", function(event) {
+				var self = $(this);
+				self.val(self.val().replace(/[^0-9\.]/g, ''));
+				if ((event.which != 46 || self.val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) 
+				{
+					event.preventDefault();
+				}
+			});
+
+
+			
+==> allow zeronumeric not string
+
+	$(document).on("keypress",".zeronumeric",function(event){
+	// $(".numeric").bind('keypress', function (event) {
+		var regex = new RegExp("^[0-9\b\t]+$");
+		if(event.type=="keypress"){
+			var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+			if(regex.test(key) || event.keyCode=="9"){
+
+			}else{
+				event.preventDefault();
+				return false;	
+			}
+		}else{
+			if($(this).val().match(regex)){
+				return;
+			}else{
+				$(this).val("");
+			}
+		}
+	});
+
+
+		$(document).on('keypress', ".intnumeric",function (event) {
+			if (this.value.length == 0 && event.which == 48 ){
+				return false;
+			}
+			var regex = new RegExp("^[0-9\b\t]+$");
+			if(event.type=="keypress"){
+				var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+				if(regex.test(key) || event.keyCode=="9"){
+
+				}else{
+					event.preventDefault();
+					return false;	
+				}
+			}else{
+				if($(this).val().match(regex)){
+					return;
+				}else{
+					$(this).val("");
+				}
+			}
+		});
+
+		$('.alphanumeric').bind('keypress', function (event) {
+			var regex = new RegExp("^[a-zA-Z0-9 \b]+$");
+			if(event.type=="keypress"){
+				var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+				var charCode = (event.which) ? event.which : event.keyCode;
+				if(charCode == 8 || charCode == 46 || charCode==9 || regex.test(key)) { // Left / Up / Right / Down Arrow, Backspace, Delete keys
+					
+				}
+				else{
+					event.preventDefault();
+					return false;
+				}
+			}else{
+				if($(this).val().match(regex)){
+					return;
+				}else{
+					$(this).val("");
+				}
+			}
+		});
+
+			$(document).on("keypress blur",".alphabet",function(event){
+			// $('.alphabet').bind('keypress', function (event) {
+				var regex = new RegExp("^[a-zA-Z \b]+$");
+				if(event.type=="keypress"){
+					var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+					var charCode = (event.which) ? event.which : event.keyCode;
+					if(charCode == 8 || charCode == 46 ||  charCode==9 || regex.test(key)) { // Left / Up / Right / Down Arrow, Backspace, Delete keys charCode == 39 ||
+						
+					}else{
+						event.preventDefault();
+						return false;
+					}
+				}else{
+					if($(this).val().match(regex)){
+						return;
+					}else{
+						$(this).val("");
+					}
+				}
+			});
+
+			$('.spalphanumeric').bind('keypress', function (event) {
+				var regex = new RegExp("^[a-zA-Z0-9\- .#@ \b]+$");
+				if(event.type=="keypress"){
+					var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+					var charCode = (event.which) ? event.which : event.keyCode;
+					if(charCode == 8 || charCode == 46 || charCode==9  || regex.test(key)) { // Left / Up / Right / Down Arrow, Backspace, Delete keys
+						
+					}else{
+						event.preventDefault();
+						return false;
+					}
+				}else{
+					if($(this).val().match(regex)){
+						return;
+					}else{
+						$(this).val("");
+					}
+				}
+				
+			});
+
+			$('.comasepalphanumeric').bind('keypress', function (event) {
+				var regex = new RegExp("^[a-zA-Z0-9\-, \b]+$");
+				if(event.type=="keypress"){
+					var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+					var charCode = (event.which) ? event.which : event.keyCode;
+					if(charCode == 8 || charCode==9  || regex.test(key)) { // Left / Up / Right / Down Arrow, Backspace, Delete keys
+						
+					}else{
+						event.preventDefault();
+						return false;
+					}
+				}else{
+					if($(this).val().match(regex)){
+						return;
+					}else{
+						$(this).val("");
+					}
+				}
+			});
+
+			$('.validuserid').bind('keypress', function (event) {
+				var regex = new RegExp("(^[a-zA-Z0-9\-.@\b])+$");
+				if(event.type=="keypress"){
+					var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+					var charCode = (event.which) ? event.which : event.keyCode;
+					if(charCode == 8 || charCode == 46 || charCode==9  || regex.test(key)) { // Left / Up / Right / Down Arrow, Backspace, Delete keys
+						
+					}else{
+						event.preventDefault();
+						return false;
+					}
+				}else{
+					if($(this).val().match(regex)){
+						return;
+					}else{
+						$(this).val("");
+					}
+				}
+			});
+
+==> do not allow copy paste
+			
+		$('.nocopypaste').bind('cut copy paste', function (e) {
+			 e.preventDefault();
+		});
+
+
+---------------------------------------------------------------------------------------------------
+
+===> get all input and select fields under a div or form
+	Ex. 1
+
+
+				$(".active").each(function(){								
+								$(this).find(':input').each(function(){
+									if($(this).hasClass("required") && $.trim(this.value).length == 0){										
+										console.log($(this).attr('name'));
+										$(this).addClass('errortxt');					  	
+									}	
+								})
+							});
+		
+
+	Example 2
+	
+				$('.active input, .active select').each(
+					function(index){  
+						//var input = $(this);						
+						if($(this).hasClass("required") && $.trim(this.value).length == 0){
+							//console.log('Type: ' + input.attr('type') + 'Name: ' + input.attr('name') + 'Value: ' + input.val());
+							console.log($(this).attr('name'));										  	
+						}							
+					}
+				);
+
+---------------------------------------------------------------------------------------------------
+
+==>  remove red border from input for validation
+
+	$("input, select").on({
+		keyup: function(){
+			$(this).removeClass("errortxt");
+			$(this).removeClass("errortxt2");
+		},
+		change:function(){
+			$(this).removeClass("errortxt");
+			$(this).removeClass("errortxt2");
+		}
+	});
+
+---------------------------------------------------------------------------------------------------
+
+=>  access ::before or ::after of an element in jquery
+	
+		-> NOTE : we can not access that but we can apply css as given below
+
+	$( "<style>.input__label_a--ichiro::before { border: 1px solid #dddddd !important; }</style>" ).appendTo( "head" );
+	
+	
+	
+==> Email Id validation in jquery or js
+
+		var valid_email = new RegExp(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+		var lead_email = $('#email').val();
+		
+		if (!lead_email.match(valid_email))  
+		{
+			$('#email').addClass('errortxt2');
+		    error = 7;
+		}else{
+		   	$('#email').removeClass('errortxt2');
+		}
+
+
+		
+==> mobile no validation for length in jquery or js	
+				
+		var mob_val_size = $("#mobno").val().length;
+		var mob_max_size = $("#mobno").attr('maxlength');
+		console.log('mobile zie | '+mob_val_size+' | max_size '+mob_max_size);
+
+		if(mob_val_size != mob_max_size){
+			error = 6;
+			$("#mobno").addClass('errortxt2');
+			$(".error").text('Enter Valid Mobile No.');
+		}else{
+			$("#mobno").removeClass('errortxt2');
+			err_msg = '';	
+			console.log('else mobno');
+		}	
+							
+		-------------------------------------------------							
+
+		if($("#mob_code").val()=='91'){
+			$("#mobno").attr('maxlength','10');	
+		}
+
+		$("#mob_code").change(function(){
+			if($("#mob_code").val()=='91'){
+				$("#mobno").attr('maxlength','10');
+			}else{		
+				$("#mobno").attr('maxlength','15');
+			}
+		});
+	
+		
+		
+==>		submit a form without clicking submit button in js  or redirect to a bank by submiting a form 		
+		
+		if (typeof document.forms["frmApplyOnline"] !== 'undefined'){
+				document.forms["frmApplyOnline"].submit();
+		}
+		
+		
+	
+	
+==> apply css to placeholder  | use ::-webkit-input-placeholder
+
+	
+	input::-webkit-input-placeholder,textarea::-webkit-input-placeholder { /* Chrome */
+	  color: #000;
+	  font-size: 13px;
+	  font-family: 'SansationRegular';
+	}
+	input::-ms-input-placeholder { /* IE 10+ */
+	 color: #000;
+	 font-size: 13px;
+	 font-family: 'SansationRegular'; 
+	}
+	input::-moz-placeholder { /* Firefox 19+ */
+	  color: #000;
+	  font-family: 'SansationRegular';  
+	  opacity: 1;
+	  font-size: 13px;
+	}
+	input::-moz-placeholder { /* Firefox 4 - 18 */
+	  font-size: 13px;
+	  color: #000;
+	  font-family: 'SansationRegular';  
+	  opacity: 1;
+	}
+	
+	
+	
+==> select dropdown  placeholder   
+
+	HTML
+	
+		<select class="not_chosen">
+			 <option value="" >select</option>
+			 <option value="A" >A</option>
+			<option  value="B">B</option>
+			<option value="C" >C</option>
+		</select>
+	
+	CSS
+	
+		select.not_chosen {
+		  color: #808080;
+		}
+		select.not_chosen + span.arrow {
+		  border-color: #808080 transparent transparent transparent;
+		}
+		select option {
+			color: #080808;
+		}
+		select option:first-child {
+			color: #808080;
+		}
+		
+	JS		
+		<script>
+			if ($('select').length) {
+				$.each($('select'), function (i, val) {
+					var $el = $(val);
+					
+					if (!$el.val()) {
+						$el.addClass('not_chosen');
+					}else{
+						$el.removeClass('not_chosen');
+					}
+					
+					$el.on('change', function () {
+						if (!$el.val())
+							$el.addClass('not_chosen');
+						else
+							$el.removeClass('not_chosen');
+					});		
+			  });
+			}
+		</script>
+
+		
+==> date format in js 
+
+	 $('#datePicker').datepicker({
+                format: 'dd-M-yyyy'		//16-Mar-2018
+    }); 
+		
+		
+==> DOB start with 18 years ago | 
+	
+		var dt = new Date();
+        dt.setFullYear(new Date().getFullYear()-17);
+
+        $('#datePicker input').datepicker({
+            format: 'dd-M-yyyy',
+            autoclose: true,
+            endDate : dt
+        });
+	
+
+		
+		
+=> change date format in php
+
+	$this->add_data_util['DOB'] = DateTime::createFromFormat('d/m/Y', com_fun_util::get_data_from($array, 'DOB', ''))->format('d-M-Y');
+
+	$date = '10/12/2016';
+	$DOB = DateTime::createFromFormat('d/m/Y', $date)->format('d-M-Y'); 	 o/P =>  10-Dec-2016
+
+---------------------------------------------------
+
+=>  add new key value into an array
+
+	$this->add_data_util['APPLICANT_NO'] = 1;
+	$arr['APPLICANT_NO'] = 2;
+
+---------------------------------------------------
+
+=>   upperCase and LowerCase key in array will be treat differentaly 
+
+	$arr['APPLICANT_NO'] = 2;		//upperCase
+	$arr['appliaction_no'] = 3;		//lowerCase
+
+	$this->add_data_util['SESSION_ID'] = $_SESSION['ses_id'];	//upperCase
+	$arr['session_id'] = 'sdhjhbxy';				//lowerCase
+
+------------------------------------------------------------------
+
+=> get value of checked radio button
+
+   	var shortListedProp = $('input[name=short_listed_prop]:checked').val();	
+
+------------------------------------------------------------------
+
+=> field is visible or not 
+
+   alert($('#cost_of_prop').is(':visible'));	// visible -> true  |  hidden -> false
+
+------------------------------------------------------------------
+
+=>  conditional validation jquery
+
+
+    if($('input[name="short_listed_prop"]').is(':visible') &&  ($('input[name="short_listed_prop"]:checked').length  == 0))
+            {
+                $('input[name="short_listed_prop"]').parent().parent().addClass('switch-error');
+                error = 1;
+            }	
+
+   - it will check "short_listed_prop"  is visible or not  -> if true proceed further
+   - it will check radio checked length is 0 -> proceed further
+   
+   
+   //$("input[name='payment_type[]']").parent().find('.fa-check').css('color','#c1c1c1');
+   
+
+==> use of + in css | select next element in css use + 
+
+	Ex. 1   
+	
+		input:checked + div .fa-check, input:checked + label + div .fa-check {
+            color: #06bf50;
+        }
+		
+	Ex. 2	
+	
+		Select and style every <p> element that are placed immediately after <div> elements:
+		
+		div + p { 
+			background-color: yellow;
+		}
+	
+
+---------------------------------------------
+	
+=>  get each json values in js
+
+	var a = [
+             { name: "tom1", text: "tasty1" },
+             { name: "tom2", text: "tasty2" },
+             { name: "tom3", text: "tasty3" },
+             { name: "tom4", text: "tasty4" },
+             { name: "tom5", text: "tasty5" }
+         ];
+
+         for(var i = 0; i < a.length; ++i) {
+             var json = a[i];
+             	 console.log(json.name +' : '+json.text);            
+         }
+
+----------------------------------------------------
+
+=>  get value of radio on selection  jquery
+
+
+	$('input[type="radio"][name="acc_no"]').change(function(){
+        	alert(
+                $('input[type="radio"][name="acc_no"]:checked').val()+' : '+
+                 $('input[type="radio"][name="acc_no"]:checked').attr('data-prop-no')
+                 );
+            
+        });
+
+
+	<input type="radio" name="acc_no" data-prop-no="P764571" id="acc_no_606288169" value="606288169">
+	<input type="radio" name="acc_no" data-prop-no="P281984" id="acc_no_211722163" value="211722163">
+	<input type="radio" name="acc_no" data-prop-no="P281984" id="acc_no_213920554" value="213920554">
+
+
+----------------------------------------------------
+
+=>  add doble quotes and single quotes in js for dynamic variables
+	
+    var val = 'onclick="get_prop_loan_type(\''+val.ACCOUNT_NO+'\',\''+val.PROP_NO+'\')" ';
+
+----------------------------------------------------
+
+=> radion button is visible or not |  not checked one 
+ 
+   if($("input[name='acc_no']").is(":visible"))
+   {		
+     alert('visible');
+   }
+
+----------------------------------------------------
+
+=> radion button validation
+
+       if($("input[name='acc_no']").is(":visible") && (accno == '' || accno == undefined)){
+                 alert('inner:'+accno);               
+       }
+
+
+----------------------------------------------------
+
+=>  stop (pause) JavaScript execution  | use 'debugger'  keywords
+
+	debugger;
+
+----------------------------------------------------
+
+
+=>  JSON Syntax Rules
+
+	Data is in name/value pairs
+	Data is separated by commas
+	Curly braces hold objects
+	Square brackets hold arrays
+
+       NOTE - A name/value pair consists of a field name (in double quotes | name will be always in "" quotes )
+
+	1 - "JSON objects" are written inside curly braces.
+
+	    EX. {"firstName":"John", "lastName":"Doe"}
+
+	2 - JSON arrays are written inside square brackets.
+	
+	    "employees":[
+ 			   {"firstName":"John", "lastName":"Doe"}, 
+  			   {"firstName":"Anna", "lastName":"Smith"}, 
+  		 	   {"firstName":"Peter", "lastName":"Jones"}
+			]
+	
+=>    checkValidity()  in JS  | 	Returns true if an input element contains valid data.  
+
+	
+     EX.
+
+		<input id="id1" type="number" min="100" max="300" required>
+		<button onclick="myFunction()">OK</button>
+
+		<p id="demo"></p>
+
+
+	function myFunction() {
+    		var inpObj = document.getElementById("id1");
+    		if (inpObj.checkValidity() == false) {
+        		document.getElementById("demo").innerHTML = inpObj.validationMessage;
+    		} else {
+        		document.getElementById("demo").innerHTML = "Input OK";
+   			 } 
+	} 
+	
+--------------------------------------------
+
+=>  get file name from current url in js
+
+		var top_location = top.location.href;
+        loc_array = top_location.split('/');
+        var parent_page = loc_array[loc_array.length - 1];
+		  
+		  
+==>  get value of hidden field in jquery
+
+	$("input[type='hidden'][name='lead_no']").val()
+
+	
+
+==> redirect to referrer link using js
+
+	<a href="#" onclick="window.location.href=document.referrer;"> Link </a>
+
+
+	
+==>	convert string to interger in js
+	
+	var calc_val =  parseInt($.trim($(this).text()), 10); 
+	OR
+	
+	var myVal = "10";		
+	var calc_val =  parseInt($.trim(myVal), 10); 
+
+	
+==>	get all id or class div name start with in jQuery
+
+		$("div[id^='CALC_AMOUNT']").each(function(){
+			  console.log('#### : '+$(this).html());
+			  OR
+			  console.log('#### : '+$(this).text());
+		});
+		
+
+	***** for name parameter	
+
+		$(`input[name^='oc_receipt_no_']`).length	
+
+		
+==> get total no of sum of all div in jquery
+	
+		var tot_sum = 0;
+		function tot_calc_amnt()
+		{
+				$("div[id^='CALC_AMOUNT']").each(function(){
+					  var calc_val =  parseInt($.trim($(this).text()), 10);  
+					  
+						if(!isNaN(calc_val)) {        //typeof calc_val === 'number' ||  typeof calc_val === 'string' ||    
+						  tot_sum += calc_val;
+						}
+				});
+				console.log(tot_sum);
+		}
+
+		
+==> get last id of matching div ID's or class in jquery
+
+		var lastId = $("div[id^='MEAN_PERCENT']").last().attr("id");
+		console.log(lastId);
+
+		
+		
+==> apply css to matching content in jquery
+		
+	$("#ContentPlaceHolder1_GrdAtrDetails td:contains('Discussion / Review / Roles')").css({ "font-weight": "bold", "font-size": "15px" });
+	
+	
+==> use !important in .css() using jquery
+	
+	$('#elem').attr('style', 'font-size: 15px !important');	
+	$("#earn_row_id_"+last_earn_row_id).find('.cell').attr('style', 'font-size: 15px !important;font-weight: bold;');
+
+	
+==> split a variable by separater in js | 
+		
+		val = '1000-500';
+		
+	  var arr = val.split("-");
+      var con_min = parseFloat(arr[0]);
+      var con_max = parseFloat(arr[1]);
+
+      $('#con_min').val(con_min);
+      $('#con_max').val(con_max);
+	  
+	  
+	  
+==> remove %20 with space in a string in js | use decodeURI()
+
+	decodeURI(fsdfsdf%20dffssdf);
+	
+	OP => fsdfsdf dffssdf
+	
+
+  
+
+==> convert into float value in js 
+	val = 10;
+	var con_min = parseFloat(val);
+	
+
+
+==> custom select drop down filter in dataTable js
+	
+    $('#detailed_category_filter').on( 'change', function () {
+          detailed_table.column(0).search( $(this).val() ).draw();
+    });
+
+	
+
+==> check selected values in multiple select drop down | multi select   in php (codeignioter)
+	
+	
+		<select name="source[]" id="source" class="form-control" multiple="multiple">
+			<?php
+			 $source = $this->session->userdata('source');
+			 $source = @explode(',', $source); ?>
+			 <option value="Yahoo" <?php if(in_array('Yahoo', $source)) echo 'selected="selected"'; ?>>Yahoo</option>
+			 <option value="Facebook" <?php if(in_array('Facebook', $source)) echo 'selected="selected"'; ?>>Facebook</option>
+			 <option value="Google" <?php if(in_array('Google', $source)) echo 'selected="selected"'; ?>>Google</option>
+		</select>
+						
+	
+
+	in controller :
+	
+		$this->session->set_userdata('source', implode(',',$this->input->post('source')));
+		$this->session->set_userdata('medium', implode(',',$this->input->post('medium')));
+		$this->session->set_userdata('lead_stage', implode(',',$this->input->post('lead_stage')));
+	
+						
+		<select multiple name="stage[]" class=" " style="">
+			<?php
+			$step = $this->session->userdata('stage');
+			$steps = @explode(',', $step);
+			foreach($masterDetails['STAGE'] as $stage)
+			{
+			?>
+				<option value="<?php echo $stage['CD_VAL'];?>" <?php if(in_array($stage['CD_VAL'], $steps)) echo 'selected="selected"'; ?> > <?php echo $stage['CD_DESC']; ?> </option>
+			<?php } ?>
+		</select>
+
+	
+	
+	
+==> multi select dropdown option for filter in datatable | multiselect option | multiselect filter in datatable
+	FKBXB-HTVTV-37PHP-PX49X-8DRMJ
+    Add (HTML)  also bootstrap library files
+  
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+	
+	<select id="detailed_category_filter" multiple="multiple">  || NOTE  multiple="multiple"
+        <option value="php">PHP</option>
+        <option value="javascript">JavaScript</option>
+        <option value="java">Java</option>
+        <option value="sql">SQL</option>
+        <option value="jquery">Jquery</option>
+        <option value=".net">.Net</option>
+    </select>	
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#detailed_category_filter').multiselect({
+				nonSelectedText: 'Select Category',
+				
+				nonSelectedText: 'Select',
+				enableClickableOptGroups: true,
+				includeSelectAllOption: true,
+				buttonWidth: '100%'//,
+				//enableFiltering: true				
+			});
+		});
+	</script>	
+	
+  JS    NOTE: datatable column index start with 0(Zero)
+  
+	$('#detailed_category_filter').on('change', function (){
+	
+	  //  for multiselect option
+	  // 'India|Japan|Spain', true, false 
+	  
+      var category_search = [];
+
+      $.each($('#detailed_category_filter option:selected'), function(){
+            category_search.push($(this).val());
+      });
+
+      category_search = category_search.join('|');
+      detailed_table.column(1).search( category_search, true, false ).draw();
+	  
+      //detailed_table.column(1).search( 'Others|Tax|Travel', true, false ).draw();
+    });
+	
+	
+	Notes:
+	
+	Updated: We need to add two more parameters in the "search()" function.
+
+    search(val_1,val_2,val_3)
+
+    where,
+    val_1 is search string with "|" symbol seperated. So it contains regular express chars as per the example. 
+    val_2 is true (To enable regular express in the search)
+    val_3 is false (To disable smart search. default is true)
+	
+	
+	
+
+==> add datatable in js
+	
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+	
+
+			
+	
+==> use ajax in datatable | modify column generate with datatable | hide pagination in DT
+
+function get_detailed_bank_stmt_details(cas_no,bk_mst_no)
+{
+	/*var consolidated_table = $('#conso_bankstmt_table').DataTable();*/
+        //console.log('outer part...'+base_url+' | '+controller_name);   //bankstatement
+        // url: base_url+controller_name+'/get_consilidated_bankstmt_report',
+        // url :"employee-grid-data.php", // json datasource   
+        //"iDisplayLength": 10,
+          //"iDisplayStart" : 0,
+        //"serverSide":true,
+        //"serverSide": true,  detailed_table
+
+        //$('#YOURTABLENAME-table_length').hide();
+        //"bInfo": false
+        //"destroy": true,  
+
+/*
+         "info": false,
+          "paging": false,          // hide pagination
+          "searching": false,       */
+
+
+        detailed_table = $('#detailed_bankstmt_table').DataTable({
+          "bFilter": true,			//for search option
+          "processing": true,
+          "paging": false, 
+          "destroy": true,
+          "lengthChange": false,    // hide length data on page         
+          "ajax":{
+            url: base_url+controller_name+'/get_detailed_bankstmt_report',
+            type: "post",  // method  , by default get
+            "data": function ( d ) {
+              d.cas_no = cas_no;
+              d.bk_mst_no = bk_mst_no;
+              // d.custom = $('#myInput').val();             
+            },            
+            error: function(){  // error handling
+              //$(".conso_bankstmt_table-error").html("");
+              $("#conso_bankstmt_table").append('<tbody class="conso_bankstmt_table-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>');
+              //$("#conso_bankstmt_table_processing").css("display","none");              
+            }
+          },
+          "columns": [
+                    { "data": "TRAXN_DATE" },
+                    { "data": "CATEGORY" },
+                    { "data": "NARRATION" },
+                    { "data": "DEBIT",
+                      "render": function(data, type, row, meta){
+                          if(type === 'display'){
+                             data = Math.round(data); 
+                          }                          
+                          return data;
+                       }
+                    },
+                    { 
+                       "data": "CREDIT",
+                       "render": function(data, type, row, meta){
+                          if(type === 'display'){
+                             data = Math.round(data);
+                          }    
+                          return data;
+                       }
+                    },
+                    { "data": "BALANCE",
+                       "render": function(data, type, row, meta){
+                          if(type === 'display'){
+                             data = Math.round(data); 
+                          }                          
+                          return data;
+                       } 
+                    }
+                 ]
+        });
+}	
+	
+
+	
+	
+============================== online customer registration ====================================
+
+==>  events on dynamically generated elements using jquery
+
+  $(document).on('change', '.dynamic-select', function() {
+      alert('hi..');
+      console.log($(this).val());
+  });
+
+
+==>  get all selected option values of multiple select dropdown using jquery |  use class name
+
+   	$('.dynamic-select :selected').each(function(i, selected){ 
+        //foo[i] = $(selected).text(); 
+        console.log($(selected).val());
+    });
+
+
+==>  get all values of multiple div using jquery |  use class name
+
+     $('.bank_stmt_amnt').each(function(i, item){ 
+        //foo[i] = $(selected).text(); 
+          console.log($(item).html());
+     });
+
+
+
+==> get selected value of all select dropdown and show in a div using jquery
+   
+var str = "";
+$( "select option:selected" ).each(function() {
+    str += $( this ).text() + " ";
+});
+$( "div" ).text( str );
+
+
+
+==>  execute one function fully then other | use callback()
+
+	get_income_details();   // call this function 1st
+
+
+	function get_income_details(){
+  			get_cas_cd_master('SALARY_ITEM_CLASS', function(){
+
+  					ajax code | success  | other code
+
+  			});
+  	});
+
+
+
+  	function get_cas_cd_master(category, callback){ 	//category -> parameter | callback  -> keyword
+	     $.ajax({
+	            type: "POST",
+	            url: base_url+'/get-cd-master',
+	            data:{cat:category},
+	            dataType: 'json',      
+	            success: function(data)
+	            {  
+	              console.log(data);
+	              callback();
+	            }
+	         });
+	     //callback();     
+	}
+
+	
+	
+-------------------
+==> multiselect with ajax call   |  
+	library 
+		
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+	
+	HTML CODE	
+		<select multiple="multiple" class="dynamic-select" id="detailed_category_filter"> </select>
+		
+	
+	JS code
+	
+		var detailed_category_filter = '';
+		$(document).ready(function()
+		{
+				detailed_category_filter  = $('#detailed_category_filter').multiselect({
+					nonSelectedText: 'Select Category'
+					//,includeSelectAllOption: true,
+					//enableFiltering : true
+				});
+		});
+		
+		function generate_detailed_category_filter(cas_no,bk_mst_no)
+		{
+				$.ajax({
+					type: "POST",
+					url: base_url+controller_name+'/detailed_category_filter_drop_down',
+					data:{cas_no:cas_no,bk_mst_no:bk_mst_no},
+					dataType: 'json',      
+					success: function(data)
+					{
+						var option = '';
+						$.each(data['cat_list'], function (index, item) {
+							  var opt = $('<option />', {
+								  value: item.CATEGORY,
+								  text: item.CATEGORY
+							  });
+							  opt.appendTo(detailed_category_filter);                      
+						
+							  //detailed_category_filter.multiselect('refresh');
+							  detailed_category_filter.multiselect('rebuild');
+						});
+					}
+				 });
+		}
+	
+
+	
+		<select name="org_mode" id="org_mode" class="form_element_select not_chosen" style="height: 23px;">
+                <option value=""> Select Origin Mode  </option>                   
+                <?php
+                    $org_mode = $this->session->userdata('org_mode');                   
+                    foreach($masterDetails['ORIGIN_MODE'] as $val)
+                    {
+                ?>
+                    <option value="<?php echo $val['CD_VAL'];?>" <?php if($org_mode==$val['CD_VAL']) echo 'selected="selected"'; ?>> <?php echo $val['CD_DESC']; ?> </option>
+                <?php
+                    }
+                ?>                
+        </select>
+	
+
+==>  add a class to specific column in datatable  | use 'columnDefs'  for 1 or multiple column
+
+	
+		detailed_table = $('#detailed_bankstmt_table').DataTable({
+          "bFilter": true,
+          "processing": true,
+          "paging": false,            // hide pagination    
+          "destroy": true,
+          "order": [[ 0, "desc" ]],   //column index starting from 0
+          "ordering": true,
+          "lengthChange": false,    // hide length data on page         
+          "ajax":{
+            url: base_url+controller_name+'/get_detailed_bankstmt_report',
+            type: "post",  // method  , by default get
+            "data": function ( d ) {
+              d.cas_no = cas_no;
+              d.bk_mst_no = bk_mst_no;                      
+            },            
+            error: function(){  // error handling
+              //$(".conso_bankstmt_table-error").html("");
+              $("#conso_bankstmt_table").append('<tbody class="conso_bankstmt_table-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>');
+              //$("#conso_bankstmt_table_processing").css("display","none");              
+            }
+          },
+          "columns": [
+                    { "data": "TRAXN_DATE" },
+                    { "data": "CATEGORY" },
+                    { "data": "NARRATION" },
+                    { "data": "DEBIT",
+                      "render": function(data, type, row, meta){
+                          if(type === 'display'){
+                             data = Math.round(data); 
+                          }                          
+                          return data;
+                       }
+                    },
+                    { 
+                       "data": "CREDIT",
+                       "render": function(data, type, row, meta){
+                          if(type === 'display'){
+                             data = Math.round(data);
+                          }    
+                          return data;
+                       }
+                    },
+                    { "data": "BALANCE",
+                       "render": function(data, type, row, meta){
+                          if(type === 'display'){
+                             data = Math.round(data); 
+                          }                          
+                          return data;
+                       } 
+                    }
+                 ],
+                "columnDefs": [
+                                { className: "text_align_right", "targets": [ 3,4,5 ] }
+                              ]
+        });
+	
+
+
+	
+==> addition of a column's value in datatable
+		
+		  <!-- for sum of a column in DT -->
+  <script src="https://cdn.datatables.net/plug-ins/1.10.15/api/sum().js"></script>
+	
+		Ex.1 
+					drawCallback: function () {
+                        var api = this.api();
+                        considerable_out_flow = api.column( 7, {page:'current'} ).data().sum();
+                        $("#considerable_out_flow_val").html(considerable_out_flow); 
+                    }
+					
+        Ex. 2
+					
+				considerable_out_flow = consolidated_table.column( 7 ).data().sum();
+				$("#considerable_out_flow_val").html(considerable_out_flow);
+				
+				
+==> sort by date in datatable jquery
+	
+	date -> 	30-mar-17		|   
+	
+	JS :- 
+	
+	//$.fn.dataTable.moment('DD-MMM-YY HH:mm');   // for date time also  YY-17 | YYYY-2017 |  M-JULY  | MMM - Jan(jan)
+	$.fn.dataTable.moment('DD-MMM-YY');
+	
+	"order": [[ 1 ]],         //column index starting from 0  , "desc"
+    "ordering": true,
+		  
+    <script type="text/javascript" src="http://10.0.4.204/OnlineCustomerRegistration/public/js/moment.min.js"></script>
+    <script type="text/javascript" src="http://10.0.4.204/OnlineCustomerRegistration/public/js/datetime-moment.js"></script>
+
+	
+
+==> replace unwanted invalid characters in javascript
+	var invalid = /[°"§%()\[\]{}=\\?´`'#<>|,;.:+_-]+/g;	
+	var txtVal = $(this).val();	
+    var searchVal = txtVal.replace(invalid, "");
+
+	
+	
+==> td with td in table
+	
+		<table class="table" id="conso_bankstmt_table" cellspacing="0" width="100%"> 
+			<thead class="header">
+				<tr>											
+					<th> Heads </th>
+					<th> Application Form </th>
+					<th> Provided Doc </th>
+					<th>  </th>
+				</tr>
+			</thead>
+			<tbody id="general_list">
+				<tr>
+				  <td>Name 1</td>
+				  <td>Name 2</td>
+				  <td>Name 3</td>
+				  <td>Name 4</td>
+			 	</tr>				
+			 	<tr>
+				  <td rowspan="5">ITEM 1</td>
+				  <td rowspan="5">ITEM 2</td>
+				  <td>KYC ID 1</td>
+				  <td>  <input type='radio'> </input> </td>
+			 	</tr>
+			 	<tr>
+				  <td>	KYC ADD 2 </td>
+				  <td> <input type='radio'> </input>	  </td>
+			 	</tr>				
+			 	<tr>
+				  <td>	KYC ADD 3 </td>
+				  <td> <input type='radio'> </input>	  </td>
+			 	</tr>
+		 		<tr>
+				  <td>	KYC ADD 4 </td>
+				  <td> <input type='radio'> </input>	  </td>
+			 	</tr>				
+		 		<tr>
+				  <td> KYC ADD 5 </td>
+				  <td> <input type='radio'> </input>	  </td>
+			 	</tr>
+			 	<tr>
+				  <td>Name 1</td>
+				  <td>Name 2</td>
+				  <td>Name 3</td>
+				  <td>Name 4</td>
+			 	</tr>
+			 	<tr>
+				  <td>Name 1</td>
+				  <td>Name 2</td>
+				  <td>Name 3</td>
+				  <td>Name 4</td>
+			 	</tr>				
+			</tbody>
+		</table>
+		
+9834489011
+		
+==> select radio button with jquery  |  attr()   &  prop()
+		
+		$("#CAno").attr("checked",true)		
+		$('input[name="co_applicants_yn"][value="N"]').attr('checked',true);	
+		$('input[name="co_applicants_yn"][value="N"]').attr('checked','checked');		
+		//$("#CAno").prop("checked",true);		
+		$('input[name="co_applicants_yn"][value="N"]').prop("checked",true);
+		
+		
+==> set multiple attribute property in attr() in jquery
+	
+	.attr({ title:"Test", alt:"Test2" });
+	.attr({target:'nw', title:'Opens in a new window'});	
+	$(".something").attr( { title:"Test", alt:"Test2" } );
+	
+	
+	
+==> empty or set blank all fields within a div in jquery
+	
+	$("#coAppOccHide_"+index).slideUp(500).find('input,select').each(function(){
+						$(this).val('');
+	});
+
+
+==> radio button clone problem  | radio button will be unchecked problem after clone (bootstrap)
+
+	var genderVal = $("input:radio[name=co_gender_0]:checked").val();
+	var genderResidence = $("input:radio[name=co_status_of_residence_0]:checked").val();
+	
+	after clone use below lines-------
+	
+	$("input:radio[name=co_gender_0]").filter("[value="+genderVal+"]").prop("checked", "checked");
+    $("input:radio[name=co_status_of_residence_0]").filter("[value="+genderResidence+"]").prop("checked", "checked");
+	
+	
+==> remove Error border on input or change
+
+	$("input, select").on({
+		keyup: function(){
+			$(this).removeClass("errortxt");
+			$(this).removeClass("errortxt2");
+		},
+		change:function(){
+			$(this).removeClass("errortxt");
+			$(this).removeClass("errortxt2");
+		}
+	});
+	
+	
+==>	get year or month for a given date in php
+	
+	$year = date('Y',strtotime($cibil_val['HIST_END_DT']));    //year 
+	$year = date('M',strtotime($cibil_val['HIST_END_DT']));    //month
+	$year = date('F',strtotime($cibil_val['HIST_END_DT']));    //month
+		
+	// NOTE : this should be in class declaration otherwise wont work
+	$DOB = DateTime::createFromFormat('d/M/yyyy', $cibil_list['HIST_END_DT'])->format('Y');   //get year
+	$DOB = DateTime::createFromFormat('d/M/yyyy', $cibil_list['HIST_END_DT'])->format('M');   //get month
+	
+	
+==> modify array index in php
+	
+		$data = $this->cibil_model->p_get_cibil_overdue_dtls($cas_no);
+		$overdue_list = $data['overdue_list'];
+		
+		$indexed = array();
+		foreach ($overdue_list as $overdue_val) {
+			   $indexed[$overdue_val['ACCOUNT_NO']][] = $overdue_val;								//on ACCOUNT_NO
+			   $indexed2[$overdue_val['ACCOUNT_NO']][$overdue_val['OVERDUE_YEAR']] = $overdue_val;   //on OVERDUE_YEAR
+		}
+
+		$overdue_list = $indexed;
+		$overdue_list2 = $indexed2;
+		
+		echo '###<pre>';
+		print_r($overdue_list2);
+		echo '</pre>';
+	
+==>  HTTP_REFERER in php
+		
+	$_SERVER['HTTP_REFERER']
+	
+	
+	
+==>  get file name form url in php | basename() in php
+
+		$path = "/testweb/home.php";
+		
+		//Show filename with file extension
+		echo basename($path) ."<br/>";			//home.php
+
+		//Show filename without file extension
+		echo basename($path,".php");			//home
+
+==> check page refreshed or not on current page in php   | $_SERVER['HTTP_CACHE_CONTROL']
+
+	$chk_entry_point = isset($_SERVER['HTTP_CACHE_CONTROL']) ? 'max-age=0' : '1';
+	
+	if( ($chk_entry_point=='max-age=0') ){
+		echo 'refreshed';
+	}else{
+		echo 'not refreshed';
+	}	
+	
+	
+==> set session in codeigniter
+	$file_no = 123;
+	$this->session->set_userdata('file_no',$file_no);
+	$this->session->set_userdata('user_id','');
+	
+==> get session value in codeigniter
+	$file_no = $this->session->userdata('file_no');
+	
+==> get controller name in codeigniter	
+	$controller_name = $this->router->fetch_class();   //question
+
+==> get post input value in codeigniter	
+	$cas_no = $this->input->post('cas_no');
+	
+	
+	
+	
+	
+	
+Medical Allowance(MA),
+Leave travel allowance(LTA),
+Dearness allowance (DA)
+	
+Basic salary ->  actual salary amount without adding any other salary components like HRA,MA,LTA,DA
+Gross Salary ->  actual salary amount + addition of other salary components like HRA,MA,LTA,DA
+Net Salary ->   Gross Salary - deduction (like TDS, PF, PT)
+ 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+##### angularjs
+
+=> change date format in php
+
+	$this->add_data_util['DOB'] = DateTime::createFromFormat('d/m/Y', com_fun_util::get_data_from($array, 'DOB', ''))->format('d-M-Y');
+
+	$date = '10/12/2016';
+	$DOB = DateTime::createFromFormat('d/m/Y', $date)->format('d-M-Y'); 	 o/P =>  10-Dec-2016
+
+---------------------------------------------------
+
+=>  add new key value into an array
+
+	$this->add_data_util['APPLICANT_NO'] = 1;
+	$arr['APPLICANT_NO'] = 2;
+
+---------------------------------------------------
+
+=>   upperCase and LowerCase key in array will be treat differentaly 
+
+	$arr['APPLICANT_NO'] = 2;		//upperCase
+	$arr['appliaction_no'] = 3;		//lowerCase
+
+	$this->add_data_util['SESSION_ID'] = $_SESSION['ses_id'];	//upperCase
+	$arr['session_id'] = 'sdhjhbxy';				//lowerCase
+
+------------------------------------------------------------------
+
+=> get value of checked radio button
+
+   	var shortListedProp = $('input[name=short_listed_prop]:checked').val();	
+
+------------------------------------------------------------------
+
+=> field is visible or not 
+
+   alert($('#cost_of_prop').is(':visible'));	// visible -> true  |  hidden -> false
+
+------------------------------------------------------------------
+
+
+
+==>  each() in jquery 
+
+
+<button>Alert the value of each list item</button>
+<input type="text" class="monthly-income" name="c1" value="50">
+<input type="text" class="monthly-income" name="c2" value="150">
+
+
+$(document).ready(function(){
+	$("button").click(function(){
+		var monthly_income = 0;
+		$(".monthly-income").each(function(index, value){
+			var tmp = $(this).val();
+			console.log(tmp);
+		
+			if(tmp!="")
+				monthly_income = parseInt(monthly_income) + parseInt(tmp.replace(/\D/g,''));
+				console.log(monthly_income);
+		});
+			
+	});
+});
+
+
+----------------------------------------------------
+
+=>  conditional validation jquery
+
+
+    if($('input[name="short_listed_prop"]').is(':visible') &&  ($('input[name="short_listed_prop"]:checked').length  == 0))
+            {
+                $('input[name="short_listed_prop"]').parent().parent().addClass('switch-error');
+                error = 1;
+            }	
+
+   - it will check "short_listed_prop"  is visible or not  -> if true proceed further
+   - it will check radio checked length is 0 -> proceed further
+
+---------------------------------------------
+	
+=>  get each json values in js
+
+	var a = [
+             { name: "tom1", text: "tasty1" },
+             { name: "tom2", text: "tasty2" },
+             { name: "tom3", text: "tasty3" },
+             { name: "tom4", text: "tasty4" },
+             { name: "tom5", text: "tasty5" }
+         ];
+
+         for(var i = 0; i < a.length; ++i) {
+             var json = a[i];
+             	 console.log(json.name +' : '+json.text);            
+         }
+
+----------------------------------------------------
+
+=>  get value of radio on selection  jquery
+
+
+	$('input[type="radio"][name="acc_no"]').change(function(){
+        	alert(
+                $('input[type="radio"][name="acc_no"]:checked').val()+' : '+
+                 $('input[type="radio"][name="acc_no"]:checked').attr('data-prop-no')
+                 );
+            
+        });
+
+
+	<input type="radio" name="acc_no" data-prop-no="P764571" id="acc_no_606288169" value="606288169">
+	<input type="radio" name="acc_no" data-prop-no="P281984" id="acc_no_211722163" value="211722163">
+	<input type="radio" name="acc_no" data-prop-no="P281984" id="acc_no_213920554" value="213920554">
+
+
+----------------------------------------------------
+
+=>  add doble quotes and single quotes in js for dynamic variables
+	
+    var val = 'onclick="get_prop_loan_type(\''+val.ACCOUNT_NO+'\',\''+val.PROP_NO+'\')" ';
+
+----------------------------------------------------
+
+=> radion button is visible or not |  not checked one 
+ 
+   if($("input[name='acc_no']").is(":visible"))
+   {		
+     alert('visible');
+   }
+
+----------------------------------------------------
+
+=> radion button validation
+
+       if($("input[name='acc_no']").is(":visible") && (accno == '' || accno == undefined)){
+                 alert('inner:'+accno);               
+       }
+
+
+----------------------------------------------------
+
+=>  stop (pause) JavaScript execution  | use 'debugger'  keywords
+
+	debugger;
+
+----------------------------------------------------
+
+
+=>  JSON Syntax Rules
+
+	Data is in name/value pairs
+	Data is separated by commas
+	Curly braces hold objects
+	Square brackets hold arrays
+
+       NOTE - A name/value pair consists of a field name (in double quotes | name will be always in "" quotes )
+
+	1 - "JSON objects" are written inside curly braces.
+
+	    EX. {"firstName":"John", "lastName":"Doe"}
+
+	2 - JSON arrays are written inside square brackets.
+	
+	    "employees":[
+ 			   {"firstName":"John", "lastName":"Doe"}, 
+  			   {"firstName":"Anna", "lastName":"Smith"}, 
+  		 	   {"firstName":"Peter", "lastName":"Jones"}
+			]
+	
+=>    checkValidity()  in JS  | 	Returns true if an input element contains valid data.  
+
+	
+     EX.
+
+		<input id="id1" type="number" min="100" max="300" required>
+		<button onclick="myFunction()">OK</button>
+
+		<p id="demo"></p>
+
+
+	function myFunction() {
+    		var inpObj = document.getElementById("id1");
+    		if (inpObj.checkValidity() == false) {
+        		document.getElementById("demo").innerHTML = inpObj.validationMessage;
+    		} else {
+        		document.getElementById("demo").innerHTML = "Input OK";
+   			 } 
+	} 
+	
+--------------------------------------------
+
+=>  get file name from current url in js
+
+	  var top_location = top.location.href;
+          loc_array = top_location.split('/');
+          var parent_page = loc_array[loc_array.length - 1];
+
+
+--------------------------------------------
+
+=>    Dynamically generate select drop down list using angular
+
+	masterData.CATEGORY  - masterDate will be scope variable and CATEGORY is a object
+
+	<option ng-repeat="item in masterData.CATEGORY" value="{{item.CD_VAL}}">{{item.CD_DESC}}</option>
+
+--------------------------------------------
+
+=> onChange event in angular | ng-change
+
+		<select id="prop_state" name="prop_state" ng-model="selected_prop_state" ng-change="onPropertyStateChange(selected_prop_state)">
+
+	 $scope.onPropertyStateChange = function (selectedVal) {
+             alert('hiii..');         
+            console.log(selectedVal);         
+        }
+
+
+
+--------------------------------------------
+
+=>  $scope  VS  var
+
+     all variables you define on $scope, e.g. in your controller, are available in your html markup. in case you need a variable just inside your js functions, you can declare it with var, they are only locally available. Same with functions.		
+
+
+--------------------------------------------
+
+=>  get value of input using ID(#) in angular js
+
+    var product_type = angular.element('#LOAN_TYPE').val();
+    var product_type = angular.element( document.querySelector( '#LOAN_TYPE' ) );
+   
+    var product_type = $scope.LOAN_TYPE;    // LOAN_TYPE  is ng-model
+
+--------------------------------------------
+
+=> show hide multiple div on multiple condition
+  
+		$scope.v = false;	// default hidden	 
+		$scope.showVegetablesAvaliable = function() {
+			//$scope.vegetablesAvaliable = $scope.vegetablesAvaliable == false ? true : false;
+			//$scope.milkAvaliable = false;
+			//$scope.fruitsAvaliable = true;
+			$scope.v = true;
+		 };
+				 
+		 $scope.hideVegetablesAvaliable = function() {
+			//$scope.vegetablesAvaliable = $scope.vegetablesAvaliable == false ? true : false;
+			//$scope.milkAvaliable = false;
+			//$scope.fruitsAvaliable = true;
+			$scope.v = false;
+  		};
+
+
+
+	<div ng-show="fruitsAvaliable"> Fruit </div>
+	<div ng-show="milkAvaliable">Milk</div>
+	<div ng-show='v'> Vegetables</div>
+
+     <button ng-click="showVegetablesAvaliable()">Show</button>	  
+      <button ng-click="hideVegetablesAvaliable()">hide</button>	
+
+--------------------------------------------
+
+=>  set blank value to input field
+
+	<input type="text" placeholder=""  id="property_cost" name="property_cost" ng-model="property_cost">
+
+	  $scope.property_cost = null; 	      //property_cost is ng-model
+
+	  $scope.prop_city_label='';
+
+--------------------------------------------
+
+=>  default hide and show a div | ng-show 
+
+
+	    $scope.property_list_div = false;  // hidden    |  property_list_div  is ng-show
+            $scope.customer_confirmation_div = true;  // visible    
+
+
+	NOTE: if not specified then default will be false (hidden)
+
+--------------------------------------------
+
+=>  add class to an element 
+
+   angular.element(document.querySelector('#comment_0')).removeClass('ng-hide');
+ 
+   NOTE : this will only work on ID(#) not class(.)
+
+--------------------------------------------
+
+=>  call a function inside another function in angularjs
+
+	$scope.selectElement = function(eleID){
+                var element = angular.element( document.querySelector( "#"+eleID) );
+			return element;
+		}
+
+
+	
+		$scope.checkHtml = function() {		  		  
+		  $scope.selectElement('text').html('hii');
+		  
+		}	
+
+
+--------------------------------------------
+
+=>  ng-pattern   for input validation  
+ 
+    <input ng-model="val" ng-pattern="/^\d+$/" class="my-input" />	
+
+--------------------------------------------
+
+=> ng-click on dynamically generate elements (radio button)
+
+    add $complie service like below
+      myCtrl($scope, $compile) 	
+
+
+     var property_data = '';
+	for(var i=1;i<=1;i++){
+		property_data += '<input type="radio" ng-click="get_prop_loan_type()" name="acc_no"  id="acc_no_1" value=""><input type="text" name="cust_name" ng-model="cust_name"><br><br>';
+	}
+			
+	var $el = angular.element( document.querySelector( "#text") ).html(property_data);			
+	$compile($el)($scope);			
+
+
+--------------------------------------------
+
+
+=>  ajax in angularjs | 
+
+
+	add below lines on php page
+           $_POST = json_decode(file_get_contents('php://input'), true);
+
+
+			$http({
+                              method  : 'POST',
+                              url: "_ajax_files/eligibility-newa_ajax.php",
+                              data    : filtervars,
+                              headers : {'Content-Type': 'application/x-www-form-urlencoded'} 
+                         })
+                          .success(function(html) {
+
+                            //$scope.prop_city_label='';
+                            //$scope.prop_city=null;        // not working
+                            //angular.element('#prop_city').val('');
+
+                               console.log(data);                                  
+                           // $("#LOAN_TYPE").html(data).change(); 
+
+                          });
+
+
+--------------------------------------------
+
+=>  select all element by tag name use find() | will not work with CSS selector
+
+
+	Note: Keep in mind that this function will not find elements by tag name / CSS selector. For lookups by tag name, try instead angular.element(document).find(...) or $document.find(), or use the standard DOM APIs, e.g. document.querySelectorAll().
+
+
+--------------------------------------------
+
+
+=>  select 1st / all element using tag name class name |  use querySelector()  & querySelectorAll()  &  find()
+
+<div class="a">	class - A1	<input type="text" value="a1"> 				</div>
+		
+<div class="a">	class - A2 <input type="text" value="a2">				</div>	
+		
+<div class="a">	class - A3 <select><option>select 1</option></select>	</div>
+		
+<div class="c">	class - C1  <select><option>select 2</option></select> 	</div>
+		
+<div class="c">	class - C2	<input type="text" value="c2">				</div>
+		
+
+		
+angular.element(document.querySelector(".a")).append(' hii');				// select only 1st element
+angular.element(document.querySelectorAll(".a")).append(' hii');			// select all elements with className a
+				
+angular.element(document.querySelector(".c")).css('color','red');
+angular.element(document.querySelectorAll(".c")).css('color','red');
+				
+angular.element(document.querySelectorAll("input")).css('background','red');		// select all input elements			
+angular.element(document).find('select').css('background','green');					// select all select elements	
+
+
+contents('')
+
+ $("div").contents().filter("em").wrap("<b/>");
+
+--------------------------------------------
+
+
+=>	form custom validation
+
+	 $scope.submitSearch = function(search){
+		if($scope.searchForm.$valid) {
+		  console.log("form sent");
+		  console.log(search);
+		}else{
+		  // If form is invalid, show errors
+		  $scope.searchForm.submitted = true;
+		}
+	}
+
+	
+	<form name="searchForm" novalidate role="form" >
+      <!-- Required: out of the box validation -->
+	  
+      <label for="leaving_from" data-ng-class="{'error-req': searchForm.submitted &amp;&amp; searchForm.leaving_from1.$invalid}">
+			From<span class="ada-hide"> City or airport</span>*
+	  </label>	  
+      <input type="text" placeholder="City or airport" id="leaving_from1" name="leaving_from1" data-ng-model="search.leaving_from1" required data-ng-minlength="3" data-ng-class="{'err-border': searchForm.submitted && searchForm.leaving_from1.$invalid}" ng-required='!search.name' >	  
+	 <!--  .$error.required -->	  
+      <br /> 	  
+	  
+      <label for="leaving_from" data-ng-class="{'error-req': searchForm.submitted && searchForm.name.$invalid}"> name* </label>	  
+      <input type="text" placeholder="Enter Name" id="name" name="name" data-ng-model="search.name" required data-ng-minlength="3"  class="input-width" data-ng-class="{'err-border': searchForm.submitted && searchForm.name.$invalid}" ng-required='!search.leaving_from1'>
+      <br />
+      
+    <button type="submit" data-ng-click="submitSearch(search)">submit</button>	
+	
+    <!-- <button type="submit" data-ng-click="submitSearch(search)" ng-disabled="searchForm.$invalid">submit</button>   for disable button-->	
+	<!-- <button type="submit" class="pure-button pure-button-primary" ng-disabled="searchForm.$invalid || !conditions">Submit</button> -->	
+	  
+      <button data-ng-click="reset()">reset</button>
+    </form>
+
+--------------------------------------------
+
+=>> Get selected radio button val | use ng-model name  |  also can pass as a parameter
+
+
+	<input type="radio" name="content" ng-model="fileType" value="base">
+	<input type="radio" name="content" ng-model="fileType" value="dynamic" >
+	<button type="button" class="btn btn-default" ng-click="downloadFile(fileType)">Get Template</button>
+		
+				$scope.downloadFile= function(result) {				
+					console.log(result)					
+					console.log($scope.fileType);
+				};	
+
+
+------------------------------------------------------
+
+=> 	check radio button by default  |  use 	ng-checked="true"   | use $scope.model_name = value
+	
+<input id="dynamic" type="radio" name="content" ng-model="fileType" value="dynamic" ng-checked="true">	
+
+	OR	using in controller
+ $scope.gender = 'male';
+
+
+ $scope.checkEliFrmData.co_val_0 = "N";          radio will be checked with value 'N'
+
+
+-------------------------------------------------------
+
+=> Get element attribute value in angular  | use attr()  and $event
+
+
+<input class="star-5" id="wstar-5" rating="5" type="radio" name="welcome" ng-click="rateThis($event)"/>
+
+$scope.rateThis = function($event){
+    var elName = angular.element($event.target).attr('name');
+    var elName = angular.element($event.target).attr('rating');
+    //alert(elName);
+}
+
+
+---------------------------------------------------
+
+
+=> remove()  and empty() in jquery  
+    
+   empty() =>  method removes the child elements of the selected element(s).	
+   remove() =>  method removes the selected element(s) and its child elements.
+
+---------------------------------------------------
+
+
+=> dynamically generated div with numeric name  hide / show 
+
+
+var div_ele = $parse('div_name_'+div_no)			
+div_ele.assign($scope, true);			// div show
+			
+			
+
+var div = $parse(ele_type+'_'+div_no)	// for dynamic name		
+var div2 = div.assign($scope, true);
+			
+
+// function
+			
+$scope.coAppEleParseAction = function(element_id,applicant_no,type){
+		var ele_div = $parse(element_id+'_'+applicant_no)         
+		ele_div.assign($scope, type);
+}			
+
+
+---------------------------------------------------
+
+
+=>  default selected value in select drop down | use ng-selected  OR define in controller OR use ng-init method
+
+
+	<option ng-repeat="country_code in masterData.country_phone" value="{{country_code.CD_VAL}}" ng-selected="'91' == country_code.CD_VAL"> {{country_code.CD_DESC}}</option>
+
+
+OR
+
+<select ng-init="object.item=2" ng-model="object.item" >
+ng-init="somethingHere = options[0]"
+
+<select ng-model="checkEliFrmData.lead_mobile_country_cd1" ng-init="checkEliFrmData.lead_mobile_country_cd1='91'" >
+
+OR
+
+In side controller
+
+	$scope.boxModel = 600;
+	$rootScope.model = { id: 2 };
+
+
+
+---------------------------------------------------
+
+
+=>> add new element to a json object in angularjs | use  Object.assign ->  1st position | angular.extend(dest,src) -> last index | angular.merge(dest,src) -> last index
+
+
+	elig_form_data = Object {lead_mobile_country_cd: "91", PROPERTY_SELECTED: "N", LOAN_TYPE: "LND", expected_loan_amount: "56,56,565"}
+	var form_data = elig_form_data;
+ 
+ 
+	var requestFlag = "N";                            
+	form_data1 = Object.assign({OTP_REQ_FLAG: requestFlag}, form_data);
+               
+	form_data2 = angular.extend(form_data, {OTP_REQ_FLAG: requestFlag});
+	form_data3 = angular.merge(form_data, {OTP_REQ_FLAG: requestFlag});
+			   
+
+form_data => Object {lead_mobile_country_cd: "91", PROPERTY_SELECTED: "N", LOAN_TYPE: "LND", expected_loan_amount: "56,56,565"}
+
+form_data1 => Object {OTP_REQ_FLAG: "N", lead_mobile_country_cd: "91", PROPERTY_SELECTED: "N", LOAN_TYPE: "LND", expected_loan_amount: "56,56,565"}
+
+form_data2 => Object {lead_mobile_country_cd: "91", PROPERTY_SELECTED: "N", LOAN_TYPE: "LND", expected_loan_amount: "56,56,565", OTP_REQ_FLAG: "N"}
+
+form_data3 => Object {lead_mobile_country_cd: "91", PROPERTY_SELECTED: "N", LOAN_TYPE: "LND", expected_loan_amount: "56,56,565", OTP_REQ_FLAG: "N"}
+
+
+---------------------------------------------------
+
+
+=>	 send hidden field values | assign values in controller | use ng-init 
+
+		$scope.form = {};			
+		$scope.form.PROP_NO = 'PROP_NO123';
+		$scope.form.ACCOUNT_NO = 'ACCOUNT_NO23';
+		
+
+	<input type="hidden" id="PROP_NO" name="PROP_NO" ng-model="form.PROP_NO">
+	<input type="hidden" id="ACCOUNT_NO" name="ACCOUNT_NO" ng-model="form.ACCOUNT_NO"> 
+
+	<!-- <input type="hidden" id="ACCOUNT_NO" name="ACCOUNT_NO" ng-value="ACCOUNT_NO" ng-model="form.ACCOUNT_NO" ng-init="form.ACCOUNT_NO=form.ACCOUNT_NO">  -->
+
+---------------------------------------------------------------------
+
+=> ternary operator 
+
+{{
+	(l.NEGATIVE_FLAG == "P") ? 'add' :
+		((l.NEGATIVE_FLAG == "N") ? 'remove' : 'error')
+                                                         
+}}
+-----------------------------------------------
+
+=> check null value |  null keyword
+
+
+<i ng-show="l.NEGATIVE_FLAG === null" class='material-icons' style="border-radius: 50%;color: grey;"> info </i>
+
+-------------------------------------------------------
+
+=>   multiple filter (search) option
+
+
+<tr ng-repeat="l in surveyList | 
+                                filter:{SURVEY_CATEGORY_CD:category} |
+                                filter:{STATUS:status} |
+                                filter:{REQUEST_KEY1:REQUEST_KEY} |
+                                filter:{SURVEY_MODE:mode} |                                
+                                filter:{NEGATIVE_FLAG:feedback_response} |
+                                filter:{CREATED_DT:from_date} |
+                                filter:{CREATED_DT:to_date}
+
+                                 ">
+
+----------------------------------------------------
+
+==> forEach in angularjs | get value of all input box with same classname in angularjs
+
+
+<input type="text" id="applicant_count" class="monthly-income" name="applicant_count" value='4' ng-model="checkEliFrmData.applicant_count">
+<input type="text" id="total_count" class="monthly-income" name="total_count" value='1' ng-model="checkEliFrmData.total_count"> 
+
+<input type="submit" ng-click="submitForm(checkEliFrmData)">
+
+
+JS
+
+		$scope.submitForm = function(form_date){		
+			angular.forEach(angular.element(document.querySelectorAll( '.monthly-income' )), function(value, key){					
+					//console.log('key : '+key);					
+					console.log('value : '+angular.element(value).val());
+			});
+			//console.log(form_date);
+		}
+
+---------------------------------------------------
+
+==> trigger on click event programmatically  in angularjs | auto onclick event
+
+JS
+
+		$('.PROP_PLOTTED').trigger('blur');
+
+		$timeout(function() {
+				angular.element( document.querySelector('#sumID') ).triggerHandler('click');
+		})
+
+
+
+---------------------------------------------------
+
+=>  add one or many elementv(dynamically) to a json object
+
+	item = {}
+        item ["title"] = id;
+        item ["email"] = email;
+
+
+---------------------------------------------------
+
+==> add red border to all fields on click of a button  | without submit button
+
+.errortxt{
+	border:1px solid red;
+}
+
+$scope.loanDetailForm = {};
+
+$scope.showApplicant = function(){
+	if($scope.loanDetailForm.$valid) {                       
+		alert('success');                   
+	}else{
+	   // If form is invalid, show errors
+		$scope.loanDetailForm.submitted = true;
+		alert('Error');
+	}
+}
+
+
+ <form name='myform' ng-init="step = 1">
+  
+    <div ng-show="step==1">
+		<div ng-form='loanDetailForm'>
+		
+		
+			<input type="text" placeholder="" id="expected_loan_amount" name="expected_loan_amount" 
+													class="step-content-form-input input-width mask-number-input"
+													maxlength="12" 
+													autocomplete="off"
+													data-ng-class="{'errortxt': loanDetailForm.submitted && loanDetailForm.expected_loan_amount.$invalid}"
+													required	
+													ng-model="checkEliFrmData.expected_loan_amount"
+													>
+
+			<select
+												id="LOAN_TYPE"
+												name="LOAN_TYPE"
+												ng-model="checkEliFrmData.LOAN_TYPE"
+												data-ng-class="{'errortxt': loanDetailForm.submitted && loanDetailForm.LOAN_TYPE.$invalid}"
+												required												
+												ng-change="onLoanTypeChange(checkEliFrmData.LOAN_TYPE)">
+												<option value=''>- - Select - -</option>
+												<option ng-repeat="loan_type_data in masterData.loan_type" value="{{loan_type_data.CD_VAL}}">{{loan_type_data.CD_DESC}}</option>
+											</select>
+													
+													
+													
+			<a class="right-intro-btn btn-loan-detail" ng-click="showApplicant()">CONTINUE</a>
+	</div>
+	</div>
+</form>
+			
+
+
+
+
+--------------------------------------------------------
+
+radion button border for form validation   | use above methods
+
+
+<div class="step-content-form-field01">
+												<ul class="switch-radio" data-ng-class="{'switch-error': loanDetailForm.submitted && loanDetailForm.PROPERTY_SELECTED.$invalid}">
+												<li>	 <!-- onclick="javascript:have_you_shortlised();" onclick="reset_switch(this);" -->
+													<input type="radio" name="PROPERTY_SELECTED" id="short_listed_prop_yes" value="Y"
+													ng-model="checkEliFrmData.PROPERTY_SELECTED"
+													ng-click="isPropertySelected(checkEliFrmData.PROPERTY_SELECTED);"
+													required
+													> <!-- -->
+												    <label for="short_listed_prop_yes">Yes</label>
+												</li>
+												<li>
+													<input type="radio" name="PROPERTY_SELECTED" id="short_listed_prop_no" value="N"
+													ng-model="checkEliFrmData.PROPERTY_SELECTED"
+													ng-click="isPropertySelected(checkEliFrmData.PROPERTY_SELECTED);"
+													required>
+												    <label for="short_listed_prop_no" class="switch-radio-no-border">No</label>
+												</li>
+												</ul>									
+											</div>
+
+-----------------------------------------------------------
+
+==>  conditional validation on field hidden visible case | use ng-required case
+
+
+<input type="text" placeholder="" id="property_cost" name="property_cost" class="step-content-form-input input-width mask-number-input" maxlength="12" 
+													autocomplete="off"
+													ng-required="checkEliFrmData.LOAN_TYPE == 'LND' || checkEliFrmData.LOAN_TYPE == 'HOU' || checkEliFrmData.LOAN_TYPE == 'EXT' || checkEliFrmData.LOAN_TYPE == 'IMP'"
+													data-ng-class="{'errortxt': loanDetailForm.submitted && loanDetailForm.property_cost.$invalid}"
+													ng-model="checkEliFrmData.property_cost"
+													>
+
+
+
+
+-----------------------------------------------------------
+
+
+=>  disabled button
+
+		ng-disabled="Form_name.$invalid"
+		ng-disabled="Form_name.$invalid || !conditions"
+
+-----------------------------------------------------------
+=> Input Attributes may be as given below for validation
+
+		email
+		required
+		ng-minlength="6"
+		ng-maxlength="10"
+
+-----------------------------------------------------------
+		
+=> redirect to another page
+
+	window.location.replace("thank-you.php");
+
+-----------------------------------------------------------		
+
+=> Pass hidden field on submit
+		
+<input type="text"  name="feed.SRNO{{ $index + 1 }}" ng-model="feed.SRNO[q.QUESTION_NO]" ng-value='{{q.SRNO}}' /  >    //NOT WORKING   
+
+ <input type="hidden" ng-model="feed.SRNO[q.QUESTION_NO]" ng-init="feed.SRNO[q.QUESTION_NO]=q.SRNO" />		//working	(q.SRNO  -> value)
+ <input type="hidden" ng-model="feed.survey_id" ng-init="feed.survey_id=survey_id" />
+ <input type="hidden" ng-model="feed.customer_name" ng-init="feed.customer_name=cust_data.CUST_NAME" />
+
+-----------------------------------------------------------
+
+ =>  dynamic custome model name
+
+ 	 <textarea  ng-model="feed.Q[q.QUESTION_NO+'_comments']" ng-required="feed.Q[q.QUESTION_NO] == q.RATING_5" placeholder="comments"></textarea>
+
+-----------------------------------------------------------
+
+=>  show div on specific value |  ng-show="feed.Q[q.QUESTION_NO] == q.RATING_5"
+
+	<div ng-show="feed.Q[q.QUESTION_NO] == q.RATING_5" id="comment_0{{ $index + 1 }}" >
+            <textarea rows="2" cols="50" class="textarea" ng-model="feed.Q[q.QUESTION_NO+'_comments']" ng-required="feed.Q[q.QUESTION_NO] == q.RATING_5" placeholder="comments"></textarea>
+    </div>
+
+-----------------------------------------------------------
+
+=> mandatory on certain condition  | ng-required="feed.Q[q.QUESTION_NO] == q.RATING_5"
+
+    <div ng-show="feed.Q[q.QUESTION_NO] == q.RATING_5" id="comment_0{{ $index + 1 }}" >
+            <textarea rows="2" cols="50" class="textarea" ng-model="feed.Q[q.QUESTION_NO+'_comments']" ng-required="feed.Q[q.QUESTION_NO] == q.RATING_5" placeholder="comments"></textarea>
+    </div>
+
+-----------------------------------------------------------
+
+=>  show hide div using if 
+
+	<div ng-if="q.QUESTION_CONTROL === 'RADIO'">	if radio show this	</div>     
+	<div ng-if="q.QUESTION_CONTROL === 'RATING'">   if RATING show this  </div>  
+
+-----------------------------------------------------------
+
+=>  empty certain field on click | ng-click
+
+	ng-click="feed.Q[q.QUESTION_NO+'_comments'] = null" 	
+	
+=>  addition |  use '--'
+	if + not works use '--'
+
+	{{ selection--1 }}/{{stepsLength}} 
+
+-----------------------------------------------------------
+	
+=> show / hide on slider | use index value and length
+	
+	<div ng-if="stepsLength>$index+1">
+           some content
+    </div>	
+
+-----------------------------------------------------------
+
+=> add remove class ng-hide /  show hide
+
+		var feed_element_main = angular.element( document.querySelector( '.main_div' ) );
+		var feed_element_thank = angular.element( document.querySelector( '#thank-you' ) );
+			feed_element_main.addClass('ng-hide');
+			feed_element_thank.removeClass('ng-hide');  
+	
+
+-----------------------------------------------------------
+
+=> convert json object to  array
+	$scope.ques_data = { 
+							0:{some val},
+							1:{some val},
+							2:{some val}
+						}
+
+	$scope.steps = Object.keys($scope.ques_data);
+    O/P =>  ['0','1','2','3','4']
+
+-----------------------------------------------------------
+
+
+=>  lowercase 
+
+	<label class="{{rate_val.RATING_1 | lowercase }}"> </lable>
+
+-----------------------------------------------------------
+
+=> 	set default value in text area
+
+	<textarea rows="2" cols="50" class="textarea" ng-model="feed.Q[q.QUESTION_NO+'_comments']" placeholder="comments" ng-init="feed.Q[q.QUESTION_NO+'_comments']=q.ANSWER_REMARKS" ></textarea> 
+
+	
+-----------------------------------------------------------
+
+==>	find which field is causing problem | which field is making form invalid in angularjs
+
+applicantDetailForm  is name of FORM (all field must have name attribute)
+
+	 console.log('--------------11');
+	console.log($scope.applicantDetailForm.$error.required);
+            
+            console.log('--------------22');
+
+            console.log($scope.applicantDetailForm.$error);
+            
+            console.log('Method-------------33');
+
+            if ($scope.applicantDetailForm.$invalid && $scope.applicantDetailForm.$error && $scope.applicantDetailForm.$error.required) {
+                $scope.applicantDetailForm.$error.required.forEach(function (error) {
+                    console.log(error.$name + ' is required'); 
+                });
+            }
+
+           
+NOTE : 3rd method will give exact field name
+
+-----------------------------------------------------------
+
+
+=> call a function after some seconds | execute some code after some time in angular
+
+	var coAppNo = 0;
+        $scope.coAppDOB = function(coAppNo){
+             $timeout(function() {
+                    var dob_ajax = $scope.selectElement("#co_DOB_"+coAppNo).val();
+                    var co_dob = $parse('co_DOB_'+coAppNo);  // for dynamic name
+                    co_dob.assign($scope.checkEliFrmData, dob_ajax);
+            }, 3000); // 3 seconds
+        }
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+-----------------------------------------------------------------------
+
+=> get id from parent div input field on click of a class (.ui-datepicker-trigger)  | used for datepicker
+
+var closeEle = $scope.selectElement('.ui-datepicker-trigger');      //ui-datepicker-trigger
+        closeEle.bind('click', function(obj) {
+          console.log('clicked');
+           //angular.element($event.target).attr('id');
+          //console.log($(event.target).attr("id"));
+          //console.log(angular.element($event.target).attr('id'));
+
+          //$($event.target).parent();
+
+            //console.log($($event.target).parent());
+
+               console.log($(obj.currentTarget).parent()[0]); 
+               console.log(angular.element($(obj.currentTarget).parent()[0].innerHTML).attr('id'));		//IMP point 
+               
+               //console.log($(obj).parent()); 
+               //console.log($(e.currentTarget).parent()); 
+               //console.log($(e.currentTarget).parent().attr("id"));
+              // console.log($($event.target).parent().attr('id'));
+
+        }); 
+
+
+OR 
+
+
+var closeEle = $scope.selectElement('.close_co_app');
+        closeEle.bind('click', function() {
+          console.log('clicked');
+        });   
+
+
+
+--------------------------------------------------------------------
+
+
+
+=> prevent showing div's on page load | Add css and 'ng-cloak' keyword in div | use ng-cloak
+
+<style>
+  [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide {
+ 	  display: none !important;
+ }	
+</style>	
+
+-> add 'ng-cloak' in div which is flikaring
+
+<div class="step-bar-active" id="step_1_1" ng-cloak ng-show="step_1_1">Know Your Eligibility</div>
+
+
+
+---------------------------------------------------
+
+=>   create an array in js or in angularjs
+     var occ_status_arr = [];
+
+---------------------------------------------------
+
+=> add element to an array in js or in angularjs  | use  push()
+
+	occ_status_arr.push('E');
+	OR  dynamic way
+
+	occ_status_arr.push($scope.checkEliFrmData.occupation_type);	
+
+---------------------------------------------------
+
+=> find an element in an array in angularjs  | use indexOf() method
+
+	// not present ->  -1
+	// if present ->  index of the value in the array
+
+	if(occ_status_arr.indexOf('E') !== -1) {					
+		console.log('E is present ');
+	}else{			// use == -1 for not present 
+		 console.log('E is not present');
+	}	
+
+---------------------------------------------------
+
+=>  lenght of an array
+
+     occ_status_arr.length
+
+
+---------------------------------------------------
+	
+==> get focus input  from controller in angularjs  | use boolean values
+	
+<input type="text" id="myinput" ng-focus="inputfocus">
+
+
+  $scope.inputfocus = false;
+  $scope.myfocus = function(){
+    $scope.inputfocus = true;
+  };
+  
+  $scope.blurInput = function(){
+    $scope.inputfocus = false;
+  };
+
+
+---------------------------------------------------
+
+
+=> add element to a json object | use push()
+
+ $scope.contacts = [
+			{ name: 'Gordon Freeman' },
+			{ name: 'Barney Calhoun' },
+			{ name: 'Lamarr the Headcrab' },
+		  ];
+		  
+		$scope.createContact = function(u) {        
+			$scope.contacts.push({ name: u.firstName + ' ' + u.lastName });
+			$scope.modal.hide();
+		  };
+		  
+		
+            <input ng-model="newUser.lastName" type="text">
+            <input ng-model="newUser.email" type="text">			
+		<button ng-click="createContact(newUser)">Create</button>
+		
+		
+		
+==> email id pattern
+
+
+	$scope.valid_email_format = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	
+	
+	/^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z.]{2,5}$/i
+	
+
+==>  get image extension in js | split()
+		
+		var img = 'exhibitions.png';			
+		var selected_img = img.split('.');
+			
+			selected_img[0]   //exhibitions
+			selected_img[1]   //png
+		
+		selected_img = selected_img[0]+'_s.'+selected_img[1];     //exhibitions_s.png
+
+
+		
+==> get parent div  in angularjs  || get id of a div or element in angularjs
+
+		<div ng-if="rate_val.RATING != ''" class="check">               
+
+            <label id="chek_img_{{q.QUESTION_NO}}_{{$index+1}}" style="background:url('images/checkbox/{{rate_val.IMG}}') no-repeat;"></label> 
+
+                <input type="checkbox"  ng-click="validateCheckBox(rate_val.IMG,rate_val,q.QUESTION_NO,$event)" >                   
+                <small>{{rate_val.RATING}}</small>
+				  
+            </label>
+		</div>
+		
+	
+	js		
+		
+	  $scope.validateCheckBox = function(img,rate_val,ques_no,this_val){
+	  
+            var selected_img = img.split('.');
+            selected_img = selected_img[0]+'_s.'+selected_img[1];                                               
+			
+			// var parent_div = this_val.target.parentNode.id;    //get parent div's ID
+			 
+            var parent_div = this_val.target.parentNode;                 
+			
+            label = angular.element(parent_div).find('label').css('background','green');    //find label                 
+            console.log(label);	
+			
+			//label =  angular.element(document.querySelector('#'+parent_div));
+			//label.css("background","url('images/checkbox/"+selected_img+"') no-repeat");   
+			
+		}		  
+
+
+==> get id of parent div  and apply css on it
+
+			<input type="checkbox" ng-click="validateCheckBox($event)" >
+			
+		js function (this_val) 
+	
+			var parent_div = this_val.target.parentNode.id;                                                              
+			label =  angular.element(document.querySelector('#'+parent_div));
+			label.css("background","url('images/checkbox/"+selected_img+"') no-repeat");   
+
+			
+
+			
+==>  events on dynamically generated elements using jquery
+
+  $(document).on('change', '.dynamic-select', function() {
+      alert('hi..');
+      console.log($(this).val());
+  });
+
+  
+==> form validation for dynamically generated forms using ajax | put all code once modal opened 
+
+		$('#BannerModal').on('shown.bs.modal', function() {
+
+				$('#frmBanner')
+					.formValidation({ 
+							//all code
+					});
+		});
+		  
+
+==> modal pop up hide event use 'hidden' | reset a form 
+
+	$('#add-oc-receipt-popup').on('hidden.bs.modal', function() {
+		$('#frmAddReceipt')[0].reset();
+	});
+
+==>  get all selected option values of multiple select dropdown using jquery |  use class name
+
+   	$('.dynamic-select :selected').each(function(i, selected){ 
+        //foo[i] = $(selected).text(); 
+        console.log($(selected).val());
+    });
+
+
+==>  get all values of multiple div using jquery |  use class name
+
+     $('.bank_stmt_amnt').each(function(i, item){ 
+        //foo[i] = $(selected).text(); 
+          console.log($(item).html());
+     });
+
+
+
+==> get selected value of all select dropdown and show in a div using jquery
+   
+var str = "";
+$( "select option:selected" ).each(function() {
+    str += $( this ).text() + " ";
+});
+$( "div" ).text( str );
+
+
+
+==>  execute one function fully then other | use callback()
+
+	get_income_details();   // call this function 1st
+
+
+	function get_income_details(){
+  			get_cas_cd_master('SALARY_ITEM_CLASS', function(){
+
+  					ajax code | success  | other code
+
+  			});
+  	});
+
+
+
+  	function get_cas_cd_master(category, callback){ 	//category -> parameter | callback  -> keyword
+	     $.ajax({
+	            type: "POST",
+	            url: base_url+'/get-cd-master',
+	            data:{cat:category},
+	            dataType: 'json',      
+	            success: function(data)
+	            {  
+	              console.log(data);
+	              callback();
+	            }
+	         });
+	     //callback();     
+	}
+	
+	
+	
+	
+	
+	
+------------------------ Feedback Management System  -----------------------------------
+
+
+=> get tns string for connection with oracle with codeigniter | type in cmd
+	
+	tnsping dbloanuat3   (tnsping name_of_network_server)
+
+	tnsping  net_service_name
+	tnsping net_service_name count
+
+
+	tnsping dbloans
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (COMMUNITY = tcp.world)(PROTOCOL = TCP)(Host = DCORA1DB1)(Port = 1513)) (ADDRESS = (COMMUNITY = tcp.world)(PROTOCOL = TCP)(Host = DCORA1DB1)(Port = 1521))) (CONNECT_DATA = (SID = loans)(server=dedicated)))
+OK (60 msec)	
+
+
+
+
+
+=> 	LDAP -> Lightweight Directory Access Protocol.	
+
+
+=> set session data while login
+
+		   $sess_array = array(
+                        'login_state' => TRUE,
+                        'userid' => $data['list'][0]['USER_ID'],
+                        'username'=> $data['list'][0]['NAME'],
+                        'userrole'=>$data['list'][0]['ROLE'],
+                        'usersession'=>$this->session->userdata('session_id')
+                    );
+
+                    $this->session->set_userdata($sess_array);
+                    return TRUE;
+
+
+=> 	To set your own custom message you can use the following function:
+
+	$this->form_validation->set_message('rule', 'Error Message');    
+
+Ex. 	$this->form_validation->set_message('email_check', 'Please provide an acceptable email address.');   //email_check - function name
+	    $this->form_validation->set_message('check_database', 'Invalid username or password'); 				 //check_database - function name
+
+
+	    
+=>  Reset modal form in bootstrap in js
+
+	 var myBackup = $('#composeMailModal').clone();				// composeMailModal is form modal ID
+	 $('body').on('click','.action-close-btn',function() {
+	        $('#composeMailModal').modal('hide').remove();
+	        var myClone = myBackup.clone();
+	        $('body').append(myClone);
+	});	    
+
+
+=> Reload after 1 sec in js
+	
+	window.setTimeout(function(){location.reload()},1000);	
+
+
+
+=> submit a form using js and ajax   ||  post all form data using serialize() in js
+
+
+	$("#frmActionUpdate").submit(function(e){              // frmActionUpdate is form ID
+        event.preventDefault();
+        $('#action-update-msg').html('<i class="ion fa fa-spinner fa-spin" style="font-size:27px;color:red"></i> Please Wait...');
+
+        $.ajax({
+            type: "POST",
+            url: base_url+'/action-update',                             //the script to call to get data          
+            data: $("#frmActionUpdate").serialize(),
+            dataType: 'json',                                           //data format 
+            success: function(data)                                     //on receive of reply
+            {   
+                $('#action-update-msg').html(data['message']);
+                $('#frmActionUpdate').html('<div class="cen mt15"> <button class="btn btn-primary mr5 mt5 waves-effect waves-effect action-close-btn" data-dismiss="modal" > Close </button></div>');
+                    //window.setTimeout(function(){location.reload()},1000);
+            }
+        });
+    });
+
+
+==> use href = "" in button | button works like a link
+
+	<button class="btn full height30 font-size13 bg-white" onclick="location.href='{{route("additionalDisbursement")}}';">Request Disbursement</button>
+	
+	
+==> upload media files using ajax	
+
+	<form name='myfrm' enctype="multipart/form-data" id="myfrm" action="javascript:void(0);" method="post" >
+	
+	   <input name="name" type="text">
+	   <input name="media" id='media' type="file">
+	   
+	   <input class="button" type="submit" alt="Upload" value="Upload" />
+	</form>
+	
+	
+	
+	$('#myfrm').submit( function(e) {
+		  e.preventDefault();
+
+			$.ajax({
+			type: 'POST',
+			data:  new FormData(this),
+			url: "<?php echo base_url();?>dashboard/test_data",
+			cache: false,
+			contentType: false,
+			processData: false,
+			//dataType: 'json',
+			success: function(data){
+				console.log(data);
+			}
+	});
+
+	
+	
+	
+=>  Loading glyphican in bootstrap
+
+	<i class="ion fa fa-spinner fa-spin"></i>
+
+
+	
+==> generate dynamic form and submit it in jquery
+
+	function view_document(ivalue){
+			$('#viewDoc').remove();
+			var doc_id = ivalue;
+			var userid = $("input[type='hidden'][name='userid']").val();
+			var applicationid = $("input[type='hidden'][name='applicationid']").val();
+			var serialno = $("input[type='hidden'][name='serialno']").val();
+
+		$form = $("<form method='post' id='viewDoc'></form>");
+		var input1 = $("<input>").attr("type", "hidden").attr("name", "viewdocsrno").val(doc_id);
+		var input2 = $("<input>").attr("type", "hidden").attr("name", "userid").val(userid);
+		var input3 = $("<input>").attr("type", "hidden").attr("name", "applicationid").val(applicationid);
+		var input4 = $("<input>").attr("type", "hidden").attr("name", "serialno").val(serialno);
+		$form.append($(input1)).append($(input2)).append($(input3)).append($(input4));
+		$form.attr('target','_blank');
+		$form.attr('action',base_url+'common/view_document');
+		$form.appendTo('body').submit(); 
+	}
+
+
+
+=>  Desire tab selection | active tab from url  | write anywhere in file
+
+	jQuery(function(){
+               var url = document.location.toString()+'#tab-flip-one-1'; 			// #active tab that will be active
+               if (url.match('#')) {
+                    $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
+                } 
+               
+                // Change hash for page-reload
+                $('.nav-tabs a').on('shown', function (e) {
+                    window.location.hash = e.target.hash;
+                });
+	});
+
+
+
+=>  Order By date  in Data table |  column index starting from 0  |  no of records per page
+
+
+	$(document).ready(function() {
+		$.fn.dataTable.moment('DD-MMM-YY HH:mm');
+		// DataTable
+		var table = $('#pendingCallTbl').DataTable({
+		                "bLengthChange": false,
+		                "bFilter": false,
+		                /*"pageLength": 2,*/   // for no of records per page
+		                "order": [[ 3, "desc" ]],   //column index starting from 0
+		                "ordering": true
+		            });
+	});	
+
+
+=>  For soring and pagination  use below files
+
+	<link rel="stylesheet" href="<?php echo base_url();?>public/styles/jquery.dataTables.css">
+	
+	<script src="http://10.0.4.204/Feedback_management_system/public/scripts/jquery.dataTables.min.js"></script> 
+	<script src="http://10.0.4.204/Feedback_management_system/public/scripts/moment.min.js"></script> 
+	
+	
+	
+	
+	$(document).ready(function() {
+		$('select[multiple]').multiselect();
+		$.fn.dataTable.moment( 'D-MMM-YY' );
+		$.fn.dataTable.moment( 'DD-MM-YYYY HH:mm' );
+
+		$('#example1, #example2').dataTable({
+   						"bLengthChange": false,
+	    				"bFilter": false,
+        				"order": [[ 4, "desc" ]],
+        				"info": false,
+        				paging: false,
+        				"bAutoWidth": false,
+        				"language": {
+				            "decimal": ",",
+				            "thousands": "."
+				        },
+						"columnDefs": [{ "width": "200", "targets": 0 }],
+						"initComplete": function (settings, json) {
+							var intVal = function ( i ) {
+				                return typeof i === 'string' ?
+				                    i.replace(/[\$,]/g, '')*1 :
+				                    typeof i === 'number' ?
+				                        i : 0;
+				            };
+
+					        this.api().columns('.sum').every(function () {
+					            var column = this;
+					            var sum = column
+					               .data()
+					               .reduce(function (a, b) { 
+					                   return intVal(a) + intVal(b);
+					               });
+					            
+					            $(column.footer()).html((column[0][0]==1)?sum:sum.toFixed(2));
+					        });
+					    }
+    				});
+	});
+	<script src="http://10.0.4.204/Feedback_management_system/public/scripts/datetime-moment.js"></script> 
+	
+
+
+==> sum using datatable
+	
+	$(document).ready(function() {
+		$('select[multiple]').multiselect();
+		$.fn.dataTable.moment( 'D-MMM-YY' );
+		$.fn.dataTable.moment( 'DD-MM-YYYY HH:mm' );
+
+		$('#example1, #example2').dataTable({
+   						"bLengthChange": false,
+	    				"bFilter": false,
+        				"order": [[ 4, "desc" ]],
+        				"info": false,
+        				paging: false,
+        				"bAutoWidth": false,
+        				"language": {
+				            "decimal": ",",
+				            "thousands": "."
+				        },
+						"columnDefs": [{ "width": "200", "targets": 0 }],
+						"initComplete": function (settings, json) {
+							var intVal = function ( i ) {
+				                return typeof i === 'string' ?
+				                    i.replace(/[\$,]/g, '')*1 :
+				                    typeof i === 'number' ?
+				                        i : 0;
+				            };
+
+					        this.api().columns('.sum').every(function () {
+					            var column = this;
+					            var sum = column
+					               .data()
+					               .reduce(function (a, b) { 
+					                   return intVal(a) + intVal(b);
+					               });
+					            
+					            $(column.footer()).html((column[0][0]==1)?sum:sum.toFixed(2));
+					        });
+					    }
+    				});
+	});
+
+
+
+----------------------------------------------------------------------
+
+==>  export to excel button option in datatable
+
+	
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css">
+	<!--
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	-->
+		<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js">
+		</script>
+		<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>			
+		<script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+		<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+			
+			
+		$(document).ready(function() {
+		   $.fn.dataTable.moment( 'D-MMM-YY HH:mm' );
+		   $.fn.dataTable.moment( 'DD-MM-YY HH:mm' );
+		   $('#example').dataTable({
+				"bLengthChange": false,
+				"bFilter": false,
+				"order": [[ 3, "desc" ]],
+				dom: 'Bfrtip',
+				/*buttons: [
+					'excel'
+				]*/
+				
+				buttons: [
+				{
+					extend: 'excel',
+					text: 'Export to Excel'
+				}
+				]
+			});
+		});		
+
+
+==> datatable export to excel problem | action button not showing | input fields values not showing | use hidden span tag with values
+	
+	<span style="display: none">View</span>
+	
+	
+==> export to excel button placement manual
+
+	<div id="btn-export"></div>
+	
+	var buttons = new $.fn.dataTable.Buttons(table, {
+     //buttons: [ 'excelHtml5' ]
+     buttons: [{
+				extend: 'excel',
+				text: 'Export to Excel'
+			  }]
+	}).container().appendTo($('#btn-export'));
+
+
+	
+	
+==> get user agent | browser info | ip address of visitors  in codeigniter
+
+		$this->load->library('user_agent');
+		
+ 		echo '$$$$->'.$agent = $this->agent->browser(). ' | ######: '. $this->agent->version();
+
+ 		echo '<br> platform ->'.$platform = $this->agent->platform();
+		echo '<br>HTTP_USER_AGENT ->'.$full_user_agent_string = $_SERVER['HTTP_USER_AGENT'];
+
+		echo 'Ip:'.$ip = $this->input->ip_address();
+
+		
+		
+		
+==>  remove an element from an array in js |  splice
+
+	-First, find the index of the element you want to remove:
+		
+		var array = [2, 5, 9];
+		var index = array.indexOf(5);
+		
+			
+		if (index > -1) {
+			array.splice(index, 1);
+		}
+	
+
+==> get array value in POST in codeigniter
+
+	print_r($this->input->post('cas_no', true));
+		
+		
+		
+==>  add an element and remove an element from an array in js  |  indexOf() | splice() | push()
+		
+		var cas_no_arr = [];
+		
+		function get_general_list(cas_no)
+		{ 
+			var cas_no_index = cas_no_arr.indexOf(cas_no);
+			console.log('cas_no_index:'+cas_no_index);
+			
+			if( cas_no_index !== -1 ) {    //present 				
+				cas_no_arr.splice(cas_no_index, 1);		//remove	
+			}else{     				 					// use == -1 for not present    //absent             
+				cas_no_arr.push(cas_no);
+			}
+		}
+
+
+==>  number no with  comma in js	
+
+	function numberWithCommas(x) {
+	  return x.toString().substring(0,x.toString().split('.')[0].length-3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + x.toString().substring(x.toString().split('.')[0].length-3);
+	}	
+		
+	value = numberWithCommas(value);
+	console.log(value);
+		
+
+==> use of siblings() in jquery |   Sibling -> share the same parent.
+
+	The siblings() method returns all sibling elements of the selected element.
+	Sibling elements are elements that share the same parent.
+	
+	$('.btn-change').on('click', function() {
+      $(this).parents('.complete-box').siblings().show();
+      $(this).parents('.complete-box').hide();
+      var val = $(this).parents('.complete-box').find('.ammount span').text().trim();
+      val = val.replace (/,/g, "");
+      val = parseFloat(val);
+      $(this).parents('.complete-box').siblings().find('input.salary').val(val);
+      var remark = $(this).parents('.complete-box').find('.remarks').text().trim();
+      $(this).parents('.complete-box').siblings().find('textarea').val(remark);
+    })
+	
+==> get child text	in jquery
+	
+	$(this).find('.btn_text').html()
+	
+==> datatable null values from server using ajax | show msg no data found
+	
+		if($index){
+			echo json_encode($index);	
+		}else{		
+			echo json_encode(array('data'=>'')); 
+		}	
+		
+
+==> count each array values in php
+	array_count_values($source_arr);
+
+	
+==> google pie chart 
+	
+	URL ->  http://talkerscode.com/webtricks/display-data-in-pie-chart-using-php-and-jquery.php
+	
+	also include js
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		
+
+==> create array for generating google pie chart in php 	
+		
+		function generate_array($chart_type,$array){
+			$c = 0;
+			$result = array();
+			foreach ($array as $key => $val) { 
+				if($c==0){
+				   $result[] = array($chart_type, 'Rating');      
+				}		    
+				$key = ($key=='') ? 'Null' : $key;				
+				$result[] = array("$key",$val);
+				$c++;
+			}
+			return $result;
+		}
+
+		
+				$source_arr = $medium_arr = $lead_stage_arr = array();	       		
+       			$res = '';
+				if($result)
+				{
+		            $res = $result->OBJECT[0]->GET_CAMPAIGN_LEAD_DETAILS;		            
+					foreach ($res as $val) {						   
+						   $source_arr[] = $val->SOURCE;
+						   $medium_arr[] = $val->MEDIUM;
+						   $lead_stage_arr[] = $val->LEAD_STAGE;						 
+					}					
+		        } 
+		        $data['list'] = $res;		      
+
+		        if(count($res)>0){
+			        $data['source_data'] = $this->generate_array('SOURCE',array_count_values($source_arr));		       
+			        $data['medium_data'] = $this->generate_array('MEDIUM',array_count_values($medium_arr));
+			        $data['lead_stage_data'] = $this->generate_array('LEAD_STAGE',array_count_values($lead_stage_arr));
+			    }else{			      
+			      $data['source_data'] = array(array('SOURCE', 'Rating'),array('No Data Found',1));
+			      $data['medium_data'] = array(array('MEDIUM', 'Rating'),array('No Data Found',1));
+			      $data['lead_stage_data'] = array(array('LEAD_STAGE', 'Rating'),array('No Data Found',1));
+			    }
+
+			
+			$source_data = json_encode($source_data);
+			$medium_data = json_encode($medium_data);
+			$lead_stage_data = json_encode($lead_stage_data);
+					
+					
+		<script type="text/javascript">
+				google.charts.load('current', {'packages':['corechart']});
+				google.charts.setOnLoadCallback(drawSourceChart);
+
+				function drawSourceChart(){
+				  var data = google.visualization.arrayToDataTable(      
+					  <?php echo $source_data; ?>
+				  );
+					var options = {
+						title: '',
+						width: 449,
+						height: 300,
+						is3D: true,
+					};    
+					var chart = new google.visualization.PieChart(document.getElementById('source_chart'));    
+					chart.draw(data, options);
+				}
+		</script>
+	
+		
+		 var options = {
+            legend:'none',								//hide menus
+            pieHole: 0.6,
+            width: '100%',		
+            height: '99%',
+            //pieSliceText: "none",						//  don't show percentage value
+            pieSliceText: "percentage",					//  show percentage on graph
+            colors: ['#ff0033', '#0f93f0'],				//custom colors
+            chartArea: {		
+                left: "3%",
+                top: "1%",
+                height: "94%",			
+                width: "94%"
+            }
+        };
+	
+				
+	
+	
+==>  format for indian currency in js |  rupee	
+	
+	function formatIndianCurrency(x){
+            x=x.toString();
+            var lastThree = x.substring(x.length-3);
+            var otherNumbers = x.substring(0,x.length-3);
+            if(otherNumbers != '')
+            lastThree = ',' + lastThree;
+            var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return res;
+        }
+
+
+
+==>  roundup to 2 decimal places in js |  round up 
+
+		function roundup(num) {    
+			num = num.toFixed(2);
+			num = parseFloat(num);
+			return num;
+		}
+	
+
+--------------------------------------------------------------------------------------
+	
+==> generate array for json |  use json_encode() | for multiple records
+
+	
+	  public function final_submit($post){
+
+    	//echo '<pre>';
+    	//print_r($post);    	    	
+    	//print_r($post['applicant_data']);    	
+    	//echo '</pre>';
+    	
+    	$my_data = array();
+    	foreach($post['applicant_data'] as $key => $value){
+    		$my_data[$value['name']] =  $value['value'];
+
+    	}
+
+    	//print_r($my_data);
+   		foreach($this->loan_json as $key => $value){				
+			$this->loan_json[$key] = com_fun::get_data_from($my_data, $key, '');    		
+    	}
+
+    	$this->loan_json['REQ_ADDRESS_TYPE'] = $post['req_address_type'];
+    	$this->loan_json['PURPOSE'] = implode(",",$post['purpose']);
+    	$this->loan_json['REQ_MOBILE_NO'] = $post['req_mobile_no'];
+    	$this->loan_json['REQ_EMAIL_ID'] = $post['req_email_id'];
+    	$loan_json = json_encode($this->loan_json);
+		//print_r($loan_json);
+
+    	// -------------------- applicant data 	-----------------------------		
+    	$tot_cust = com_fun::get_data_from($my_data, 'tot_cust', '');	
+    	$cust_json_arr = array();    		
+    	for($i=1; $i<=$tot_cust; $i++){    		
+	    	foreach($this->cust_json as $key => $value){
+				$this->cust_json[$key] = com_fun::get_data_from($my_data, $key.'_'.$i, '');
+			}							
+			$cust_json_arr[] = $this->cust_json;
+		}
+
+		$cust_json = json_encode($cust_json_arr);
+
+	    $params = array(	     
+			  "USER_ID" => com_fun::get_data_from($_SESSION, 'ses_user_id', ''),
+		     "FILE_NO" => com_fun::get_data_from($_SESSION, 'topup_file_no', ''),
+		     "PROP_NO" => com_fun::get_data_from($_SESSION, 'topup_prop_no', ''),
+		     "LOAN_TYPE" => "TOP",
+		     "CUST_JSON" => $cust_json,
+		     "LOAN_JSON" => $loan_json,
+		     "LOGIN_MODE" => "WEBSITE",
+		     "REF_CODE" => "",
+		     "SOURCE_CODE" => ""
+		);
+
+	//print_r($params);
+	$result_data = com_fun::call_webservice_ajax('Set_PreApprovedLoanReq',$params);
+	
+
+	/*	echo '#####<pre>';
+		print_r($result_data);
+		echo '</pre>';*/   
+
+    }	
+	
+	
+==> change key name in array
+
+	$validatedInput['serial_no_2'] = $validatedInput['serial_no'];
+    unset($validatedInput['serial_no']);
+	return  $validatedInput;
+		
+
+==> calculate EMI in js	
+
+	function calculateEMI(loanAmount,numberOfMonths,rateOfInterest)
+	{
+		var monthlyInterestRatio = (rateOfInterest/100)/12;
+		var top = Math.pow((1+monthlyInterestRatio),numberOfMonths);
+		var bottom = top -1;
+		var sp = top / bottom;
+		var emi = ((loanAmount * monthlyInterestRatio) * sp);
+		var emi_str = Math.round(emi);
+		$("#emi_payable").html(emi_str);
+		$("#REQ_EMI").html(emi_str);
+	}
+
+	
+--------------------------------------------------------------------------------------
+
+==> view document in php with base64  encrypted format
+
+	<?php
+		$data = $_POST['FILE_DATA'];			//FILE_DATA - it will come from post
+		$data = base64_decode($data);
+		$ext = strtolower(pathinfo($_POST['FILE_NAME'], PATHINFO_EXTENSION));			//FILE_NAME - it will come from post
+		if($ext == 'PDF' || $ext == 'pdf')
+		{
+			header("Content-type: application/pdf");
+		}
+		if($ext == 'jpeg' || $ext == 'jpg')
+		{
+			header("Content-type: image/jpeg");
+		}
+		header("Content-Length:" . strlen($data));
+		header("Content-Disposition: inline; filename=".$_POST['FILE_NAME']);		//FILE_NAME - it will come from post
+		print $data;
+	?>
+	
+	2nd option  ----------------------
+	
+	$topup=new Topup();        // topup class 
+	
+	$view_document = $topup->viewPreApprLoanDocument($_POST); 			 // topup class function
+	
+	$filename = $view_document['FILE_NAME'];
+	$bin = $view_document['FILE_DATA'];
+    
+    if(isset($filename) && isset($bin) && $filename != "" && $bin != ""){
+
+	    $data = str_replace(" ","+",$bin);
+	    $data = base64_decode($data);
+	    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+		
+		header("Content-type: application/".$ext."");
+		header("Content-Length:" . strlen($data ));
+		header("Content-Disposition: inline; filename=".$filename);
+		print $data;
+
+	}else{
+		com_fun::post_page('invalid.php',"Sorry! The Requesting Document not found on Server.");
+	}
+	
+	
+==> google map in js
+	    
+    $.getScript("//maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA0kLcRknnbAV7KjGkWe6enD-p7VbQbh4M")
+    .done(function() {
+        $('#map-popup').on('shown.bs.modal', function(){
+              loadpropmap();
+        }); 
+    })
+    .fail(function(){
+        $("#service-center-map").hide();
+    });
+
+    function loadpropmap()
+    {     
+        if($("#PROP_LATITUDE").val() != '' && $("#PROP_LONGITUDE").val() != '')
+        {
+            var lat = parseFloat($("#PROP_LATITUDE").val());
+            var lng = parseFloat($("#PROP_LONGITUDE").val());
+
+            $.ajax({
+                url : 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=false&key=AIzaSyA0kLcRknnbAV7KjGkWe6enD-p7VbQbh4M',
+                success: function(data){               
+                    if(data['results'][0]['formatted_address'] != undefined)
+                    {           
+                        var myLatLng = {lat: lat, lng: lng};                
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 15,
+                            center: myLatLng
+                        });
+
+                        var marker = new google.maps.Marker({
+                            position: myLatLng,
+                            map: map,
+                            draggable:true
+                        });   
+                    }
+                },
+                error: function(err)
+                {
+                    $("#map").hide();        
+                    $("#map-popup h4").html('Unable to load maps.');
+                }
+            });
+        }
+    }
+	
+==> format date in datatable in js   ||  use render
+	
+	http://adkh.datatables.net/forums/discussion/33852/datetime-moment-js-with-sharepoint-date-data
+	
+	<script src="https://cdn.datatables.net/plug-ins/1.10.16/dataRender/datetime.js"></script> 
+	
+	NOTE:  use 		$.fn.dataTable.moment('DD-MM-YYYY');     // for filter
+	
+	ar table = $('#example').DataTable({
+	                "bLengthChange": false,
+	                "bFilter": false,
+	                /*"pageLength": 2,*/   // for no of records per page
+	                "order": [[ 0, "desc" ]],   //column index starting from 0
+	                "ordering": true,	                
+	             	dom: 'Bfrtip',
+	             	columnDefs: [ {
+							      targets: 0,							     
+							      render: function ( data, type, row ) {
+								           return (moment(data).format("DD-MM-YYYY"));
+								    }
+							    } ],
+			        buttons: [{
+								extend: 'excel',
+								text: 'Export to Excel',
+							}]
+	            });
+
+				
+==> 	date time picker bootstrap | 
+
+	https://stackoverflow.com/questions/41236574/bootstrap-datetimepicker-not-working-with-the-jquery-3
+
+https://code.jquery.com/jquery-3.1.1.min.js
+https://momentjs.com/downloads/moment.js
+<script src="{{url('js/bootstrap.min.js')}}"></script>
+https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js
+
+
+normal 
+
+		 $('#datetimepicker1').datetimepicker({format: "YYYY-MM-DD HH:mm:ss", ignoreReadonly:true });
+
+
+with ajax 
+
+			success: function (response) {            
+                 $('#datetimepicker1').datetimepicker({format: "YYYY-MM-DD HH:mm:ss", ignoreReadonly:true });
+            },
+
+
+html			
+		<div class='input-group date' id='datetimepicker1'>
+            <input type='text' class="form-control" />
+            <span class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+            </span>
+        </div>
+
+
+
+		
+==> add validation error on each fields in bootstrap form from server side with ajax
+		
+		  $(document).on('submit', '#frmEditMessage', function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: "post",
+                    data: $(this).serialize(),
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.data){
+                            $(".error").html(response.data);
+                        }
+                    },
+                    error: function (response) {
+                        /*if (response.status === 422){
+                            $(".error").html('Error, Enter Required Fields');
+                        }
+                        return;*/
+                       // console.log(response);
+
+                        $.each(response.responseJSON.errors, function (key, value) {
+                            var input = '#frmEditMessage input[name=' + key + '], #frmEditMessage select[name=' + key + ']';
+                           // var select = '#frmEditMessage select[name=' + key + ']';
+                            $(input + '+small').text(value);
+                            $(input).parent().addClass('has-error');
+                        });
+                    }
+				});
+            });
+
+
+==> spellcheck | spell | spelling checking 
+
+	<textarea spellcheck="false"> or <input type="text" spellcheck="false">`
+
+
+	
+==> each() for jquery  | foreach() for javascript
+
+	let sections = document.querySelectorAll('.fly-in');
+	let value = 100;
+
+Ex.1
+
+ 	$.each(sections, function (i, section) {
+		setTimeout(function () {
+			section.classList.add('visible');
+		}, value);
+		value = value * 2;
+	});
+
+
+
+Ex. 2
+	
+		description:Array(1)
+		0:"The description field is required."
+
+		name:Array(1)
+		0:"The name field is required."
+
+
+		var errorList = error.response.data.errors;
+
+
+		$.each(error.response.data.errors, function (key, value) {
+		   console.log(key);  console.log(value);
+		});
+
+
+
+
+
+
+Ex. 2 - forEach is for javascript not jquery
+
+		var sections = document.querySelectorAll('.fly-in');
+		var value = 100;
+
+		sections.forEach(function (section) {
+			setInterval(function () {
+				section.classList.add('visible');
+			}, value);
+			value = value * 2;
+		});	
+	
+	
+	
+==>  scroll to specific div | do function depending on # url | hash
+
+HTML:
+	<a class="pending-link" href="http://insta-loan.test/additional-loan-request#pendingQuery">pendingQuery</a>
+
+	
+JS:
+	$(document).ready(function () {
+        let $url = document.location.toString();
+         handleAdditionalLoanTabs($url);
+
+        $(".pending-link").click(function () {
+            handleAdditionalLoanTabs($(this).attr('href'));
+        });
+    });
+    
+    function handleAdditionalLoanTabs(url) {
+        let $tab = url.split('#')[1];
+        $tab = $tab == undefined ? 'pendingDocuments' : $tab;
+        slideToDiv($tab);
+
+        $("input[type='checkbox']").attr('checked',false);
+        $("#"+$tab).attr('checked',true);
+
+        $('.menu-drawer').removeClass('active');
+        $('.overlay').removeClass('fixed-full');
+    }
+
+    function slideToDiv(tab) {
+        //e.preventDefault();
+        var position = $('#'+tab+'Scroll').offset().top;
+        $("body, html").animate({
+            scrollTop: position
+        }, 'slow' );
+    }
+	
+
+
+---------------------------------------------
+
+npm rebuild node-sass
+
+
+---------------------------------------------
+
+==> jquery form validation |  dynamic message | use max property for dynamic values
+
+	 rules: {
+                amount_payable: {
+                    required: true,
+                    number: true,
+                    max: function(){
+                        return parseInt($("#amount_payable").attr('data-amount'), 10)
+                    },
+                },
+                bank_account: 'required',
+                'payment_type[]': {
+                    required : function () {
+                        return $("input[name='payment_type[]']").length != 0 ? true : false;
+                    }
+                },
+            },
+            messages: {
+                amount_payable: {
+                    required: function () {
+                      //  let number = $(`[name="applicant_country_code"]`).val() === '91' ? 10 : 15;
+                        //return `Mobile number should be maximum ${number} digits.`;
+						
+                        return `Amount should be less than or equal to `+$("#amount_payable").attr('data-amount')+`.`;
+                    }
+                },
+            },
+            //ignore: ".ignore",
+
+			
+    ------- apply validation if element present in dom | use lenght property
+	
+			 'payment_type[]': {
+                    required : function () {
+                        return $("input[name='payment_type[]']").length != 0 ? true : false;
+                    }
+                },
+				
+				
+
+				
+
+
+==>
+
+
+	callback: {
+		                    callback: function (value, validator, $field) {
+
+                                var isValid = false;
+                                var message = '';
+
+                                var countryCode = $('#frmPersonal').find('[name="cm_mobile_code"]').val();
+
+                                        if(countryCode == '91') {
+                                            $($field[0]).attr('maxlength',10);
+                                            isValid =  value.length == 10  ? true : false;  
+                                            message = "Mobile number should be exacly 10 digits";
+
+                                        }else{
+                                            message = "Mobile number should be between 6 and 15 digits";
+                                            $($field[0]).attr('maxlength',15);
+                                            isValid =  (value.length >= 6 && value.length <= 15) ? true : false;
+                                        }
+                                
+                                        if( !isValid) {
+                                            setTimeout(function() {
+                                                $('#frmPersonal').find('[data-fv-validator="callback"][data-fv-for="cm_mobile_no"]').text(message);
+                                            }, 300)
+                                        }
+                                return isValid;
+                            }
+
+
+==> includes() | a value exits in array in js
+
+
+	var ACC_SIZE = $('#ACCOUNT_SIZE__' + hbd).val();
+    var isAccountSizeValid = ACC_SIZE=="" ? true : ACC_SIZE.split('$').includes(ACC_NO.length.toString());
+
+
+
+
+==> validate multiple email id in js | forEach()  on array
+
+	
+	var lead_email = $('#email').val();
+
+                    if (lead_email.length != 0 || lead_email == '') {
+                        var valid_email = new RegExp(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+                        
+                        var EmailArr = lead_email.split(',');
+
+                        EmailArr.forEach(function(val){
+                            if (!val.match(valid_email)) {
+                                $('#email').addClass('errortxt2');
+                                error = 11;
+                            } else {
+                                $('#email').removeClass('errortxt2');
+                            }
+                        });
+
+                    }
+
+
+==> typeof  for undefined
+
+		if(typeof(APPLICANT_NAME_BANK) === 'undefined'){
+            continue;
+        }
+
+
+
+==> submit a form using js
+
+	 document.forms["perfiosForm"].submit();
+
+==> redirect to back page | previous page in js
+
+	window.history.back();
+
+
+==> replace in js | replace all comma(,) with blank | multiple replace
+
+	Ex .  INCOME_AMOUNT.replace(/,/g, '')
+
+	parseInt(INCOME_AMOUNT.replace(/,/g, '')) < 8000	
+
+
+
+==> replace()  in js  | single replace 
+
+		var str = "Visit Microsoft!";
+		var res = str.replace("Microsoft", "W3Schools");
+		
+		O/P => Visit W3Schools!
+
+
+
+
+
+
+==> mobile no validation in jquery validator
+
+	 mobile_no: {
+                    required: true,
+                    number: true,
+                    maxlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91' ? 10 : 15;
+                    },
+                    minlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91' ? 10 : 6;
+                    },
+                },
+
+                
+
+ 	messages: {
+                mobile_no: {
+                    maxlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91'
+                            ? 'Mobile number should be 10 digits.'
+                            : 'Mobile number should be min 6 and max 15 digits.';
+                    },
+                    minlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91'
+                                    ? 'Mobile number should be 10 digits.'
+                                    : 'Mobile number should be min 6 and max 15 digits.';
+                    },
+                },
+                dob : 'Enter date Of birth',
+                name : 'Enter your name',
+            },
+
+
+
+
+
+==> 
+		$('.nav-link').click(function () {
+            $(".error-msg").html('');
+            $('form').each(function() {
+                $(this).validate().resetForm();
+                $(this)[0].reset();
+            });
+        });

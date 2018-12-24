@@ -1,0 +1,81 @@
+$(document).ready(function() {
+
+  // Setup table
+
+  $('#table').DataTable({
+    responsive: true,
+    paginate: false,
+    info: false
+  });
+
+  // Setup dropdown
+
+  $('#dropdown').multiselect({
+    onChange: function(element, checked) {
+
+      var cities = $('#dropdown option:selected');
+
+      var selected = [];
+      $(cities).each(function(index, city) {
+        selected.push([$(this).val()]);
+      });
+
+      var regex = selected.join("|");
+      
+      $('#table').DataTable().column(1).search(
+        regex, true, true
+      ).draw();
+    }
+  });
+});
+
+
+<select id="dropdown" multiple="multiple" style="display: none;">
+  <optgroup label="Cities">
+    <option value="Edinburgh">Edinburgh</option>
+    <option value="Lisbon">Lisbon</option>
+    <option value="London">London</option>
+    <option value="Paris">Paris</option>
+    <option value="Tokyo">Tokyo</option>
+  </optgroup>
+</select>
+
+<table id="table" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>City</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Tiger Nixon</td>
+      <td>London</td>
+    </tr>
+    <tr>
+      <td>Garrett Winters</td>
+      <td>Paris</td>
+    </tr>
+    <tr>
+      <td>Ashton Cox</td>
+      <td>Lisbon</td>
+    </tr>
+    <tr>
+      <td>Cedric Kelly</td>
+      <td>Edinburgh</td>
+    </tr>
+    <tr>
+      <td>Airi Satou</td>
+      <td>Tokyo</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+#table_filter {
+  display: none;
+}
+
+
+

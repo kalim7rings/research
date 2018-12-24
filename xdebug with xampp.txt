@@ -1,0 +1,27 @@
+search ->    phpstorm bookmark xdebug
+https://medium.com/@michalisantoniou6/set-up-xdebug-with-homestead-phpstorm-and-php7-85b5ac8f0c79       for homestead
+
+https://www.jetbrains.com/phpstorm/marklets/
+
+https://w3guy.com/xdebug-xampp-phpstorm/
+
+in cmd -> 	php -i > text.txt
+copy output ->  https://xdebug.org/wizard.php       imp        debug.dll ->   ext file 
+
+zend_extension = "D:\apps\xampp\php\ext\php_xdebug.dll"
+xdebug.profiler_append = 0
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 0
+xdebug.profiler_output_dir = "D:\apps\xampp\tmp"
+xdebug.profiler_output_name = "cachegrind.out.%t-%s"
+xdebug.remote_enable = 1
+xdebug.remote_handler = "dbgp"
+xdebug.remote_host = "127.0.0.1"
+xdebug.trace_output_dir = "D:\apps\xampp\tmp"
+xdebug.idekey = PHPSTROM
+
+shortcuts 
+https://docs.emmet.io/cheat-sheet/
+
+XAMPP Custom Domain:
+https://gist.github.com/omarusman/5530016

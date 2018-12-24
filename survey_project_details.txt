@@ -1,0 +1,60 @@
+Feedback Management System
+
+
+Front End
+		https://applications.hdfc.com/feedback/HcRBdQVRXo
+		
+		192.168.10.139
+		
+		http://10.0.4.53/feedback/NenYWEZzVT
+		http://10.0.4.53/feedback/ydVdAcOvgQ
+				
+		http://10.0.4.53/feedback/HcRBdQVRXo		
+		http://10.0.4.53/feedback/NSETJaZQak			//question not available
+
+		http://10.0.4.53/feedback/NenYWEZzVT			// already RESPONDED
+
+		10.3.1.228
+
+-------------------------------------------
+	
+Admin (Back End) 
+
+	Url ->  http://10.0.4.204/Feedback_management_system
+
+--------------------------------------------------
+
+LIVE
+Schema used (database)
+		messages		
+		dbloans		
+		PKG_SURVEY_ADMIN and
+		PKG_SURVEY
+				
+		
+Local
+Schema used (database)
+		messages
+		dbloanuat3
+		PKG_SURVEY_ADMIN and
+		PKG_SURVEY
+
+-------------------------------------------------
+
+LIVE	
+	http://10.0.4.202:8081/feedback_ws_live/feedbackservice.asmx?wsdl
+	
+	
+Local	
+	http://10.0.1.132/feedback_ws_uat3/feedbackservice.asmx?wsdl
+	
+	
+
+DL
+	
+	
+	
+	
+
+vhdfconline1\instauser
+Hdfc@0123

@@ -1,0 +1,23 @@
+Steps:
+1 - install vagrant
+
+vagrant box add laravel/homestead file:///c:/users/tushara/downloads/virtualbox.box
+
+d:/laravel/virtualbox-v4.0.0.box
+
+
+https://medium.com/@eaimanshoshi/i-am-going-to-write-down-step-by-step-procedure-to-setup-homestead-for-laravel-5-2-17491a423aa
+
+https://www.digitalocean.com/community/tutorials/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps
+
+
+vagrant box remove laravel/homestead
+
+
+
+
+vagrant box add laravel/homestead file:///c:/users/tushara/downloads/virtualbox.box
+
+
+
+vagrant box add laravel/homestead D:\software\virtualbox-v4.0.0.box

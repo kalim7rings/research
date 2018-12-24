@@ -1,0 +1,556 @@
+
+https://mailtrap.io/signin
+
+login with google account(use below details)
+
+hdfc2019@gmail.com
+Secure@2017
+
+
+
+
+
+
+URL : http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Ps_Get_Loan_Summary			//Account summary
+" FILE_NO ":" 605374593 ", 				// 605374593
+" CUST_NO
+
+ 
+
+-------------------------------------------------------------------------------------------------
+
+
+URL : http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Ps_Get_Prov_Interest
+
+" LACK_NO":" 605374593",
+" FINANCIALYEAR":" 201718"
+ 
+
+-------------------------------------------------------------------------------------------------
+
+
+URL : http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Ps_Get_Transactions
+
+" LACK_NO":" 605374593",
+" FINANCIALYEAR":" 201718"
+
+-------------------------------------------------------------------------------------------------
+
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Generate_Certificates
+
+
+USER_ID : ANJASS
+LAC_NO : 605374593
+YEAR: 201718
+RPT_TYPE :"LYP" / "PRO" / "ACC_CURR" / "ACC_PREV"
+APPL_TYPE : "WEB" / "MOBILE"
+
+
+PRO -> for IT certificate provisional 
+LYP ->  for IT certificate
+ACC_CURR -> account certificate for current year
+ACC_PREV -> account certificate for previous year
+
+-------------------------------------------------------------------------------------------------
+
+ http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Get_Loan_Details
+	LAC_NO :601034770 
+
+-------------------------------------------------------------------------------------------------
+
+1)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_Provisional_Interest
+"LAC_NO":" 605374593"
+
+-------------------------------------------------------------------------------------------------
+
+
+2)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Generate_IT_Cert			//income tax
+
+"USER_ID":" ANJASS",
+"LAC_NO":"605374593",
+APPL_TYPE : WEB
+"YEAR":"201718",
+"RPT_TYPE":"LYP"
+
+-------------------------------------------------------------------------------------------------
+
+3)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_Transactions_YEAR
+"LAC_NO":" 605374593"
+
+-------------------------------------------------------------------------------------------------
+  
+4)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Generate_Account_Cert	  //old	not in use	//account stmt
+"USER_ID":"ANJASS",
+"LAC_NO":"605374593",
+"RPT_TO":""
+
+-------------------------------------------------------------------------------------------------
+
+3)http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Generate_Account_Cert_Curr
+USER_ID : E
+LAC_NO:606288169
+APPL_TYPE:WEB
+
+-------------------------------------------------------------------------------------------------
+
+4)http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Generate_Account_Cert_Prev
+USER_ID:"E",
+LAC_NO:"606288169
+APPL_TYPE:"WEB
+YEAR:201718
+
+-------------------------------------------------------------------------------------------------
+
+5) URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_Payment_Mode
+"LAC_NO":" 605374593"
+
+-------------------------------------------------------------------------------------------------
+
+
+6) URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_Query_Feedback
+
+"USER_ID:"ANJASS",
+"LAC_NO":" 605374593" 
+
+-------------------------------------------------------------------------------------------------
+ 
+7) URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Add_Query_Feedback
+
+"USER_ID:"ANJASS",
+"LAC_NO":" 605374593",
+"QUESTION":"ABS",
+"SUBJECT":"SAD"
+
+-------------------------------------------------------------------------------------------------
+
+
+8)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Get_Subject
+
+-------------------------------------------------------------------------------------------------
+
+9)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Get_Cust_details
+ "CUST_NO":" 18549880"
+
+ -------------------------------------------------------------------------------------------------
+
+10)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Get_Contact_Info
+
+"CUST_NO":" 18549880",
+"LAC_NO":"605374593",
+"USER_ID":"ANJASS"
+
+-------------------------------------------------------------------------------------------------
+
+11)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Update_Contact_Info
+
+"USER_ID":"ANJASS",
+"LAC_NO":"605374593",
+"EMAIL_ID":"",
+"MOBILE_NO":"",
+"ADDR_TYPE":"",
+"ADDRESS":""
+
+-------------------------------------------------------------------------------------------------
+
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Get_Loan_Details
+
+LAC_NO - 601034770
+
+-------------------------------------------------------------------------------------------------
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/GetServiceCenterDetails
+
+COUNTRY:        INDIA
+STATE:          MS 
+LOCATION:       MUMBAI
+CURR_LATITUDE:  19.110917
+CURR_LONGITUDE: 72.917789
+
+Near By    ->   CURR_LATITUDE  &  CURR_LONGITUDE
+INDIA 	   ->	COUNTRY , STATE & LOCATION
+ABROAD	   ->   COUNTRY != INDIA
+
+-------------------------------------------------------------------------------------------------
+
+
+http://192.168.10.95/insta-loan-web-services/public/api/v1/getHelplineNo
+
+
+php artisan migrate --path=/database/migrations/insta_loan/ --databese=insta_loan
+
+-------------------------------------------------------------------------------------------------
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_User_Details
+
+Parameters :
+
+1) I_TYPE = "APPLICANT_LIST"						// 14.b - get_user_detail(APPLICANT_LIST) 
+
+USER_ID : ANJASS
+serial_NO : 605374593
+SESSION_ID :DSGHJF
+I_TYPE : APPLICANT_LIST
+I_KEY1 : 18549880 (CUST_ID)
+I_KEY2 : ""
+I_KEY3 : ""
+I_KEY4 : ""
+I_KEY5 : ""
+
+
+2) I_TYPE = "PROPERTY_LIST"
+
+USER_ID : ANJASS
+serial_NO : ""
+SESSION_ID :DSGHJF
+I_TYPE : PROPERTY_LIST
+I_KEY1 : ""
+I_KEY2 : ""
+I_KEY3 : ""
+I_KEY4 : ""
+I_KEY5 : ""
+
+
+3) I_TYPE = "LOAN_LIST" 
+USER_ID : ANJASS
+serial_NO : ""
+SESSION_ID :DSGHJF
+I_TYPE : LOAN_LIST
+I_KEY1 : "pass loan type here ( e.g IMP/EQT/TOP/NRP/EXT)"
+I_KEY2 : ""
+I_KEY3 : ""
+I_KEY4 : ""
+I_KEY5 : ""
+
+
+4) I_TYPE = "LOAN_AMT_POSS"
+USER_ID : ""
+serial_NO : "605374593"
+SESSION_ID :DSGHJF
+I_TYPE : LOAN_AMT_POSS
+I_KEY1 : " PASS LOAN PRODUCT (e.g TOP/EQT)"
+I_KEY2 : "PASS EXPECTED LOAN AMOUNT HERE"
+I_KEY3 : ""
+I_KEY4 : ""
+I_KEY5 : ""
+
+
+4) I_TYPE = "IS_VALID_USER"
+USER_ID : "ANJASS"
+serial_NO : ""
+SESSION_ID :DSGHJF
+I_TYPE : "IS_VALID_USER"
+I_KEY1 : ""
+I_KEY2 : ""
+I_KEY3 : ""
+I_KEY4 : ""
+I_KEY5 : ""
+
+
+  
+get user deatils
+  
+  {
+  "user_id": "ANJASS",
+  "serial_no": "",  
+  "i_key1": ""
+}
+
+
+
+-------------------------------------------------------------------------------------------------
+
+
+14.a - (submit) - get_user_detail(LOAN_LIST) 
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Check_Loan
+
+
+USER_ID : ANJASS"
+LOAN_LEVEL : NEW"				//NEW/EXISTING/REFINANCE
+serial_NO : 605374593"
+PROP_NO : P869594"
+APPLIED_LOAN_TYPE : TOP"
+APPLIED_LOAN_AMOUNT : 2000000"
+
+-------------------------------------------------------------------------------------------------
+
+service for pre sanction
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_Step_Data
+
+USER_ID : ANJASS
+SESSION_ID : SDFSDF
+INSTA_ID : 
+APPLICATION_ID : 
+SERIAL_NO : 605374593
+STEP_NO : 5
+SUB_STEP_NO : 1
+
+
+
+http://192.168.10.95/insta-loan-web-services/public/api/v1/getStepData
+
+serial_no : 605374593
+			other fields are hardcoded in micro
+
+http://192.168.10.95/insta-loan-web-services/public/api/v1/getLoanReview
+serial_no :605374593
+
+
+
+
+MANGSI
+630395447
+
+
+"PENDING_QUERY": [
+        {
+            "CUST_NUMBER": 24835096,
+            "CUST_NAME": "MANGUTKAR SANDEEP ISHWAR",
+            "CAPACITY": "BORROWER",
+            "DESRIPTION": "Application Form",
+            "REQ_DATE": "23-JAN",
+            "ROW_SRNO": 21422020392,
+            "REQ_REASON": "File not received"
+        }
+    ],
+
+
+
+PATRAN81
+630376750
+
+"PENDING_DOC": [
+        {
+            "CUST_NUMBER": 24835553,
+            "CUST_NAME": "PATRE SHRADDHA AMOL",
+            "CAPACITY": "CO BORROWER",
+            "DESRIPTION": "KYC - ADDRESS PROOF",
+            "REQ_DATE": "23-JAN",
+            "ROW_SRNO": 21422212257,
+            "REMARK": null,
+            "LOC_PATH": "ILPS201Feb18",
+            "DOC_TYPE": "KYC_ADDR",
+            "TYPE": "FILE_REQUIREMENTS",
+            "STATUS": "PENDING",
+            "DOC_STATUS": null,
+            "OVERALL_REMARK": null
+        }
+    ],
+
+
+
+
+-------------------------------------------------------------------------------------------------
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Is_Acc_Registered
+
+EMAIL_ID : "",	// METHSHANKAR53@gmail.com
+MOBILE_NO : ""  //9987014034  //9987014034
+ACC_NO : ""		//606669547
+
+-------------------------------------------------------------------------------------------------
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Is_User_Id_Exist
+	USER_ID : "ANJASS
+
+The user id has already been taken.
+
+-------------------------------------------------------------------------------------------------
+
+
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Register_User
+
+ACC_NO :      m
+EMAIL_ID :	  m	
+MOBILE_NO :   m
+USER_ID :     m
+
+//PASSWORD :    m   	 --> //no
+
+
+
+---------------------------------------------------------------------------------
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/GET_DET_CONV_N_POPULATE
+LAC_NO :
+
+---------------------------------------------------------------------------------
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/Ins_Lac_Conv_Dtls
+
+
+LAC_NO :
+NEW_ROI :
+NEW_TERM :
+EMI :
+FEES :
+CALC_TERM: 
+NEW_SPREAD :
+USER_ID : 
+APPL_TYPE :
+
+
+
+Ins_Lac_Conv_Dtls
+
+ 				'lac_no'     => 'required',   		session 
+                'new_roi'    => 'required',
+                'new_term'   => 'required',
+                'emi'        => 'required',			p|EMI
+                'fees'       => 'required',			p|FEES
+                'calc_term'  => 'required',
+                'new_spread' => 'required',			P| NEW_SPREAD
+                'appl_type'  => 'required',			
+
+
+
+
+
+URL :  http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/GetMaster
+
+TYPE : HDFC_SERVICE_CENTER 
+KEY1  : MS
+KEY2 : MUMBAI-NAVI MUMBAI  / THANE
+
+
+     TYPE       LETTER_TYPE  / PROP_CONSTR_STATUS
+
+
+
+---------------------------------------------------------------------------------
+
+pay online
+
+1) http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Check_Pymt_Allowed
+
+LAC_NO: "603654504",
+USER_ID :"ANJASS"
+
+
+2) http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_Payment_Details
+
+LAC_NO: "603654504",		//605374593
+USER_ID :"ANJASS"
+
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/insta/Get_Payment_Adj_allowed
+
+REF_PAY_NO: "261317"
+
+
+
+
+
+
+
+
+
+
+
+insta_id   -> (APPL_NO) 			->           	applicationForm.index
+
+
+<input type="hidden" name="serial_no" value="630376750"> (file no)  ->  applicationSummary
+
+
+
+
+
+
+
+11)URL :http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/SET_DISB_REQUEST
+
+"USER_ID":"ANJASS",
+FILE_NO : 123
+
+
+
+[{"key":"FILE_NO","value":"123","description":""},{"key":"USER_ID","value":"A","description":""},{"key":"DISB_NO","value":"1","description":""},{"key":"OWN_CONTRI_FLAG","value":"Y","description":""},{"key":"RECEIPT_IS_AVAILABLE","value":"Y","description":""},{"key":"DISB_RECEIPT_JSON","value":"[{\"RECEIPT_MODE\":\"CAPTURED\",\"RECEIPT_NO\":\"1234\",\"RECEIPT_DATE\":\"22-MAY-2018\",\"RECEIPT_AMOUNT\":\"141252\",\"RECEIPT_FILE\":\"\"},{\"RECEIPT_MODE\":\"UPLOAD\",\"RECEIPT_NO\":\"\",\"RECEIPT_DATE\":\"\",\"RECEIPT_AMOUNT\":\"\",\"RECEIPT_FILE\":\"FILENAME\"}]","description":""},{"key":"PROP_CONSTR_STATUS","value":"READY","description":""},{"key":"PROP_CONSTR_STAGE","value":"WSEE","description":""},{"key":"LETTER_TYPE_IS_AVAILABLE","value":"Y","description":""},{"key":"DISB_PROP_JSON","value":"[{\"LETTER_TYPE\":\"DEMAND\",\"LETTER_DATE\":\"22-MAY-2018\",\"DEMAND_LETTER_FILE_NAME\":\"FILE_NAME\",\"REMARKS\":\"\"},{\"LETTER_TYPE\":\"BUILDER\",\"LETTER_DATE\":\"22-MAY-2018\",\"DEMAND_LETTER_FILE_NAME\":\"FILE_NAME\",\"REMARKS\":\"JDFKLFJG\"}]","description":""},{"key":"REQ_DISB_DATE","value":"22-MAY-2018","description":""},{"key":"TOTAL_REQ_DISBAMOUNT","value":"34666","description":""},{"key":"DISB_PAYEE_DET","value":"[{\"PAYABLE_TO\":\"TEST\",\"PAYABLE_AMOUNT\":\"343454\",\"PAYMENT_MODE\":\"NETBANKING\"},{\"PAYABLE_TO\":\"TEST1\",\"PAYABLE_AMOUNT\":\"343454\",\"PAYMENT_MODE\":\"NETBANKING\"}]","description":""}]
+
+
+
+
+
+Pay online payment
+
+
+
+
+1)Before_Payment
+
+LAC_NO
+USER_ID 
+WEBLOGIN            -> login user id 
+AMT_DUE             ->
+PAYMENT_AMT         -> 
+GATEWAY_NAME 
+BANK_ID
+NRI_FLG
+EMAIL_ID
+MOBILE_NO
+TR_TYPE :  EMI / ALLDP for dues
+TR_MODE   : NB for both
+PY_MERCHANT_TYPE  : '' for both
+CUST_BANK_ACC_NO : due -> enter account nom | emi dropdown  
+REFER_URL 
+MERCHANTID  :  VENDOR_ACCOUNT   from bank list dropdown
+SESSION_ID
+APPLN_TYPE
+CLIENT_IP
+PAY_ADJ_JSON  :  i_PAY_ADJ_JSON [Ref_Pay_No , Py_Merchant_Refid = '', Paymentamt =    
+
+                                "REF_PAY_NO": 23442,                                "PAY_AMT": 1000,
+                                "REF_PAY_NO": 23442,                                "PAY_AMT": 1000,   multiple
+
+
+
+
+
+
+result
+
+   SELECT  0 AS RETURN_CODE,
+     NULL AS MESSAGE,
+     LV_BILLDESK_REQUEST_SRNO AS PAYMENT_NO,
+     V_CSTWEB_TRXN_NO as CSTWEB_TRXN_NO
+     FROM DUAL;
+
+
+
+
+
+
+
+
+
+2)ConfirmPaymentRequest
+
+USER_ID   -> login user id
+SESSION_ID = 'dafdsfd'
+APPLN_TYPE  => 
+PAYMENT_NO =>   PAYMENT_NO
+REQUEST_URL => 
+REQUEST_MSG => ''  hash
+
+
+
+
+
+http://192.168.10.220/INSTA_LARAVEL_DMZ/api/Insta/ViewDocument
+
+
+'USER_ID'       
+'SERIAL_NO'
+'SESSION_ID
+'DOC_SCAN_ROWNO'

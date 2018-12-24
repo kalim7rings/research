@@ -1,0 +1,5041 @@
+https://www.cloudways.com/blog/rest-api-laravel-passport-authentication/         for passport-authentication api
+
+
+https://medium.com/@oliverusselldev/for-authentication-laravel-rest-api-the-best-method-is-to-use-laravel-passport-as-explained-here-676ec8292742								for api
+
+
+==>  pull new laravel project
+
+	 composer create-project laravel/laravel laravelvuejstutorial --prefer-dist
+
+	 composer create-project --prefer-dist laravel/laravel blog
+
+
+
+==> create a new controller
+	php artisan make:controller ApiController.php
+	
+	
+=>   install Laravel Passport
+
+	1 -	composer require laravel/passport
+
+
+	2 - add below in config/app.php
+
+         - add in providers array 
+
+			Laravel\Passport\PassportServiceProvider::class,	
+
+	3 -  php artisan migrate
+	4 - php artisan passport:install
+
+	5 - add below trait to your App\User model. 
+
+		use Laravel\Passport\HasApiTokens;		
+
+		and within class
+		use HasApiTokens, Notifiable;
+
+	6 - open  App\Providers\AuthServiceProvider.php
+
+		use Laravel\Passport\Passport; to the top of the file and Passport::routes(); in the boot() method like below. 
+
+				public function boot()
+			    {
+			        $this->registerPolicies();
+
+			        Passport::routes();
+			    }
+
+   7 - open config/auth.php
+
+		'api' => [
+		       'driver' => 'passport',
+		       'provider' => 'users',
+		],			
+
+	8 -  if want to access API from web application  NOTE : Access only from mobile then no need below config
+		
+		open  Http\Kernel.php  and add below line in $middlewareGroups (web)
+
+			\Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
+		    
+
+
+
+==> create a user auth using Artisan
+		php artisan make:auth
+
+
+==> link the storage with the public folder
+		php artisan storage:link
+
+
+==> Generate a migration, factory, and resource controller for the model  in sigle command
+
+	make:model [options] [--] <name>  
+	
+	-a, --all             Generate a migration, factory, and resource controller for the model
+	
+	php artisan make:model User -a
+		
+		
+==>  get help of a command
+
+	php artisan make:model -h
+
+
+==> create models   \\ create Models folder inside app directory
+	php artisan make:model Models\ModelName
+
+		
+	Generate a database migration when you generate the model,  |  generate migration also
+	
+		php artisan make:model User --migration
+		php artisan make:model User -m	
+		
+		
+		 -a, --all             Generate a migration, factory, and resource controller for the model
+
+		
+
+	ModelName.php
+
+
+	protected $table = 'banner_master';    	//table_name
+    public $timestamps = false;				//dont want to use default created_date updated_date
+    protected $fillable = ['id','Name'];	//specify columns that we are going to use
+
+
+
+
+==> pass variable to view from controller
+
+	controller.php
+
+		$banner_master = BannerMaster::all();
+		return view('homePage.index', compact('banner_master'));   // for single variable
+
+		$title = 'Home Page';
+		return view('homePage.index', compact('title','banner_master'));  // for multiple variables
+
+
+	view.blade.php	
+
+
+		@foreach($banner_master as $banner)
+	        {{$banner->banner_id}}
+	        {{$banner->banner_mode}}
+	    @endforeach
+
+	    {{ $title }}
+
+		
+	Also like this ************************* index.blade.php
+	
+	  @extends('mobile.eligibility.layout', ['title' => 'Check your Eligibility'])
+
+	
+
+==>  generate key for api
+	  php artisan key:generate
+
+
+==> create a resource    (APP\HTTP\resource)   ->  A resource class represents a single model that needs to be transformed into a JSON structure.
+
+	php artisan make:resource Product
+	php artisan make:resource User
+
+
+
+==> up() -> I will define the schema for the table, add new columns, etc.
+	down()->  I will do the reverse such as dropping the table or reverse our previous changes.
+
+	
+==> run specific migration | it will run those are not migrated
+
+	php artisan migrate --path=/database/migrations/insta_loan/ --database=insta_loan
+
+	
+==> run specific seeder
+
+	php artisan db:seed --class=UsersTableSeeder
+	
+	php artisan db:seed --class=HelplinesTableSeeder --database=insta_loan
+	
+	
+==>  migrate fresh 95 server
+
+		php artisan migrate:reload
+
+		php artisan db:seed
+
+	
+	
+==> error  Column not found: 1054 Unknown column 'updated_at' in 'field list'  while using seeder
+
+	In the model, write the below code;
+	
+		public $timestamps = false;
+
+		
+	
+
+==> create a new migration table for Todo
+
+		php artisan make:migration create_todo_table
+
+		php artisan make:migration create_items_table
+		php artisan make:migration create_orders_table
+		php artisan make:migration create_invoice_table
+		
+		php artisan migrate:make create_bears_table --create=bears
+
+==>  generate seed file | Fill the dummy data into the database
+
+		php artisan make:seeder UsersTableSeeder
+		php artisan make:seeder ItemsTableSeeder
+		php artisan make:seeder OrdersTableSeeder
+		php artisan make:seeder InvoiceTableSeeder
+		
+		
+
+==> create db seeder file 
+
+		php artisan make:seeder UsersTableSeeder
+		php artisan make:seeder AccountsTableSeeder
+
+
+	Ex. 1  UsersTableSeeder
+	
+			class UsersTableSeeder extends Seeder
+			{
+				public function run()
+				{
+					DB::table('users')->insert([
+						'name' => str_random(10),
+						'email' => str_random(10).'@gmail.com',
+						'password' => bcrypt('secret'),
+					]);
+					
+					DB::table('users')->insert([
+						'name' => str_random(10),
+						'email' => str_random(10).'@gmail.com',
+						'password' => bcrypt('secret'),
+					]); 
+				}
+			}
+	
+	
+	Ex. 2  AccountsTableSeeder
+ 
+			public function run()
+			{
+				DB::table('accounts')->insert([
+					'user_id' => 1,
+					'account_number' => rand(100000000,999999999)
+				]);				
+			}	
+	
+==> call seeder file in  DatabaseSeeder.php file
+
+		public function run()
+		{
+			$this->call(UsersTableSeeder::class);
+			$this->call(AccountsTableSeeder::class);
+		}
+
+==>  after execute to db seed 
+		
+		php artisan db:seed
+
+
+==> generate seeder from existing table
+
+		https://github.com/orangehill/iseed
+
+		1 - composer require orangehill/iseed
+		2 - php artisan iseed my_table   OR
+		3 - php artisan iseed my_table,another_table
+		
+		
+==>    
+	php artisan migrate
+
+
+==> migrate all table is new column added
+
+	php artisan migrate:refresh
+	
+	php artisan migrate:fresh
+	
+	php artisan migrate:fresh --seed
+	
+	php artisan migrate:fresh --force
+	
+
+
+==> create both Controller and model
+	
+	php artisan make:controller TodoController --resource --model=Todo
+
+
+==> create  model	
+
+	php artisan make:model TodoModel
+
+
+==> create controller with resources   (default  7 methods)
+
+	php artisan make:controller ArticleController --resource
+
+
+
+
+==>  below fields will not give in select *    or ::all()
+
+	 protected $hidden = [               
+        					'password', 'remember_token',
+    					];
+
+
+==> dynamic title
+	
+	<title>@yield('title')</title>
+
+
+==>  get request value |  all are working same except last one (input)
+
+	    return request()->banner_mode;		
+        return request('banner_mode');
+		
+		return request()->input('banner_mode', 'default_val');   if banner_mode not set then value will be 'default_val'
+
+		
+		return request()->only('banner_mode');		// returns all of the key / value pairs that you request
+		
+		
+==> use scope function for query 
+
+	public static function activeBanner(array $request = [])
+    {
+        return self::select('banner_img_url', 'banner_navigation_url')
+            ->active()
+            ->validDate()
+            ->where('banner_mode', data_get($request, 'banner_mode'))
+            ->get();
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        $query->where('active_flag', true);
+    }
+
+    public function scopeValidDate(Builder $query)
+    {
+        $query->whereRaw('CURRENT_DATE() between valid_from and IFNULL(valid_till, CURRENT_DATE())');
+    }
+		
+	
+==> a link url() 
+
+	<a class="navbar-brand" href="{{ url('/') }}">Home</a>
+  	<a class="navbar-brand" href="{{ url('/todo') }}">Todo</a>
+  	
+  	<a href="{{ route('articles.create') }}"> Create New Article</a>
+	
+	<a href="{{ route('articles.index') }}"> Back</a>
+
+
+==>	validation | get all data -> $request->all()  | modify single data in array
+
+		request()->validate([
+            'lac_no' => 'required|numeric',
+            'financialyear' => 'required|numeric'
+        ]);
+		
+	OR:
+
+		public function register(Request $request)
+		    {
+		        $validator = Validator::make($request->all(), [
+		            'name' => 'required',
+		            'email' => 'required|email',
+		            'password' => 'required',
+		            'c_password' => 'required|same:password',
+		        ]);
+
+		        if ($validator->fails()) {
+		            return response()->json(['error'=>$validator->errors()], 401);
+		        }
+
+		        $input = $request->all();
+		        $input['password'] = bcrypt($input['password']);
+		        $user = User::create($input);
+		        $success['token'] =  $user->createToken('MyApp')->accessToken;
+		        $success['name'] =  $user->name;
+
+		        return response()->json(['success'=>$success], $this->successStatus);
+		    }
+
+		OR	
+
+
+			Ex.   unique -> it will check if given email id is unique in table ro not
+				  exists -> it will check if given email id is exists in table ro not
+
+
+				$this->validate($request, [
+		            'name'     => 'required',
+        		  //'email'    => ['required', 'email', Rule::exists('users', 'email')],
+            		'email'    => ['required', 'email', Rule::unique('users', 'email')],
+            		'password' => 'required',
+        		]);
+
+		
+		$credentials = request()->validate([
+            'user_id'  => 'required',
+            'password' => 'required',
+        ]);
+
+        $credentials['user_id'] = strtoupper($credentials['user_id']);
+			
+		NOTE : we can modify 'user_id' as shown above
+			
+			
+			
+	public function rules()
+    {
+        return [
+            'user_type'           => 'required|in:NEW,EXISTING',
+            'acc_no'              => 'required_if:user_type,EXISTING',
+            'user_id'             => ['required', 'max:100', 'min:1', Rule::unique('user_master'), (new IsUserIdExists())],
+            'password'            => 'required_if:user_type,NEW|confirmed',
+            'mobile_no'           => 'required|min:10|max:15',
+            'email_id'            => 'required|email',
+            'mobile_country_code' => 'required|max:3',
+            'name'                => 'required_if:user_type,EXISTING',
+            'dob'                 => 'required_if:user_type,EXISTING',
+            'emi'                 => 'required_if:user_type,EXISTING',
+        ];
+    }
+
+
+==> validation for otp | digits_between
+
+		request()->validate([
+           'otp' => 'required|numeric|digits_between:4,6',
+        ]);
+
+			
+==> upper case array key  not value  | use array_change_key_case()
+		
+		if( ! function_exists('keyUpperCase'))
+		{
+			function keyUpperCase(array $inputs)
+			{
+				return array_change_key_case($inputs,CASE_UPPER);
+			}
+		}	
+			
+
+==> email id validation | mobile no only no | use nullable (not required but should be no only)
+
+		request()->validate([
+			'user_id' => 'required',
+			'lac_no'  => 'required|numeric',
+			'email_id'  => 'nullable|email',
+			'mobile_no' => 'nullable|numeric',
+			'new_addr' => '',
+			'curr_addr' => '',
+		]);
+			
+
+==> create register and login
+
+	php artisan make:auth
+
+	
+==>  for building forms
+
+	composer require laravelcollective/html
+
+	config/app.php			(in providers)	
+	
+		-> Collective\Html\HtmlServiceProvider::class,         // for form building
+	
+
+==>		here resource() is used for getting all default methods. no need to manually specify methods
+
+	    Route::resource('articles','ArticleController');
+
+	    Route::get('/home', 'HomeController@index');   //manually specify method
+
+
+
+==> get values from url
+
+	http://localhost/laravel_test/blog/public/articles?page=1
+
+
+	echo request()->input('page', 1);     // if page is not set then default will be 1 as specified in 2nd parameter
+
+==> check request data coming ro not
+
+	  dd(request()->all());
+        dd($response->status());
+        dd(request()->file_no);
+        dd($response->json());
+		
+---------------------------------------------------------------	
+
+==>	add value in collection | use PUSH  | put()
+		
+		//	$collection->put('test', 'test');		
+
+		$financial_yrs_list = collect(data_get(session()->get('loan.summary'),'FINANCIAL_YEARS'));
+
+        $financial_yrs_list->push(array(
+            'YEAR' => '201415',
+            'YEAR_DESC' => '2014-15'
+        ));
+
+        $financial_yrs_list->push(array(
+                                        'YEAR' => '201617',
+                                        'YEAR_DESC' => '2016-17'
+                                        ));
+        $financial_yrs_list->push(array(
+            'YEAR' => '201314',
+            'YEAR_DESC' => '2013-14'
+        ));
+
+        $financial_yrs_list->push(array(
+            'YEAR' => '201819',
+            'YEAR_DESC' => '2018-19'
+        ));
+		
+---------------------------------------------------------------
+==> sort a collection in desc order | use sortByDesc(callable) 
+	
+		$financial_yrs_list->push(array(
+            'YEAR' => '201314',
+            'YEAR_DESC' => '2013-14'
+        ));
+
+        $financial_yrs_list->push(array(
+            'YEAR' => '201819',
+            'YEAR_DESC' => '2018-19'
+        ));
+
+        $financial_yrs_list = $financial_yrs_list->sortByDesc(function($financial_yrs_list){
+            return $financial_yrs_list['YEAR'];
+        });
+		
+		
+		
+		
+		public function getNotificationData()
+		{
+			return $this->allNotifications()->sortByDesc(function($notification){
+				return \Carbon\Carbon::parse($notification['created_dt']);
+			})->groupBy(function($notification) {
+				return \Carbon\Carbon::parse($notification['created_dt'])->format('M Y');
+			});
+			
+		}
+		
+		
+
+==> create sub array within array (collection) | 
+		
+		 $roiCollection = collect(data_get(session()->get('loan.summary'),'INTEREST_RATE_CHANGES'))->groupBy('ROI');
+		 
+	DATA =>
+		 
+		0:{TRAN_DT: "15-APR-2017", RCBL_AMT: " ", TRANS_TYPE: 'EMI', RCVD_AMT: "20716", OS_AMT: "0", TR_TYPE: "SM",…}
+		1:{TRAN_DT: "15-MAY-2017", RCBL_AMT: " ", TRANS_TYPE: 'EMI',RCVD_AMT: "20716", OS_AMT: "0", TR_TYPE: "SM",…}
+		2:{DT1: "", EFF_DT: "", FINANCIAL_YEAR: "", TRANS_TYPE: 'PRE-EMI',OS_AMT: 14785, RCBL_AMT: 3000, RCVD_AMT: "",…}
+		3:{DT1: "", EFF_DT: "", FINANCIAL_YEAR: "", TRANS_TYPE: 'PRE-EMI',OS_AMT: 15785, RCBL_AMT: 2000, RCVD_AMT: "",…}
+		 
+		 		 
+		 $transHistory = $transHistory->groupBy('TRANS_TYPE');
+		 
+		// OUTput =>  
+		
+		EMI:[{TRAN_DT: "15-APR-2017", RCBL_AMT: " ", RCVD_AMT: "20716", OS_AMT: "0", TR_TYPE: "SM",…},…]
+		PRE-EMI:[{DT1: "", EFF_DT: "", FINANCIAL_YEAR: "", OS_AMT: 14785, RCBL_AMT: 3000, RCVD_AMT: 
+		
+		
+	Ex.			 
+				 
+		$roiCollection = collect(data_get(session()->get('loan.summary'), 'INTEREST_RATE_CHANGES'))->groupBy('ROI')
+                        ->map(function($interestRate) {
+                            new InterestRatesChanges($interestRate);
+                        }); 
+		 
+		 
+==> insert one more sub array within array (collection) | use put() and all()
+		
+		$transHistory = $transHistory->groupBy('TRANS_TYPE')->put('ALL', $transHistory->all());
+		
+	// OUTput =>
+		
+		ALL:[{TRAN_DT: "15-APR-2017", RCBL_AMT: " ", RCVD_AMT: "20716", OS_AMT: "0", TR_TYPE: "SM",…},…]
+		EMI:[{TRAN_DT: "15-APR-2017", RCBL_AMT: " ", RCVD_AMT: "20716", OS_AMT: "0", TR_TYPE: "SM",…},…]
+		PRE-EMI:[{DT1: "", EFF_DT: "", FINANCIAL_YEAR: "", OS_AMT: 14785, RCBL_AMT: 3000, RCVD_AMT: 
+		 
+---------------------------------------------------------------
+
+==> store in session and retrieve from session
+
+	\Session::put('access_token', 'test');	 		// store	 
+	session('access_token')							// get
+	
+	session()->put('applicationForm:insta_id', request('insta_id'));
+	
+	session()->put('insta_id', data_get($data, 'insta_id'));  		//store
+	session()->get('insta_id')						// get
+	session()->get('applicationForm:insta_id')						// get
+	
+        
+
+==> declare variable and pass in view
+	
+	in controller.php
+
+	return view('articles.index',compact('articles'))
+            ->with('i', 5);			//i=5            
+            ->with('i', 1);			//i=1
+        ----------------------------------------------
+            
+            ->with('i', (request()->input('page', 1) - 1) * 5);
+
+
+==> get all session
+
+	session()->all();
+
+	OR
+
+	$data = $request->session()->all();
+
+
+==> access  session data in API |
+
+	define all route in routes/web.php not in routes/api.php
+
+	routes/web.php
+
+
+
+==> remove all data | Deleting Items From The Session
+		
+	1 -	forget method will remove a piece of data from the session.
+
+			$request->session()->forget('key');
+
+ 
+	2 -  Remove all data from the session, you may use the flush method |  remove All Data
+
+			request()->session()->flush();
+
+
+
+
+
+==> declare variable in blade file
+	@php $isLoggedIn = Auth::check(); @endphp	
+
+	@php       $ac_summary = 'AC_SUMMARY.0.';    @endphp
+	
+	{{data_get(session()->get('loan.summary'), $ac_summary.'BORRNAME')  }}
+	
+	
+==> data_get() ||		3 para default value
+
+	{{data_get(session()->get('loan.summary'), 'EMAIL_ID.0.EMAIL_ID', 'NA')}}	
+	
+==> alternate class in loop
+
+	 @if($loop->iteration%2!=0) orange-disc @endif
+	 
+	
+==> first and last loop value inside a loop
+
+	@foreach ($users as $user)
+		@if ($loop->first)
+			This is the first iteration.
+		@endif
+
+		@if ($loop->last)
+			This is the last iteration.
+		@endif
+
+		<p>This is user {{ $user->id }}</p>
+	@endforeach
+
+	-----------OR-----------
+	
+	@foreach($items as $index => $item)
+		@if($index == 0)
+			...
+		@endif
+		<h4>{{ $item->program_name }}</h4>
+	@endforeach
+	
+	
+	
+	<ul>
+		@foreach(data_get(session()->get('loan.summary'), 'DISBURSEMENT_DETAILS') as $key => $value)
+			<li class="fly-in">
+				<span class="font-size14"><i class="fa fa-rupee font-size12"></i> {{data_get($value, 'AMT_OF_DISB')}}
+				<span class="history-date font-size10 lightgrey">{{data_get($value, 'EFF_DATE')}}</span></span>
+				<span class="font-size10 darkgrey font-normal">{{data_get($value, 'PAYABLE_TO')}}</span>
+				<span class="font-size10 darkgrey font-light">{{data_get($value, 'PAYABLE_TO')}}</span>
+			</li>
+		@endforeach
+	</ul>
+	
+	
+==> how to apply filter 
+
+	private function getSummary($summary)
+    {
+        return collect([
+            ['HEADS' => 'EMI', 'OUTSTANDING' => data_get($summary, 'CUR_EMIOS'), 'OPENING_BALANCE' => data_get($summary, 'OPEN_EMI'), 'RECEIVABLE' => data_get($summary, 'RECBLE_EMI'), 'RECEIVED' => data_get($summary, 'RECD_EMI'), 'DISP' => data_get($summary, 'DISPEMI')],
+            ['HEADS' => 'Additional Interest', 'OUTSTANDING' => data_get($summary, 'CUR_OSADD'), 'OPENING_BALANCE' => data_get($summary, 'OPEN_AI'), 'RECEIVABLE' => data_get($summary, 'AI_RECBLE'), 'RECEIVED' => data_get($summary, 'AI_RECD'), 'DISP' => data_get($summary, 'DISPAI')],
+            ['HEADS' => 'Incidental Charges', 'OUTSTANDING' => 0, 'OPENING_BALANCE' => data_get($summary, 'INC_CHG_OPEN'), 'RECEIVABLE' => data_get($summary, 'INC_CHG_RECBLE'), 'RECEIVED' => data_get($summary, 'INC_CHG_RECD'), 'DISP' => data_get($summary, 'DISPIC')],
+            ['HEADS' => 'Pre Payment', 'OUTSTANDING' => data_get($summary, 'CUR_EMIOS'), 'OPENING_BALANCE' => 0, 'RECEIVABLE' => 0, 'RECEIVED' => data_get($summary, 'PREP_RECD'), 'DISP' => data_get($summary, 'DISPPREP')],
+            ['HEADS' => 'Interest on Pre Payment', 'OUTSTANDING' => data_get($summary, 'INT_PREP_OS'), 'OPENING_BALANCE' => data_get($summary, 'OPEN_INT_PREP'), 'RECEIVABLE' => data_get($summary, 'INT_PREP_RECBLE'), 'RECEIVED' => data_get($summary, 'INT_PREP_RECD'), 'DISP' => ''],
+            ['HEADS' => 'Principal Adjustments', 'OUTSTANDING' => 0, 'OPENING_BALANCE' => '', 'RECEIVABLE' => '', 'RECEIVED' => '', 'DISP' => ''],
+            ['HEADS' => 'Interest Adjustments', 'OUTSTANDING' => 0, 'OPENING_BALANCE' => 0, 'RECEIVABLE' => 0, 'RECEIVED' => data_get($summary, 'INT_ADJ_RECD'), 'DISP' => ''],
+            ['HEADS' => 'Pre-EMI', 'OUTSTANDING' => data_get($summary, 'CUR_PMIOS'), 'OPENING_BALANCE' => 0, 'RECEIVABLE' => data_get($summary, 'RECBLE_PMI'), 'RECEIVED' => data_get($summary, 'RECD_PMI'), 'DISP' => data_get($summary, 'DISPPMI')]
+        ])->filter(function($summary) {
+            return $summary['DISP'] === 'Y';
+        });
+    }
+
+	Ex.
+	
+		public function getUnreadNotification()						// filter new notification
+		{
+			$collect = collect($this->getAllNotification());
+			
+			$new = count($collect->filter(function($collect){
+				return $collect['read_flag']=='N';
+			}));
+			
+			session()->put('SESS_newNotificationCount', $new);
+			
+			return $new;
+		}
+	
+	Ex.	
+		
+		public function unreadNotifications()
+		{
+			return $this->allNotifications()->filter(function($notification) {
+				return data_get($notification, 'read_flag') === 'N';
+			});
+		}
+		
+	
+==> 
+	
+	 public function generateTransactionSummary(TransactionData $transactionData)
+    {
+        $lac_no = 605374593;
+        $transSummary =  $transactionData->getTransactionData($lac_no,request('fy'));
+        $transSummary = data_get($transSummary, 'SUMMARY');
+
+        return response()->json([
+            'html' => view('mobile.account_details.transaction_summary._transaction_summary', compact('transSummary'))->render(),
+        ]);
+
+    }
+
+	
+==>
+	
+	  <?php xdebug_break(); ?>
+		
+==>  delete button
+ 
+ 		{!! Form::open(['method' => 'DELETE','route' => ['articles.destroy', $article->id],'style'=>'display:inline']) !!}
+        {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
+        {!! Form::close() !!}
+		
+		
+==>  show button
+		<a class="btn btn-info btn-sm" href="{{ route('articles.show',$article->id) }}">Show</a>
+
+==>  edit button
+        <a class="btn btn-primary" href="{{ route('articles.edit',$article->id) }}">Edit</a>
+		
+
+==> get value from url  in index method(controller)
+		
+		url?page=2
+		
+		echo request()->input('page', 1);		// default page=1  if no value of page in url
+		
+
+==> pagination | put this below table
+
+		{!! $articles->links() !!}
+		
+
+==>  index method in controller  | with('variable_name','variable_value')
+		
+			public function index()
+			{
+				$articles = ArticleModel::latest()->paginate(5);
+				//echo request()->input('page', 1);				
+
+				return view('articles.index',compact('articles'))
+					->with('i', (request()->input('page', 1) - 1) * 5);
+					//->with('i', (request()->input('page', 1) - 1) * 5);
+			}
+
+			
+			
+==>  create method in controller  | create form
+
+		public function create()
+		{
+			return view('articles.create');
+		}
+
+
+		
+==>  store method in controller  | savsave new values  | ->with('variable_name','variable_value') | redirect with msg
+
+    public function store(Request $request)
+    {
+        request()->validate([
+            'title' => 'required',
+            'body' => 'required',
+        ]);
+        ArticleModel::create($request->all());
+        return redirect()->route('articles.index')
+            ->with('success','Article created successfully');
+    }
+
+
+==>  show method in controller  | show single record values  | compact('variable_name')
+
+		public function show($id)
+		{
+			$article = ArticleModel::find($id);
+			return view('articles.show',compact('article'));
+		}
+
+==>  edit method in controller  | edit single record values  | compact('variable_name')
+
+    public function edit($id)
+    {
+        $article = ArticleModel::find($id);
+        return view('articles.edit',compact('article'));
+    }
+
+	
+==>  update method in controller | edit single record values | ->with('variable_name','variable_value')
+
+		public function update(Request $request, $id)
+		{
+			request()->validate([
+				'title' => 'required',
+				'body' => 'required',
+			]);
+			
+			ArticleModel::find($id)->update($request->all());
+
+			return redirect()->route('articles.index')
+				->with('success','Article updated successfully');
+		}
+
+
+	Ex.2   using save() method
+	
+		public function update(Request $request, Task $task)
+	    {
+	        $this->validate($request, [
+	            'name'        => 'required|max:255',
+	            'description' => 'required',
+	        ]);
+
+	        $task->name = request('name');
+	        $task->description = request('description');
+	        $task->save();
+
+	        return response()->json([
+	            'message' => 'Task updated successfully!'
+	        ], 200);
+	    }	
+
+
+Ex. 3
+
+	 	public function update(Request $request, Task $task)
+	    {
+	        $task->update($request->validate([					// it will 1st validate then update specific record
+	            'name',
+	            'description',
+	        ]));
+
+	        return response()->json([
+	            'message' => 'Task updated successfully!',
+	        ], 200);
+	    }
+
+==> update using multiple where clause | save()
+
+		$this->user = User::whereUserIdAndMobileNo(request('user_id'),request('mobile_no'))->first();
+        $this->user->mobile_code = mt_rand(1000, 9999);
+        $this->user->mobile_verified_flag = 'N';
+        $this->user->save();
+
+
+
+        App\Models\UserMasterOtp::select('otp_code', 'contact_details')->whereIdAndUserMasterUniqueCustId('1','3232')->first()
+        
+
+==> destroy method in controller | delete single record values | ->with('variable_name','variable_value')
+    
+Ex.1 
+
+		public function destroy($id)
+		{
+			ArticleModel::find($id)->delete();
+			return redirect()->route('articles.index')
+				->with('success','Article deleted successfully');
+		}
+
+Ex. 2
+
+		public function destroy(Task $task)      	// here id will be configured internally
+	    {
+	        $task->delete();
+
+	        return response()->json([
+	            'message' => 'Task deleted successfully!',
+	        ], 200);
+	    }
+
+		
+		
+==>		show all records on index.blade
+		
+		@foreach ($articles as $article)
+            <tr>
+                <td>{{ ++$i }}</td>
+                <td>{{ $article->title}}</td>
+                <td>{{ $article->body}}</td>
+                <td>
+                    <a class="btn btn-info btn-sm" href="{{ route('articles.show',$article->id) }}">Show</a>
+                    <a class="btn btn-primary" href="{{ route('articles.edit',$article->id) }}">Edit</a>
+                    {!! Form::open(['method' => 'DELETE','route' => ['articles.destroy', $article->id],'style'=>'display:inline']) !!}
+                    {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
+                    {!! Form::close() !!}
+                </td>
+            </tr>
+        @endforeach
+		
+		{!! $articles->links() !!}				// for pagination
+		
+
+==> select drop down 
+
+	 {!! Form::select('active_flag',
+                [
+                       ''   => 'Select',
+                       'Y'   => 'Yes',
+                       'N'   => 'No',
+                ], null, ['class' => 'form-control']
+
+        ) !!}
+
+		
+==> we can use same form for edit and for create || show default values from dB |  use Form::open() and Form::model()
+
+	
+	create.blade		// form fields will be blank
+	
+		{!! Form::open(array('route' => 'articles.store','method'=>'POST')) !!}
+            @include('articles.form')
+        {!! Form::close() !!}
+		
+		
+	edit.blade		// filled with values from DB
+		
+		{!! Form::model($article, ['method' => 'PATCH','route' => ['articles.update', $article->id]]) !!}
+			@include('articles.form')
+		{!! Form::close() !!}
+
+
+
+==> create custom helper 
+
+	HTTP://ITSOLUTIONSTUFF.COM/POST/HOW-TO-CREATE-CUSTOM-HELPER-IN-LARAVEL-5EXAMPLE.HTML
+	
+	Step 1: Create helpers.php File   ->  app/Http/helpers.php
+		ex.
+		
+		function productImagePath($image_name)
+		{
+			return public_path('images/products/'.$image_name);
+		}
+		
+	Step 2: Add File Path In composer.json File
+	
+		"files": [
+			"app/Http/helpers.php" //Add This Line
+		]
+		
+	Step 3: Run Command
+	
+		composer dump-autoload
+		
+	->
+		use anywhere	
+		
+		$imageName = 'example.png';
+		$fullpath = productImagePath($imageName);
+		print_r($fullpath);
+		
+		
+==> format money | comma seprated | create a helper function 
+
+		if (!function_exists('format_price')) {
+
+			function format_price($money)
+			{
+				$len = strlen($money);
+				$m = '';
+				$money = strrev($money);
+				for($i=0;$i<$len;$i++){
+					if(( $i==3 || ($i>3 && ($i-1)%2==0) )&& $i!=$len){
+						$m .=',';
+					}
+					$m .=$money[$i];
+				}
+				return strrev($m);
+			}
+		}
+	
+
+==> get values from collection |  where 
+
+	auth()->user()->applicants()->where('applicant_id', $key)->first()->fullName()
+
+	
+----------------------------------------------------------------
+		
+==> print error in log  file
+
+	\Log::info(Token::header());
+		
+==> create middleware 
+
+	php artisan make:middleware IsAdminMiddleware
+	
+	php artisan make:middleware locationRedirect
+	
+
+==> if already logged in redirect to dashboard or after login page
+	
+	in loginController
+	
+		if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+		
+	
+==> get details of logged in user  | get logged in user id
+
+	Ex.1-			auth()->user()->user_id;
+	
+	also in micro service layer
+	
+		$validatedInput = ['USER_ID' => auth()->user()->user_id];
+	
+	
+
+	return auth()->user();			// return in json like below
+
+	{"id":3,"name":"test3","email":"test3@gmail.com","is_permission":2,"created_at":null,"updated_at":null}
+	
+	//auth()->user()->is_permission;		//2
+	//  ;					//test3	
+	
+	print_r(auth()->user())		//return in collection
+	
+	$user = Auth::user();		//Auth facade   but need to include
+	
+    $user = \Auth::user();		//Auth facade   but no need to include class
+		
+    //$user = auth()->user();		// using helper
+        
+	//Get Logged User ID using facade
+        $id = Auth::user()->id;
+        print_r($id);
+        
+	
+	
+	
+	if (Auth::check()) {
+		// The user is logged in...
+	}
+	
+
+
+	@guest
+		not login
+	@else
+		login
+	 @endguest
+
+
+
+Ex. 
+
+	 		@if (Route::has('login'))
+                <div class="top-right links">
+                    @auth
+                        <a href="{{ url('/home') }}">Home</a>
+                    @else
+                        <a href="{{ route('login') }}">Login</a>
+                        <a href="{{ route('register') }}">Register</a>
+                    @endauth
+                </div>
+            @endif
+
+
+
+
+
+	
+	
+==> logout
+
+	Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+	
+	public function logout(){
+        Auth::logout();
+		
+		// \Session::flush();
+        return redirect('/');
+    }
+	
+	
+	
+	
+	protected $table = "generic_messages";
+
+    const CREATED_AT = 'created_dt';
+    const UPDATED_AT = 'updated_dt';
+
+    protected $fillable = [
+                        'id',
+                        'msg_mode',
+                        'valid_from',
+                        'valid_till',
+                        'active_flag',
+                        'message',
+                        'created_by',
+                        'created_dt',
+                        'updated_by',
+                        'updated_dt'
+                    ];
+					
+
+
+==> redirect after login to a url |  redirectTo
+	
+		Auth/LoginController.php
+
+
+		protected $redirectTo = '/admin/companies';
+
+					
+---	if only created_at date and no updated_at date | only created_at date
+	
+	//const CREATED_AT = 'created_dt';
+    //const UPDATED_AT = 'updated_dt';
+	
+    1 - public $timestamps = false;
+
+	2- 
+		public static function boot(){
+			static::creating( function ($model) {
+				$model->setAttribute('created_dt', $model->freshTimestamp());
+			});
+			parent::boot();
+		}
+					
+					
+==>  first letter of a string | str_limit()  | first uppar case 
+
+	 {{ucfirst(str_limit(auth()->user()->full_name,1,''))}}
+
+	 
+==> get route name | current url
+
+		{{url()->current()}}		//http://insta-loan.dev/dashboard
+
+		{{Route::currentRouteName()}}		//dashboard
+		
+					
+===> ajax  code with error msg
+		
+		<script>
+			$(function () {
+				var articleData = new FormData($('#formArticle')[0]);
+
+
+				$(document).on('submit', '#formArticle', function (e) {
+					e.preventDefault();
+
+					$('input+span>strong').text('');
+					$('input').parent().parent().removeClass('has-error');
+
+					$.ajaxSetup({
+						headers: {
+							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+						}
+					});
+
+					$.ajax({
+								type: "POST",
+								url: "{{ url('article/') }}",
+								dataType: 'json',
+								processData: false,
+								contentType: false,
+								cache: false,
+								data: articleData
+							})
+							.done(function (data) {
+								$(".alert-success").prop("hidden", false);
+							})
+							.fail(function (data) {
+								$.each(data.responseJSON, function (key, value) {
+									var input = '#formArticle input[name=' + key + ']';
+									$(input + '+span>strong').text(value);
+									$(input).parent().parent().addClass('has-error');
+								});
+							});
+				});
+			});
+		</script>
+		
+--------------------------------------------------------------------------------------
+
+==> convert array to collection  | use collect
+	
+	$my_arr = data_get(session()->get('loan.summary'), 'FINANCIAL_YEARS');
+	
+	$my_collection = collect($my_arr);   	OR
+	$my_collection = collect(data_get(session()->get('loan.summary'), 'FINANCIAL_YEARS'));
+
+	
+	
+=> check collection is empty or not 
+
+	$my_collection = collect(data_get(session()->get('loan.summary'), 'FINANCIAL_YEARS'));
+	
+	@if($my_collection->isNotEmpty())
+			///code
+	@else	
+		///code
+	@endif
+
+	
+==> skip 1st element in array and show values from 2nd elements
+
+		@php $previousYearsStatements = collect(data_get(session()->get('loan.summary'), 'FINANCIAL_YEARS'))->forget(0); @endphp
+
+			@if($previousYearsStatements->isNotEmpty())
+                <div class="card-table-wrapper margintop10 fly-in">
+                   
+                   <div class="label-content nopadding">
+                    @foreach($previousYearsStatements as $key => $value)				
+					
+						<span class="font-size12">{{data_get($value,'YEAR_DESC')}}</span>						
+						
+					@endforeach
+                    </div>
+                </div>
+			@endif
+
+			
+==> call a blade file's HTML in js
+	<script>
+		  var CONST = (function () {
+                function generateHTML() {
+                    @php
+                        $html = view('mobile.account_summary.co_borrower_info')->render(); @endphp
+                        return '{!! preg_replace("/[\r\n]*/","",$html); !!}';
+                }
+                
+                return {
+                    generateHTML: generateHTML
+                }
+            }());
+	</script>
+	
+	in Js file	call
+	
+			window.CONST.generateHTML();
+			
+
+		
+---------------------------------------------------------------------------------------
+
+==> get 1st record from a collection |  array   | use 		->first()
+
+	$financialYearsList = collect(data_get(session()->get('postLogin.loanSummary'),'FINANCIAL_YEARS'));
+		 
+	$financialYearsList->first();
+
+
+---------------------------------------------------------------------------------------
+		
+==> add validation error on each fields in bootstrap form from server side with ajax
+		
+		  $(document).on('submit', '#frmEditMessage', function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: "post",
+                    data: $(this).serialize(),
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.data){
+                            $(".error").html(response.data);
+                        }
+                    },
+                    error: function (response) {
+                        /*if (response.status === 422){
+                            $(".error").html('Error, Enter Required Fields');
+                        }
+                        return;*/
+                       // console.log(response);
+
+                        $.each(response.responseJSON.errors, function (key, value) {
+                            var input = '#frmEditMessage input[name=' + key + '], #frmEditMessage select[name=' + key + ']';
+                           // var select = '#frmEditMessage select[name=' + key + ']';
+                            $(input + '+small').text(value);
+                            $(input).parent().addClass('has-error');
+                        });
+                    }
+				});
+            });
+
+--------------------------------------------------------------------------------------------------------
+
+==> upload image file using ajax 
+
+	controller.php *************
+			
+		---> for thumbnail
+			
+		function test_make(){	
+			$this->validate($request, [
+				'title' => 'required',
+				'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+			]);
+
+            $image = $request->file('image');
+            $input['imagename'] = time().'.'.$image->getClientOriginalExtension();
+
+            $destinationPath = public_path('/thumbnail');
+            $img = Image::make($image->getRealPath());
+
+            $img->resize(100, 100, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'.$input['imagename']);
+
+            $destinationPath = public_path('/images');
+            $image->move($destinationPath, $input['imagename']);
+
+            $this->postImage->add($input);
+
+            return back()
+            ->with('success','Image Upload successful')
+            ->with('imageName',$input['imagename']);	
+		}
+	
+	
+	
+	
+		 public function store()
+		 {
+				$input = request()->validate([
+					'banner_mode' => 'required',
+					'valid_from' => 'required',
+					'valid_till' => 'required',
+					'banner_navigation_url' => 'required',
+					'active_flag' => 'required',
+					'banner_img_url' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+				]);
+
+			  /*  $DATA['updated_by'] =  \Auth::user()->name;
+				$DATA['created_by'] = 'Admin';
+				$result = Generic::create($DATA);*/
+
+
+			//if ($validator->passes()) {
+			   // $input = request()->all();
+				//$DATA['updated_by'] =  \Auth::user()->name;
+				$input['created_by'] = \Auth::user()->name;
+
+				$input['banner_img_url'] = 'banner_'.time().'.'.request()->banner_img_url->getClientOriginalExtension();
+				request()->banner_img_url->move(public_path('images'), $input['banner_img_url']);
+
+				Banner::create($input);
+				return response()->json(['data'=>'Banner Added SuccessFully.']);
+
+			//}
+		   // return response()->json(['error'=>$validator->errors()->all()]);
+		}
+
+	.js **********************
+
+		$.ajax(function(){
+		
+			e.preventDefault();
+
+            var formData = new FormData($(this)[0]);
+            $.ajax({
+                url: $(this).attr('action'),
+                method: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: "json",
+                success: function (response) {
+                    if (response.data) {
+                        $("#frmBanner").hide();
+                        $(".error").html(response.data);
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    }
+                },
+                error: function (response) {
+                    $.each(response.responseJSON.errors, function (key, value) {
+                        var input = '#frmBanner input[name=' + key + ']';   //, #frmBanner file[name=' + key + '], #frmBanner select[name=' + key + ']
+                        //$(input + '+small').text(value);
+
+                        $(input).parents('div').siblings().find('small').text(value);
+
+                        $(input).parent().addClass('has-error');
+                    });
+
+                }
+            });
+
+
+
+
+
+==> upload file in laravel controller
+
+		public function uploadDocs()
+	    {
+	       print_r(request()->file('files'));
+
+	       return request()->file('file')->store('/');  // it will store file in store/app directory
+	    }
+
+
+
+==> access files in laravel 
+
+	
+	 request()->file('oc_files')
+	 request()->file('property_files')
+
+
+
+
+
+	
+
+==>  use below if delete conformation is dynamically generated  | using ajax
+	
+	$('body').confirmation({
+        rootSelector: 'body',
+        selector: '[data-toggle=confirmation]',
+        onConfirm: function (event, element) {
+            element.trigger('deleteBannerConfirm');
+        }
+    });	
+	
+----------------------------------------------------------------------------------------------------------
+			
+==> Delete record with file in laravel using ajax 
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-confirmation/1.0.5/bootstrap-confirmation.min.js"></script>
+	
+	Balde.php file*************
+		
+		within foreach
+		
+			 <tr id="tr_{{$msg->id}}"> </tr>
+
+		 <a href="{{ route('banner.destroy',$msg->id) }}" class="btn btn-danger btn-sm"
+                                       data-tr="tr_{{$msg->id}}"
+                                       data-toggle="confirmation"
+                                       data-btn-ok-label="Delete" data-btn-ok-icon="fa fa-remove"
+                                       data-btn-ok-class="btn btn-sm btn-danger"
+                                       data-btn-cancel-label="Cancel"
+                                       data-btn-cancel-icon="fa fa-chevron-circle-left"
+                                       data-btn-cancel-class="btn btn-sm btn-default"
+                                       data-title="Are you sure you want to delete ?"
+                                       data-placement="left" data-singleton="true">
+                                        <i class="fa fa-times-circle btn-danger" aria-hidden="true"></i>
+                                    </a>
+	
+	
+	
+	 /*--------------    Delete Banner     ------------------------*/
+    //$('.confirmation').confirmation();
+
+    $('[data-toggle=confirmation]').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function (event, element) {
+            element.trigger('deleteBannerConfirm');
+        }
+    });
+
+    $(document).on('deleteBannerConfirm', function (e) {
+        var ele = e.target;
+        e.preventDefault();
+        $.ajax({
+            url: ele.href,
+            type: 'DELETE',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success: function (response) {
+                if (response['data']) {
+                    $("#" + response['tr']).slideUp("slow");
+                    $(".alert").show().html('<p>'+response['data']+'</p>');
+                } else {
+                    $(".alert").show().html("<p>Whoops Something went wrong!!</p>");
+                }
+                setTimeout(function () {
+                    $(".alert").slideUp("slow");
+                },2000);
+            },
+            error: function (response) {
+                //alert(response.responseText);
+            }
+        });
+        return false;
+    });
+	
+	controller.php file*************
+
+			public function destroy($id)
+			{
+				//$result = Banner::find($id)->delete();
+
+				$result = Banner::find($id);
+				$banner_name = $result->banner_img_url;
+				$banner_path = public_path('images').'/'.$banner_name;
+				$result = $result->delete();
+
+				$rs = 'Failed 222';
+				if($result){
+					$rs = 'Banner Deleted successfully.';
+					if(file_exists($banner_path)){
+						\File::delete($banner_path);
+					}
+				}
+				
+				return response()->json([
+					'data' => $rs,
+					'tr'=>'tr_'.$id
+				]);
+			}
+			
+----------------------------------------------------------------------------------------------------------	
+==> delete files | single | multiple 
+
+	// Delete a single file
+	File::delete($filename);
+
+	// Delete multiple files
+	File::delete($file1, $file2, $file3);
+
+	// Delete an array of files
+	$files = array($file1, $file2);
+	File::delete($files);
+
+	
+----------------------------------------------------------------------------------------------------------	
+	
+==>  add dummy data in user table using tinker
+	$ php artisan tinker
+	>>> factory(App\User::class, 100)->create();
+	
+	 factory(App\Models\BannerModel::class, 10)->create();
+	 	 
+	 factory(App\Models\GenericMessageModel::class, 10)->create();
+	 
+	 factory(App\Models\UserMasterModel::class, 5)->create();
+	 
+	 
+	 
+	 
+	1 - create factory.php file 
+	2 - set everyting like below	
+		return [
+            'banner_mode' => $faker->randomElement(['APP','WEBSITE','OTHERS']),
+            'valid_from' => $faker->dateTime,
+            'valid_till' => $faker->dateTime,
+            'banner_navigation_url' => $faker->text(15),
+            'active_flag' => $faker->randomElement(['Y','N']),
+            'created_by' => $faker->randomElement(['Admin','User'])
+		];	
+	3 - run command in tinker	| php artisan tinker
+		factory(App\Models\BannerModel::class, 10)->create();
+
+	
+==> delete data using tinker if inserted using tinker | save in a varible
+	1 - var $data = factory(App\Models\BannerModel::class, 10)->create();
+	2 - $data->each-delete();
+	
+	
+		
+	
+	
+
+
+==> migrate error  | Syntax error or access violation: 1071 Specified key was too long; max key length is 1000 bytes
+ 
+		app/providers/AppServiceProvider.php
+		
+
+		use Illuminate\Support\Facades\Schema;
+
+		public function boot()
+		{
+			Schema::defaultStringLength(191);
+		}
+	
+
+==> check installed packages | 
+
+		composer show		
+		composer remove
+
+
+==> remove installed packages | 
+		
+		composer remove vendor/package
+		composer remove Vendor/Package Name  
+		
+		
+==> remove installed packages | uninstall npm packages
+
+	npm uninstall cropperjs		
+	npm uninstall cropperjs --save		//remove name from package.json page
+
+	npm remove bootstrap --save-dev
+	npm remove bootstrap-sass --save-dev
+	
+	
+==> composer show	|	composer install -> reinstall vendor files and folders
+
+	1. Use `composer show` to double check which version of packages you are using.
+	2. Delete all files under `bootstrap/cache` folder as suggested by @RBBarani.
+	3. Delete `vendor` folder and reinstall all packages using `composer install`.
+	
+--------------------------------------------------------------------------------------
+
+==> use mix 
+	1  - npm install
+	
+	2 - write below for all css in webpack.mix.js in root folder
+	
+		mix.styles([
+                'public/css/bootstrap.min.css',
+                'public/css/bootstrap-datetimepicker.css',
+                'public/css/font-awesome.min.css',
+                'public/css/formValidation.css',
+                'public/css/style.css'
+           ], 'public/css/all.css');
+	
+	3- 	run command ->	npm run dev
+		it will generate 'public/css/all.css'  in a single file 'all.css'
+		
+	4 -  include 'all.css' in your file instead of all .css files 		
+	
+	5- 	run command ->	npm run prod
+			it will generate minify file (minified file content)
+			
+	6- 	run command ->	npm run dev
+		revert back to non minified file 
+	
+	
+==>  add your own dependency files 
+
+	yarn add jquery popper.js bootstrap@4.0.0-beta --dev
+	yarn add jquery@3.1.1  --dev
+	
+	if yarn not recognized use npm install
+	
+	npm install jquery@3.1.1  --dev			
+			-> // it will install jquery 3.1.1 in npm_module folder and override exiting jquery versin
+	
+	
+==>	install font-awesome in npm_module
+
+	npm install font-awesome --save  // latest version
+	npm install font-awesome@4.7.0  --save  // version  4.7.0
+	
+	
+	npm install sass-loader@6.0.0  --save
+	npm install resolve-url-loader@2.0.0  --save
+	
+	"resolve-url-loader": "^2.0.0", "sass-loader": "^6.0.0",
+	
+	
+	For Laravel >= 5.5
+
+	Run npm install font-awesome --save
+	Add @import "~font-awesome/scss/font-awesome.scss"; in resources/assets/saas/app.scss
+	Run npm run dev (or npm run watch or even npm run production)
+	
+	
+==>  install sweetalert2 and others | install multiple
+
+	npm install sweetalert2
+	
+	npm install --save jquery-validation pubsub-js sweetalert2
+	
+
+
+==> downgrad ziggy   |   tightenco/ziggy  | use route() in js files
+	
+
+	composer require "tightenco/Ziggy:0.4.0"
+
+
+	1 -	composer require tightenco/ziggy
+
+	2 - @routes('author')    //in app.blade.php or layout.blade.php
+
+
+	source : Ex.
+
+		https://github.com/tightenco/ziggy
+		https://tightenco.github.io/ziggy/0.6/
+
+		
+
+==> download zttp | send post request in laravel
+
+	1 -	composer require kitetail/zttp
+
+
+	source : Ex.
+
+		https://github.com/kitetail/zttp
+
+
+
+	
+==> versioning | version in laravel 
+
+	1 - add below code in webpack.mix.js	
+		mix.version();
+
+	2 - use mix() function in .blade file
+	
+	 <link href="{{mix('css/all.css')}}" rel="stylesheet">	// versioning  | use mix()
+	 <link href="{{url('css/all.css')}}" rel="stylesheet">		// normal way without versioning  | use url()	 
+
+	3 - run command -> npm run dev     // on runing this command  everytime it will generete new key id
+	
+
+==>	reload page without manual reload
+	
+	1 - add below code in webpack.mix.js
+		mix.browserSync('http://insta-loan-admin.dev');			//add http://
+	
+	2 - run command ->	npm run dev	
+	3 - run command ->	npm run watch
+	4 -  do any changes i blade file and check browser
+
+	
+	
+	
+	
+	
+	
+	
+	
+==> commands for mix
+	
+	// mix.js(src, output);
+	// mix.version(); // Enable versioning.
+	// mix.copy(from, to);
+    // mix.copyDirectory(fromDir, toDir);
+	
+	
+		- npm run dev
+			This builds our assets but does not minify or produce a production-ready build. npm run dev
+
+		- npm run watch
+			Similar to npm run dev but will watch for changes to our assets and automatically re-compile any changed asset
+
+		- npm run hot
+			Will not just refresh the page when a piece of JavaScript is changed, but it will also maintain the current state of the component in the browser.
+
+		- npm run production
+			Will compile all our assets and produce a production-ready build. It will run all Mix tasks, and it will minify the output.	
+
+==> db seed our manual
+
+	php artisan migrate:reload && php artisan db:seed
+
+			
+==> install redis
+	1 - composer require predis/predis
+	2 - change in .env file to => "CACHE_DRIVER=redis"
+	3  - start using below code
+	
+	
+
+	Route::get('test',function(){
+			$value = '';
+			$value = Cache::remember('users', 1, function () {		//1- no of minutes
+				echo 'this is cache';						// it will not execute on 2nd time run
+				return DB::table('users')->get();
+				
+				//$articles = Articles::all();
+				//return response()->json($articles);
+			});
+
+			if (Cache::has('users')) {
+				$value = Cache::get('users');
+			}else{
+				echo 'false';
+			}
+			return $value;
+
+			//  $expiresAt = Carbon::now()->addMinutes(10);
+			//  Cache::put('key', 'value', $expiresAt);
+
+			//	Cache::add('key', 'value', $minutes);		// better to use Cache::remember
+
+			//  Cache::forget('key');   // remove items from the cache
+			//	Cache::flush();         //clear the entire cache
+	});
+	
+==> 2 hours ago | 3 minutes ago date format | diffForHumans() | format date in blade format()
+
+	-- in blade file
+	
+	@php
+		//echo $date = \Carbon\Carbon::now();
+        //echo $notiVal['created_dt']->diffForHumans();
+		
+        echo \Carbon\Carbon::parse($notiVal['created_dt'])->diffForHumans();
+    @endphp
+	
+	
+	echo  Carbon\Carbon::parse($notiVal['created_dt'])->format('d-m-Y i');
+	
+
+	{{ \Carbon\Carbon::parse($preSanctionVal['CREATED_DT'])->format('d-m-Y') }}
+	
+==> current date in laravel
+
+	echo $date = \Carbon\Carbon::now()
+	
+	
+==> datatable in laravel 5.5  with ajax
+	ex -> http://laravelcode.com/post/laravel-55-yajra-datatable-example
+	
+	<link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	
+	1 - composer require yajra/laravel-datatables-oracle
+	2 - add setting in config/app.php
+	3 - php artisan vendor:publish
+	4 - create route in web.php
+	5 - 
+	
+	js part
+		
+	var genericTable = $('#genericMessageTable').DataTable({
+        "bLengthChange": false,
+        processing: true,
+        serverSide: true,
+        ajax: get_message_url,
+        columns: [
+            {data: 'message', name: 'message'},			//column names
+            {data: 'msg_mode', name: 'msg_mode'},
+            {data: 'valid_from', name: 'valid_from'},
+            {data: 'valid_till', name: 'valid_till'},
+            {data: 'active_flag', name: 'active_flag'},
+            {data: 'created_by', name: 'created_by'},
+            {data: 'created_dt', name: 'created_dt'},
+            {data: 'updated_by', name: 'updated_by'},
+            {data: 'updated_dt', name: 'updated_dt'},
+            {data: 'action', name: 'action'}
+            /*{data: 'action', name: 'action', orderable: false, searchable: false}*/
+        ]
+    });
+	
+	-> if adding using ajax  use inly draw() method in success
+	
+			genericTable.draw();
+	
+	#### add function in controller
+	
+		 public function getBanner(){
+			$list = Banner::all();				// model
+			return \DataTables::of($list)
+				->addColumn('banner_img', function ($list) {
+				   return '<a href="" class="view-banner-btn" data-banner-url="'.url('images/'.$list->banner_img_url).'" data-title="View Banner" data-toggle="modal" data-target="#ViewBannerModal" title="Edit">View Banner</a>';
+				})
+				->addColumn('action', function ($list) {
+					return '<a href="" class="btn btn-success btn-sm banner_action_btn" data-url="'.route('banner.edit',$list->id).'" data-title="Edit Banner" data-toggle="modal" data-target="#BannerModal" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+					<a href="'.route('banner.destroy',$list->id).'" title="Delete" class="btn btn-danger btn-sm delete_btn"
+									   data-tr="tr_'.$list->id.'"
+									   data-toggle="confirmation"
+									   data-btn-ok-label="Delete" data-btn-ok-icon="fa fa-remove"
+									   data-btn-ok-class="btn btn-sm btn-danger"
+									   data-btn-cancel-label="Cancel"
+									   data-btn-cancel-icon="fa fa-chevron-circle-left"
+									   data-btn-cancel-class="btn btn-sm btn-default"
+									   data-title="Are you sure you want to delete ?"
+									   data-placement="left" data-singleton="true">
+										   <i class="fa fa-times-circle btn-danger" aria-hidden="true"></i>
+									</a>';
+				})
+				->rawColumns(['banner_img', 'action'])			// if using addColumn() more than 1
+				->setRowId('id')								// add unique id in tr
+				->editColumn('id', 'tr_{{$id}}')				// tr id name like id="tr_1"
+				->make(true);									// make table
+		}
+
+	
+		==============		OR	by using view	 ===============
+		
+		public function getBanner(){
+			$list = Banner::all();
+			return \DataTables::of($list)
+				->addColumn('banner_img', function ($list) {
+				   return '<a href="" class="btn btn-default btn-sm view-banner-btn" data-banner-url="'.url('images/'.$list->banner_img_url).'" data-title="View Banner" data-toggle="modal" data-target="#ViewBannerModal" title="Edit">View Banner</a>';
+				})
+				->addColumn('action', function ($list) {
+					return view('Banner.actionButton', compact('list'))->render();
+				})
+				->rawColumns(['banner_img', 'action'])
+				->setRowId('id')
+				->editColumn('id', 'tr_{{$id}}')
+				->make(true);
+		}
+
+			
+		actionButton.blade.php	
+		
+		<a href="" class="btn btn-success btn-sm banner_action_btn" data-url="{{route('banner.edit',$list->id)}}" data-title="Edit Banner" data-toggle="modal" data-target="#BannerModal" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+		
+			<a href="{{route('banner.destroy',$list->id)}}" title="Delete" class="btn btn-danger btn-sm delete_btn"
+			   data-tr="tr_{{$list->id}}"
+			   data-toggle="confirmation"
+			   data-btn-ok-label="Delete" data-btn-ok-icon="fa fa-remove"
+			   data-btn-ok-class="btn btn-sm btn-danger"
+			   data-btn-cancel-label="Cancel"
+			   data-btn-cancel-icon="fa fa-chevron-circle-left"
+			   data-btn-cancel-class="btn btn-sm btn-default"
+			   data-title="Are you sure you want to delete ?"
+			   data-placement="left" data-singleton="true">
+				<i class="fa fa-times-circle btn-danger" aria-hidden="true"></i>
+			</a>
+			
+
+			
+			
+----------------------------	run test	------------------------------
+
+==> test 
+
+1 - 
+
+	Route::get('/getdata', function(){
+	  return response()->json(['website'=>'AppDividend']);    // it will return json values 
+	});
+
+
+2 - php artisan make:test HTTPTest		//create test HTTPTest file inside tests/featureTest/HTTPTest.php
+
+
+	#######RUN ALL TEST
+
+3 -	phpunit
+	OR
+	vendor/bin/phpunit
+	OR
+	vendor\bin\phpunit // it will run all test under UNITE TEST as well as FEATURE TEST  (3 test depends on no of files) or  (2 test)
+	
+	#### RUN SPECIFIC TEST
+		vendor\bin\phpunit --filter=testExample1		
+
+
+	public function testExample()
+	{
+		$response = $this->get('/getdata');
+		$response->assertJson(['website'=>'AppDividend']);	  //above route json() value will be same as this json value so will pass
+	}
+
+	NoTE : now change something in above route json value then test will not pass
+
+	functions =
+	
+		
+		$response->assertJson()
+		$response–>assertJson(array $data)	//This function basically checks the return response from the original route.
+		
+		$response–>assertViewIs($value)		//checks return view from either web.php file or particular controller file.
+		
+		
+		$this->assertTrue()
+		
+		$response–>assertStatus($code)		//checks the status code return from the web API point.
+
+
+----------------------------------------------------------------------
+
+==> insert | update | delete  using DB
+
+		\DB::table('users')
+					->where('id', 1)
+					->update(['name' => str_random(10)]);
+
+		DB::table('users')->delete(4);
+		
+		DB::table('items')->insert(['name'=>'hello new']);
+		
+		
+		DB::table('bears')->delete();     // delete all records
+
+
+		
+----------------------------------------------------------------------
+==> console command  | cron job
+
+	//php​ ​artisan​ ​make:console​ ​LogDemo​ ​--command​=​log:demo
+	
+	php artisan make:command SharesAlloted
+	
+	1 - php artisan make:command CronJob
+
+	2 - got to app/Console/Commands/CronJob.php   and make changes 
+
+		protected $signature = 'CronJob:cronjob';
+		protected $description = 'User Name Change Successfully';
+
+		public function handle()
+		{
+			\DB::table('users')
+				->where('id', 1)
+				->update(['name' => 'kalim']);
+
+				//->update(['name' => str_random(10)]);
+
+			$this->info('User Name Change Successfully!');
+		}		
+
+	3 - go to App\Console\Kernel.php and add like below
+
+		protected $commands = [
+			'\App\Console\Commands\CronJob'
+		];
+
+		protected function schedule(Schedule $schedule)
+		{        
+			$schedule->command('CronJob:cronjob')
+					 ->everyMinute();
+		}
+		
+		protected function commands()
+		{
+			require base_path('routes/console.php');
+		}
+
+	4 - check command showing in list or not
+		
+		php artisan list
+
+	5 - php artisan CronJob:cronjob   		OR
+		php artisan schedule:run
+		
+==> config on live server
+	
+	1 - run -> ssh username@ip_address
+	2 - enter password 
+	3 - check php version  ->  php -v
+	4 - run ->   crontab -e
+	5 - For Ex. your php version is 7.1 in your live server and your laravel project host in this directory /var/www/html. then you should be set 	  like that valye in open cron file.
+
+		* * * * * /usr/bin/php7.1 /var/www/html/artisan schedule:run 1>> /dev/null 2>&1
+
+
+----------------------------------------------------------------------
+
+==> broadcast | realtime | real time data
+
+1- 	create an Event
+		php artisan make:event ActionDone		//app/Events/ActionDone.php
+
+2 - To generate a listener					 // create in App\Listeners\ThingToDoAfterEventWasFired.php
+
+		php artisan make:listener ThingToDoAfterEventWasFired --event="ActionDone"
+
+3 - Registering Events
+	// app/Providers/EventServiceProvider.php 
+	
+
+	protected $listen = [
+	    'App\Events\ActionDone' => [
+	        'App\Listeners\ThingToDoAfterEventWasFired',
+	    ],
+	];
+
+	
+	
+----------------------------------------------------------------------
+
+==> check key exists or not in array or collection
+
+	@forelse(data_get($transHistoryData,'ALL',[]) as $key => $val)			//key => ALL
+		template code
+	@empty
+		<h3>No data found.</h3>
+	@endforelse
+	
+	
+	@forelse(data_get($transHistoryData, 'EMI', []) as $key => $val)		//key => EMI
+		template code
+	@empty
+		<h3>No data found.</h3>
+	@endforelse	
+
+
+
+----------------------------------------------------------------------
+
+==> forelse | unless | display content else no record found 
+
+		********************************
+		@forelse($users as $user)
+			<li>{{{ $user->full_name }}}</li>
+		@empty
+			<p>There are no users yet!</p>
+		@endforelse
+
+
+		************************************************************************************
+		<span class="form-group {{ $formGroupClasses or '' }}" style="{{ $style or '' }}">
+		   <label class="font-size10 titlegrey float-left">{{ $label }}</label>
+		   <select name="{{$name}}" id="{{ $name }}" class="{{ $class or '' }}">
+			  @forelse($options as $optionValue => $optionName)
+				   @if ($loop->first)
+					   <option value="">{{ $defaultText or 'Select option' }}</option>
+				   @endif
+				   <option value="{{ $optionValue }}">{{ $optionName }}</option>
+			  @empty
+				   <option value="">{{ $defaultText or 'No records found'}}</option>
+			  @endforelse
+		   </select>
+		</span>
+
+
+
+
+		********************************************************
+		@unless($users->count())
+			// Content if there are no users.
+		@else
+			// We have users.
+			<table class="table table-striped">
+				<thead>
+					<th>Full name</th>
+				</thead>
+				<tbody>
+					@foreach($users as $user)
+						<tr>
+							<td>{{{ $user->full_name }}}</td>
+						</tr>
+					@endforeach
+				</tbody>
+			</table>
+		@endunless
+
+----------------------------------------------------------------------
+
+==> show content only if user not logged in in blade file | show if not logged in
+
+	@if(Auth::guest())
+		not logged in content
+	@endif
+
+	  @if(Auth::check())	  
+		// show this if user logged in
+        <div class="head-box menu" onclick="openHeader(event, 'menu')">
+            <i class="fa fa-bars"></i>
+        </div>
+        @endif
+		
+		
+	@if(Auth::guest())
+		// show this if user not logged in
+        <div class="head-box menu" onclick="openHeader(event, 'back')">
+           <i class="fa fa-arrow-left"></i>
+        </div>
+	@endif
+	
+	
+	OR ************************ method 1
+	
+	@if(Auth::user())  
+		@include('nav.user')
+	@endif
+
+
+
+	**************************  method 2  |  includeWhen()
+
+
+		@php $isLoggedIn = Auth::check(); @endphp
+
+		@includeWhen($isLoggedIn, 'mobile.eligibility.partials.notification-drawer')
+		@includeWhen($isLoggedIn, 'mobile.eligibility.partials.menu-drawer')
+
+
+----------------------------------------------------------------
+==> show blade if blade exits
+	
+		@includeIf('my-view')
+
+			same as above
+
+		@if(View::exists('my-view'))
+			@include('my-view')
+		@endif 
+
+		
+----------------------------------------------------------------------
+
+==> use href = "" in button | button works like a link
+
+	<button class="btn full height30 font-size13 bg-white" onclick="location.href='{{route("additionalDisbursement")}}';">Request Disbursement</button>
+	
+		
+----------------------------------------------------------------------
+
+==>
+
+
+in controller	
+	private function errorResponse()
+    {
+        if (request()->wantsJson()) {
+            return response()->json(['status' => false], Response::HTTP_UNAUTHORIZED);
+        }
+
+        return redirect()->back()->withInput()->withError('Invalid User Id Or Password');
+    }
+
+	
+	return redirect()->back()->withInput()->withError('Invalid User Id Or Password');	// withInput() work as old()
+																						// withError() -> store msg in session
+	
+		in blade
+
+		@if(session()->has('error'))										//check error from above withError()
+			<span class="error-msg font-size10 red-color float-right">
+				<i>{{ session()->get('error') }}</i>						//get error msg from above withError()
+			</span>
+		@endif
+
+
+		
+----------------------------------------------------------------------
+			
+==> pass multiple variables in view 
+
+	return view('Banner.actionButton', ['list' => $list, 'case'=>'actionButton'])->render();
+	
+	
+	
+==> +++++++++++++++++++++++++++++
+
+
+mix.js('resources/assets/js/app.js', 'public/js')
+   .sass('resources/assets/sass/app.scss', 'public/css');
+	
+	
+The next couple of lines doing entire magic; mix.js('resources/assets/js/app.js', 'public/js') says to read app.js contents, pull them and put them up in public/js after mixing them up. 	
+
+
+----------------------------------------------------------------
+
+npm run dev
+
+npm run watch-poll
+
+----------------------------------------------------------------
+
+==>		test passport auth(login) using postman
+
+		POST =>		http://10.4.5.16/insta-loan-web-services/public/api/v1/login
+
+		Header :->		Accept: application/json
+
+		Body ->			x-www-form-urlencoded
+
+		Parameter ->
+						'grant_type' => 'password',
+						'client_id' => 1,
+						'client_secret' => T7eEesKVKpV5wyPiWoCVBBFUv0iGiF41sEqR5rf0,
+						'username' => data_get($credentials, 'user_id'),
+						'password' => data_get($credentials, 'password'),
+						'scope' => '',
+			
+	
+
+==>		access api using token in postman
+
+		POST => http://10.4.5.16/insta-loan-web-services/public/api/v1/getTransactionData
+		
+		Header :->		Accept: application/json
+						Authorization : Bearer {login_token}
+						
+		Body ->			form-data
+
+		Parameter ->	lac_no : 605374593
+						financialyear : 201617
+		
+	
+	
+	?XDEBUG_SESSION_START=PHPSTORM
+
+
+
+
+	
+	
+==> phpstrom shortcuts
+
+		Ctrl+Alt+Shift+Insert  -> new file any type	
+
+		Ctrl+W	-> select a block
+
+		Ctrl+B	or  ctrl+click    -> go to specific file method or code
+
+		Alt+Control+Shift+T		-> refactor
+
+		Ctrl+j					-> live template
+		
+		ctr+shift+alt + select multiple words or line -> use to uppercase or lower case string or delete
+
+
+
+
+==>	Create live template
+
+		1 - File | setting | live template | php
+		2 - Enter abbrivation -> [keyword name like myFun]
+		3 - template text ($ for dymanic)
+
+			public function $NAME$()
+			{
+				$S$
+			}
+		4 - type that 'myFun'. It will generate auto full block function
+		
+			
+------------------------------------------
+
+==>	call webservice | call api
+
+	in controller ContactController.php
+
+		$customerNo = '18549880';
+	    $lacNo = '605374593';
+    	
+    	$contactData = $contactDetails->getContactDetailsData($customerNo, $lacNo);
+		
+		
+			
+	in App/service/contactService.php
+		
+		public function getContactDetailsData($customerNo,$lacNo)
+		{
+			$data = $this->json = Zttp::withHeaders(Token::header())->post(api_route('api.getContactInfo'), [
+				'lac_no' => $lacNo,
+				'cust_no' => $customerNo,
+				'user_id' => auth()->user()->user_id,
+			])->json();
+			
+			$data = data_get($data,'Contact_Info.0',[]);			
+			session()->put('SESS_contactDetails', $data);			
+			return $data;		
+		}
+	
+	
+	
+
+
+==>	call a webservice with token | auth api	| withHeaders()
+
+	
+	$this->json = Zttp::withHeaders(Token::header())->post(api_route('api.getTransactionData'), [
+            'lac_no' => $lac_no,
+            'financialyear' => $financial_year,
+	])->json();
+	
+	
+	Token class file ->*********
+	
+		class Token
+		{
+			public static function header()
+			{
+				return [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer '.request()->passportBearerToken(),
+				];
+			}
+		}
+	
+	=> put token in session 	
+	
+		private function registerBearerTokenMacro()
+		{
+			Request::macro('passportBearerToken', function() {
+				return Session::get('access_token');
+			});
+		}
+	
+	
+==> add extra parameter in request | merge request | merge()
+
+	request()->merge([
+            'pwd_request_through' => 'WEB',
+            'pwd_request_ip'      => request()->getClientIp(),
+        ]);
+
+
+		
+==> use self:: for constant only  | check value in array validation  use Rule::in
+
+	const allowedBannerTypes = ['APP_IOS', 'APP_ANDROID', 'WEB'];
+
+	public function getBanner()
+		{
+			if (empty(request()->input('banner_mode'))) {
+				request()->merge(['banner_mode' => self::allowedBannerTypes[2]]);
+			}
+
+			$data = request()->validate([
+				'banner_mode' => [Rule::in(self::allowedBannerTypes)],
+			]);
+
+			return response()->json([
+				'data' => BannerMaster::activeBanner($data),
+			]);
+		}
+
+
+
+		
+		
+==> postman debug
+		
+	?XDEBUG_SESSION_START=PHPSTORM
+	
+	Ex.
+		http://10.4.5.16/insta-loan-micro-services/public/api/v1/password/email
+		
+
+		
+==> convert to array | array_merge()
+
+	InstaApplication::applicationsUnderProcess()->toArray()
+	
+	return array_merge(InstaApplication::applicationsUnderProcess()->toArray(),$preSanctionedLoanData);
+		
+==> merge 2 or more array | array_merge()
+
+		$data = collect($this->getApplicationSummaryData());
+        $feePayable = data_get($data,'STEP_DETAILS.0.PENDING_TOTAL_FEE');
+        
+		$extraData = [
+               'PENDING_QUERIES_COUNT' => count(data_get($data,'PENDING_QUERY',[])),
+               'PENDING_DOCS_COUNT' => count(data_get($data,'PENDING_DOC',[])),
+               'INFORMATION_COUNT' => $feePayable=='' ? 0 : 1,
+               'FEE_PAYABLE' => $feePayable=='' ? 0 : $feePayable
+        ];
+		
+        $data = data_get($data,'LOAN_DEATILS.0',[]);
+        
+		return array_merge($data, $extraData);		
+
+
+==> use of ViewObject |  use new ContactDetail()
+
+    ContactDetailsController.php  | 	controller file
+	
+		public function index(ContactDetailsService $contactDetails)
+		{    	
+			$customerNo = '18549880';
+			$lacNo = '605374593';
+			
+			$contactData = $contactDetails->getContactDetailsData($customerNo, $lacNo);
+			
+			return view('mobile.others.contact_details.index',['contactData'=> new ContactDetail($contactData)]);
+		}
+	
+	
+	ContactDetail.php			  | 	ViewObject file
+		
+		class ContactDetail extends ViewObject            					   | extends ViewObject
+		{
+			public function address()
+			{
+			   return "{$this->CADDR1} {$this->CADDR2} {$this->CADDR3} {$this->CADDR4} {$this->CCITY} {$this->CPINCODE}";
+			}
+			
+			public function email()
+			{
+				return $this->EMAIL ? : 'NA';
+			}
+			
+			public function mobile()
+			{
+				return $this->MOBILE ? : 'NA';
+			}
+		}	
+	
+	
+	
+	contact.blade.php			  | 	blade file
+	
+	{{ $contactData->address() }}							// $contactData from controller
+	{{$contactData->email()}}
+	{{$contactData->mobile()}}
+	
+	
+==> jqury form validation
+
+
+	 $.validator.addMethod("email", function (value, element) {
+            return this.optional(element) || /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z.]{2,5}$/i.test(value);
+        }, "Please enter a valid email address.");
+
+      window.kalim =  $("#frmUpdateContactDetails").validate({
+            errorPlacement: function (error, element) {
+                $(error).insertAfter(element);
+            },
+            errorClass: 'error-msg font-size10 red-color',
+            highlight: function (element) {
+                $(element).removeClass('font-size10').css('border', '1px red solid');
+                $(element).prev().css('color', 'red');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('font-size10').css('border', '');
+                $(element).prev().css('color', '');
+            },
+             rules:{
+                 email: "required email",
+                 mobile: {
+                     required: true,
+                     number: true,
+                     maxlength: 15,
+                     minlength: 10,
+                 },
+                 addressType: "required"
+             },
+             messages: {
+                 email : 'Enter Email id',
+                 mobile: {
+                     maxlength: "Mobile number should be maximum 15 digits.",
+                     minlength: "Mobile number should be minimum 10 digits.",
+                 },
+                 addressType : 'Select Address',
+             },
+            submitHandler: function (form) {
+
+                let $save = $('#btn-contact-update');
+                $save.text('Please wait...').attr('disabled', true);
+
+                $.ajax({
+                    type: "POST",
+                    url: $(form).attr('action'),
+                    data: $(form).serialize(),
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response) {
+                            $('.response-msg').html(response.MSG).css('color','green');
+                            setTimeout(function () {
+                                window.location = route('contactDetails');
+                            },2000);
+                        }
+                    },
+                    error: function (response) {
+                        alert('oops! Something went wrong');
+                       /* if (response.status === 422) {
+                            let errors = collect(response.responseJSON.errors);
+                            errors.each(function (key, value) {
+                                kalim.showErrors({value: key[0]});
+                            });
+                        }*/
+                    }
+                });
+            }
+        });
+
+
+
+
+==>  change color to red of main parent in jquery form validation
+
+
+			highlight: function highlight(element) {
+                $(element).removeClass('font-size10').css('border', '1px red solid');
+                //$(element).prev().css('color', 'red');
+                $(element).parents('.form-group').find('label').css('color', 'red');
+            },
+
+
+        //$(element).parents('.form-group').find('label').css('color', 'red');
+		$(element).parents('.form-group').css('color', 'red');    
+
+
+
+		
+==> use pluck() | get all values for specific key (applicant_id)
+
+		dd(auth()->user()->applicants()->pluck('applicant_id'));
+		
+		
+		
+		
+		
+==> change password logic		
+		
+		
+				
+	user model	
+		
+	public function changePassword($oldPassword, $newPassword)
+	{
+		if (!Hash::check($oldPassword, $this->password)) {
+			throw ValidationException::withMessages([
+				'old_password' => 'The old password does not match'
+			]);
+		}
+		
+		$this->password = bcrypt($newPassword);
+		$this->plain_password = $newPassword;
+		$this->save();
+		
+		return true;
+	}
+		
+
+==> update data
+		
+
+==> no of iteration within foreach
+<ul>
+@foreach ($pages as $page)
+    <li>{{ $loop->iteration }}: {{ $page->title }}
+        @if ($page->hasChildren())
+        <ul>
+        @foreach ($page->children() as $child)
+            <li>{{ $loop->parent->iteration }}.{{ $loop->iteration }}:
+                {{ $child->title }}</li>
+        @endforeach
+        </ul>
+        @endif
+    </li>
+@endforeach
+</ul>
+
+
+==> file upload logic
+
+  //  $all = request()->all();
+       // $files = $all['files'];
+	    
+        $messages = [
+            'file.*.required' => 'select a file.',
+            'file.*.mimes'    => 'File Type Must be png.',
+            'file.*.max'      => 'file size is too big.',
+        ];
+
+        request()->validate([
+            'file.*' => 'required|mimes:png,pdf,jpg,jpeg|max:15000'  //15MB
+        ], $messages);
+
+       /* foreach ($files as $file) {
+            $newFileName = 'doc_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploaded_docs'), $newFileName);
+        }
+	*/
+	
+	
+	
+	return response()->json(['data' => 'File Uploaded Successfully.']);
+	
+	
+==> download files from google drive | laravel 
+
+
+	https://console.developers.google.com/flows/enableapi?apiid=picker&credential=client_key
+
+
+	public function googleDriveDownloadFile()
+    {
+        /*print_r(request()->all());
+        print_r(request()->googleFiles);
+
+        $messages = [
+            'googleFiles.*.required' => 'select a file.',
+            'googleFiles.*.mimes'    => 'File Type Must be png,jpg,jpeg or pdf.',
+            'googleFiles.*.max'      => 'file size is too big.',
+        ];
+        request()->validate([
+            'googleFiles.*' => 'required|mimes:png,pdf,jpg,jpeg|max:15000'  //15MB
+        ], $messages);*/
+
+        try {
+            $googleDrive = new GoogleDrive(new Client, request()->googleFiles, request()->access_token);
+
+            $files = $googleDrive->downloadOnServer();
+            $response = $googleDrive->sendToWebLayer($files);
+
+            return response()->json([
+                'data'   => $response->json(),
+                'status' => $response->status(),
+            ], $response->status());
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+
+        /*try {
+            $all = request()->all();
+            $file_arr = $all['files'];
+
+            foreach ($file_arr as $file) {
+                $file_name = $file['name'];
+                $fileId = $file['id'];
+                $oAuthToken = $all['access_token'];
+                $getUrl = 'https://www.googleapis.com/drive/v2/files/' . $fileId . '?alt=media';
+                $options = [
+                    'http' => [
+                        'method' => "GET",
+                        'header' => "Authorization: Bearer " . $oAuthToken,
+                    ],
+                ];
+
+                $context = stream_context_create($options);
+
+                $content = file_get_contents($getUrl, false, $context);
+
+                $dir = public_path('uploaded_docs');
+
+                if (!file_exists($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+
+                //$file_name = date('d-m-y_h-i-s', strtotime("now")) . '_' . rand(1000, 9999) . '_' . urldecode($file_name);
+                $file_name = urldecode($file_name);
+                $saveto = $dir . '/' . $file_name;
+
+                if (file_exists($saveto)) {
+                    unlink($saveto);
+                }
+                file_put_contents($saveto, $content);
+            }
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+
+        return response()->json([
+            'RETURN_CODE' => '0',
+            'MSG'         => 'File Uploaded successfully.',
+        ]);*/
+    }
+	
+	
+==> merge request | add custom values in request | add extra parameter in request  
+	
+		request()->merge(['name' => $file_name,'tmp_name' => $saveto ]]);
+		
+        request()->merge(['files' => ['name' => $file_name,'tmp_name' => $saveto,'type' =>$file_type]]);
+		
+		
+==> dynamically generated html tag not working in blade 		
+		
+	{!! $data !!}   //use this
+	{{ $data }}   //not this
+
+
+==>  generate array in key value pair  | use array_keys
+
+	protected $faqContent = [
+			'Borrower and Co Borrower(s)' =>  'aaaaa',	
+			'Loan Type'                   =>  'bbbbbb',
+			];
+	
+
+
+	public static function make()
+    {
+        $instance = new static();
+        $faqCollection = collect();       
+	    
+        foreach (array_keys($instance->faqContent) as $key) {
+            $faqCollection->push([
+                'QUESTION'     => $key,
+                'ANSWER' => $instance->faqContent[$key]
+            ]);
+        }
+
+        return $faqCollection;
+    }
+	
+==> access static method or variables in same class	 | use  $instance = new static();
+	
+	protected $faqContent = [
+				'Borrower and Co Borrower(s)' =>  'aaaaa',	
+				'Loan Type'                   =>  'bbbbbb',
+			];
+	
+	public static function make()
+    {
+        $instance = new static();		
+		return $instance->faqContent;
+		
+	}
+	
+
+==> change key name in array
+
+	$validatedInput['serial_no_2'] = $validatedInput['serial_no'];
+    unset($validatedInput['serial_no']);
+	return  $validatedInput;
+	
+	
+
+==> access static method in blade
+	
+	 
+	  @foreach(App\Utilities\FaqGenerator::make() as $faq)
+	  
+	  @endforeach
+	  
+	  
+-------------------------------------------------------------------------	
+	
+==> enable imagick in wamp or xampp
+
+	https://ourcodeworld.com/articles/read/349/how-to-install-and-enable-the-imagick-extension-in-xampp-for-windows
+	
+	
+-------------------------------------------------------------------------
+
+	
+==>  scroll to specific div | do function depending on # url | hash
+
+HTML:
+	<a class="pending-link" href="http://insta-loan.test/additional-loan-request#pendingQuery">pendingQuery</a>
+
+	
+JS:
+	$(document).ready(function () {
+        let $url = document.location.toString();
+         handleAdditionalLoanTabs($url);
+
+        $(".pending-link").click(function () {
+            handleAdditionalLoanTabs($(this).attr('href'));
+        });
+    });
+    
+    function handleAdditionalLoanTabs(url) {
+        let $tab = url.split('#')[1];
+        $tab = $tab == undefined ? 'pendingDocuments' : $tab;
+        slideToDiv($tab);
+
+        $("input[type='checkbox']").attr('checked',false);
+        $("#"+$tab).attr('checked',true);
+
+        $('.menu-drawer').removeClass('active');
+        $('.overlay').removeClass('fixed-full');
+    }
+
+    function slideToDiv(tab) {
+        //e.preventDefault();
+        var position = $('#'+tab+'Scroll').offset().top;
+        $("body, html").animate({
+            scrollTop: position
+        }, 'slow' );
+    }
+
+
+==>  hide parameter name hint | parameter method hint
+
+     go to setting -> type :  'parameter name hint'  -> untick that
+	
+	
+==>	create  | insert into table | use create($input)
+
+	
+	$validatedInput = request()->validate([
+            'lac_no'   => 'nullable|numeric',
+            'question' => 'required',
+            'subject'  => 'required',
+        ]);
+
+        $validatedInput['user_id'] = auth()->user()->user_id;
+
+
+		try {
+            UserQueries::create($input);
+			
+            return response()->json([
+                'status'  => true,
+                'message' => 'Record Inserted Successfully',
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status'  => false,
+                'message' => $exception->getMessage(),
+            ]);
+        }
+	
+	
+	Ex. 2
+
+	$picnicYellowstone = Picnic::create(array(
+            'name'        => 'Yellowstone',
+            'taste_level' => 6
+        ));
+		
+		
+		
+	
+	
+	
+==> google recaptcha jquery form validation in js 
+
+
+	https://www.google.com/recaptcha/admin
+
+
+	https://bubinga.co/combining-googles-recaptcha-and-jquery-validate/
+	
+	1 -  <script src='https://www.google.com/recaptcha/api.js'></script>
+	2 - in html
+
+		<input type="hidden" class="hiddenRecaptcha required" name="hiddenRecaptcha" id="hiddenRecaptcha">
+		<div class="g-recaptcha" data-sitekey="{YOUR-SITE-KEY-HERE}"></div>
+		
+	3 -   use  ignore: ".ignore",    
+		
+		var validator = $("#add-conference").validate({
+						   ignore: ".ignore",
+						   rules: {
+							   city: {
+								   required: function() {
+									   if ($("#city-name").val()) {
+										   return false;
+									   } else {
+										   return true;
+									   }
+								   }
+							   },
+							   country: {
+								   required: function() {
+									   if ($("#country-name").val()) {
+										   return false;
+									   } else {
+										   return true;
+									   }
+								   }
+							   },
+							   "hiddenRecaptcha": {
+								   required: function() {
+									   if(grecaptcha.getResponse() == '') {
+										   return true;
+									   } else {
+										   return false;
+									   }
+								   }
+							   }
+						   }
+						});
+
+	
+
+--------------------------------------------------------------------------------------
+	
+==> show server error  as js
+
+	Ex.
+
+ 								let errVar = '';
+                                let errors = collect(response.errors);
+                                
+                                errors.each(function (key, value) {
+                                    errVar += key[0];
+                                });
+
+                                swal(errVar,'','error');
+                                
+
+	Ex.
+
+         .catch((error) => this.errors = error.response.data.errors);                       
+
+
+
+==> get logged in user token id
+
+	
+	$inputs['user_id'] = auth()->user()->user_id;
+	$inputs['token_id'] = auth()->user()->token()->id;
+
+
+==>  Call to a member function status() on array 
+
+	b4 error
+		 $response = Zttp::----()->json();
+		 return $response;
+
+     after
+
+	 remove ->json()  from response
+	 and return $response->json();
+
+
+
+==>  send values (parameter)  with header
+
+
+
+		1 - insta layer   | in laravel passport 
+
+			
+				 try {
+		            $response = Zttp::withHeaders([
+		                'X-Login-Mode' => app(Agent::class)->isMobile() ? 'MOBILE' : 'WEB',
+		                'X-User-Agent' => request()->server('HTTP_USER_AGENT'),
+		            ])->accept('application/json')->post(api_route('api.login'), [
+		                'grant_type'    => 'password',
+		                'client_id'     => config('web-services.passport.client_id'),
+		                'client_secret' => config('web-services.passport.client_secret'),
+		                'username'      => data_get($credentials, 'user_id'),
+		                'password'      => data_get($credentials, 'password'),
+		                'scope'         => '',
+		            ]);
+
+		            if ($this->isLoggedIn($response)) {
+		                return $response->json();
+		            }
+
+		            return false;
+		        } catch (\Exception $e) {
+		            return false;
+		        }
+
+
+
+		2 - Web layer
+
+			
+					$response = Zttp::withHeaders([
+		                'X-Login-Mode' => request()->header('X-Login-Mode'),
+		                'X-User-Agent' => request()->header('X-User-Agent'),
+		            ])->post(config('web-services.forceRootUrl') . "oauth/token", request()->all());
+
+
+
+		3 - micro leyer
+
+			const LOGIN_MODE = 'X-Login-Mode';
+
+		    const BROWSER_INFO = 'X-User-Agent';
+
+		    const IP_CITY = 'IP_CITY';
+
+		    const IP_COUNTRY = 'IP_COUNTRY';
+
+		    public static function forLogin($user, $tokenId)
+		    {
+		        $user->loginLogs()->create([
+		            'token_id'     => data_get($user->tokens->where('id', $tokenId)->first(), 'id'),
+		            'login_status' => 'GOOD',
+		            'login_mode'   => request()->header(self::LOGIN_MODE),
+		            'browser_info' => request()->header(self::BROWSER_INFO),
+		            'ip_address'   => request()->getClientIp(),
+		            'ip_city'      => request()->header(self::IP_CITY),
+		            'ip_country'   => request()->header(self::IP_COUNTRY),
+		            'login_dt'     => now(),
+		        ]);
+		    }
+
+
+
+
+
+
+
+EX. 2 same as above
+
+
+		 $response = Zttp::withHeaders(Token::header() + [
+                'X-Forwarded-For' => request()->getClientIp(),
+                'referer' => request()->header('referer')
+            ])
+            ->post(api_route('api.payment'), $data);
+
+
+
+
+
+==> redirect with error msg
+
+
+
+        if ($response->status() === Response::HTTP_EXPECTATION_FAILED) {
+            return (new MessageBag($response->json()));
+        }
+
+        if ($response->status() === Response::HTTP_UNPROCESSABLE_ENTITY) {
+            return (new MessageBag($response->json()['errors']));
+
+           /* return redirect()->back()->withErrors(
+                new MessageBag($response->json()['errors'])
+            )->withInput();*/
+        }
+
+        if ($response->status() === Response::HTTP_TOO_MANY_REQUESTS) {
+            //return redirect()->back()->with('message', 'Too many attempts, please try after 5 minutes.');
+            return $response->json();
+        }
+
+        //return redirect()->back()->with('message', data_get($response->json(), 'message'));
+        return $response->json();
+
+
+
+==>  response code and response message | $response->status()
+
+	 	$response = Zttp::post(api_route('api.password.forgot'), request()->all());
+
+        return response()->json($response->json(), $response->status());
+
+
+
+
+
+==> get email_id by using user_id 
+
+	In userModel
+
+		public static function findByUserId($userId)
+    	{
+        	return self::whereUserId($userId)->first();
+    	}
+
+
+
+    in controller
+
+
+		return response()->json(['message' => trans($response), 'email_id' => User::findByUserId(request('user_id'))->email_id]);
+
+
+
+==> email masking | show only some part of email id
+
+	
+	$email = 'kalim@gmail.com';
+
+
+	 $arr = explode('@', $email);		
+	   o/p => 		1 -  kalim
+	   				2 - gmail.com
+
+
+     	$email =  substr($arr[0],0,3).str_repeat('*',strlen($arr[0])-3).'@'.$arr[1];
+
+     	// 		kal**@gmail.com';
+
+
+
+==>  number mask | no mask | mobile no mask
+
+
+	function number_mask($data)
+    {
+        $len = strlen($data);
+        return str_repeat('x',$len-4).substr($data,-4);     
+    }
+
+
+==>  convert json to array | use json_decode() with 'TRUE'
+
+
+	$result =  {"OBJECT":[{"CHECKDIGITALDOCOTP":[{"RETURN_CODE":"-100","MESSAGE":"StartIndex cannot be less than zero. Parameter name: startIndex"}]}]};
+
+
+	 $result = json_decode($result, true);
+
+
+	O/P => 
+
+	 Array
+		(
+		    [OBJECT] => Array
+		        (
+		            [0] => Array
+		                (
+		                    [CHECKDIGITALDOCOTP] => Array
+		                        (
+		                            [0] => Array
+		                                (
+		                                    [RETURN_CODE] => -100
+		                                    [MESSAGE] => StartIndex cannot be less than zero. Parameter name: startIndex
+		                                )
+
+		                        )
+
+		                )
+
+		        )
+
+		)
+
+
+==>		sort a array with APPL_CUST_NUMBER
+
+
+		 	$doc_list_arr = [];
+            foreach($args['doc_list'] as $key => $value){
+                $doc_list_arr[$value['APPL_CUST_NUMBER']][] =  $value;
+            
+
+
+==>  install dropzone using npm
+
+	
+	1 - npm i dropzone
+
+	2 - import Dropzone from 'dropzone';
+
+
+==> merge a form data into another form data in js
+
+	Ex.1 
+
+	 // var formData = new FormData(document.forms['form-ship']); // with the file input
+		var otData = $('#frmUploadExtraData').serializeArray();
+		
+        for (var i=0; i<otData.length; i++)
+           formData.append(otData[i].name, otData[i].value);
+
+
+    Ex. 2
+
+    	 		var formData = new FormData(form);
+
+                var other_data = $('#frmUploadExtraData').serializeArray();
+                $.each(other_data,function(key,input){
+                    formData.append(input.name,input.value);
+                });
+
+
+
+==>  append object to formData and send it on server side | note index | make it collection 
+
+
+				receipt.each(function(receipt, index) {
+                    collect(receipt).each(function(item, nestedIndex) {
+                        formData.append(`add_receipt[${index}][${item.name}]`, item.value);
+                    });
+                });
+
+
+
+
+
+==> disable upload area in dropzone once max upload file reached
+
+
+					this.on("maxfilesexceeded", function(file) {
+                        //this.removeFile(file);
+                        this.removeEventListeners();
+                    });
+
+
+
+
+                    this.on("removedfile", function (file) {
+                        if ($('.dz-preview:not(.dz-success)').length == 0) {
+                            $('#uploadButton').hide();
+                        }
+                    });
+
+
+==> count no of invalid files in dropzone | myDropzone.getRejectedFiles().length
+
+					if(myDropzone.getRejectedFiles().length === 0){
+                        myDropzone.setupEventListeners();
+                        $('.add-more-btn').css('display','inline-block');
+                        $('#uploadButton').show();
+                    }
+
+
+==> catch block | error
+
+
+		try{
+
+			return $response->withJson([
+                'status'  => false,
+                'message' => 'Error While uploading Document',
+            ], 417);
+        } catch (ServerException | ClientException $e) {
+            return $response->withJson([
+                'status'  => false,
+                'message' => $e->getMessage(),
+            ], $e->getCode());
+        }
+
+
+
+
+        try{
+
+            if ($result) {
+                return $response->withJson($result);
+            }
+
+            return $response->withJson([
+                'status'  => false,
+                'message' => 'Error While uploading Document',
+            ], 417);
+        } catch (ServerException | ClientException $e) {
+            return $response->withJson([
+                'status'  => false,
+                'message' => $e->getMessage(),
+            ], $e->getCode());
+        }
+
+
+==>   block ui | unblock ui  npm  | npm i block-ui
+
+	1 - npm i block-ui
+
+	2 - require("block-ui");    in common js file
+
+	3 - $.blockUI();
+	4 - $.unblockUI();
+
+
+	added below code in common.js
+
+
+		require("block-ui");
+
+			$.blockUI.defaults.message = '<img src="public/images/hdfc-loader.gif" />';
+			$.blockUI.defaults.css = {
+			    'z-index': '1199',
+			    width: '100%',
+			    border: '0px solid #FFFFFF',
+			    top: '30%',
+			    cursor: 'wait',
+			    backgroundColor: 'transparent',
+			    'text-align': 'center'
+			};
+			$.blockUI.defaults.overlayCSS = {backgroundColor: '#FFFFFF', opacity: 0.9, cursor: 'wait', 'z-index': 1100}
+
+
+
+==>  restrict methods for controller in route  | use only()
+
+	Route::resource('dashboard', 'DashboardController')->only(['index']);
+    Route::resource('meals', 'MealsController')->only(['store', 'update']);
+    Route::resource('orders', 'OrdersController')->only(['index', 'create', 'store', 'update', 'destroy']);
+    Route::resource('payments', 'PaymentsController')->only(['index', 'store']);
+    Route::get('/home', 'HomeController@index')->name('home');
+
+
+
+==>  dont hit api again and again if same file no | 
+
+
+		if(session()->has('sess_serialNo') && session()->get('sess_serialNo')==$serialNo && session()->has('preSanction.loanReview'))
+            {
+                return session('preSanction.loanReview');
+            }
+
+            session()->put('sess_serialNo',$serialNo);
+
+
+    Ex.
+    
+
+    	if(session()->has('postLogin.fileNoTemp') && session()->get('postLogin.fileNoTemp')==$fileNo && session()->has('postLogin.loanSummary'))
+        {
+            return session('postLogin.loanSummary');
+        }
+
+        session()->put('postLogin.fileNoTemp', $fileNo);        
+
+
+
+
+==> date picker jquery validation error | use on change
+
+
+		$('.datePicker input').datepicker({
+            format: 'dd-M-yyyy',
+            autoclose: true,
+        }).on('change', function() {
+            $(this).valid();
+        });
+
+
+==> datepicker start from tomorrow's date
+
+     var today = new Date();
+     var tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+
+     $('.datePicker input').datepicker({
+            format: 'dd-M-yyyy',
+            autoclose: true,           
+            startDate : tomorrow
+        }).on('change', function() {
+            $(this).valid();
+        });
+
+
+==> datepicker do not allow future date
+	
+	 	var today = new Date();     
+
+        $('.datePicker input').datepicker({
+            format: 'dd-M-yyyy',
+            autoclose: true,
+            endDate : today
+        }).on('change', function() {
+            $(this).valid();
+        });
+
+
+
+==> reset some field in jquery | specific field  | pass array to function argument | use ...parameter_name
+
+	
+	resetField('letter_type', 'letter_date', 'architect_remarks');
+
+
+	function resetField(...fields)
+    {
+        fields.forEach(function(val){
+            $(`#${val}`).val('');
+        })
+    }
+
+
+
+==>  declare a global function and use any where in project |  use window.functionName
+
+	
+	window.resetField = function(...fields)
+	{
+	    fields.forEach(function(val){
+	        $(`#${val}`).val('');
+	    })
+	}
+
+
+
+==>  remove an element from collection in js using id key  | use reject
+
+
+	function removeUploadedReceipt()
+    {
+        let doc_index = $(this).attr('data-sr_no');
+        let upload_type =  $('#upload_type').val();
+
+        if(upload_type === 'oc') {
+            oc_docs = oc_docs.reject(function(item) {
+                return item.id == doc_index;
+            });
+        } else {
+            property_docs = property_docs.reject(function(item) {
+                return item.id == doc_index;
+            });
+        }
+
+       $(`#doc_no_${doc_index}`).fadeOut('slow');
+    }
+
+
+
+    Ex. 2
+
+    	 	property_docs = property_docs.reject(function(item) {
+                return item.id == doc_index;
+            });
+
+
+   Ex. 3   using forget() pass index of array
+
+   			property_docs.forget(1)
+
+
+
+==>   dropbox file upload (console)
+
+
+	 https://www.dropbox.com/developers/apps	
+
+
+
+
+==> create own function using macro in collection js for removing an element from collection |  macro()
+
+1 - a = collect([{'name':'Nitin', 'id':1, 'sex':'m'}, {'name':'Kalim', 'id':2,'sex':'m'}, {'name':'Ashish', 'id':2,'sex':'f'}]);
+
+2 - 
+collect().macro('remove', function (key, value) {
+  let rejected =  this.reject(function (item) {
+    return item[key] === value;
+  });
+this.items = rejected.items;
+	
+});
+
+3 -  a.remove('sex', 'm')
+
+
+
+Example :  Other scenario  if  { name:'id' , value:2}
+
+	
+		let $index = $(this).attr('data-sr_no');        
+
+        receipt = receipt.reject(function(item) {           
+            return collect(item).where('name', 'id').where('value', parseInt($index)).isNotEmpty();
+        });
+
+
+
+==>  get values from collect() in js | use filter
+
+    let amnt = payeeCollect.filter(function(item){
+            return collect(item).where('name','id').where('value',parseInt($index)).isNotEmpty();
+    });
+
+    var  myVal = amnt.first()[0].value;
+
+    $(`#total_undisbursed_amount`).val($(`#total_undisbursed_amount`).val()+amnt.first()[0].value);
+
+
+
+
+==>  check two values in where clause in collect js 
+
+
+	a = receipt.filter(function(item){
+
+			var b =  collect(item).where('name','receipt_amount').where('value','1000').isNotEmpty();
+
+			var c = collect(item).where('name','receipt_no').where('value','1234').isNotEmpty();
+
+
+			console.log((b && c) ? true : false);
+
+			return (b && c) ? true : false;
+
+		});
+
+
+		return a.count();  // if > 0 already exists 
+
+
+
+
+
+
+
+==>  jump to invalid field in jquery form validation | 
+
+		$("#frmDisbursement").validate({
+            focusInvalid: false,
+            invalidHandler: function(form, validator) {
+                if (!validator.numberOfInvalids())
+                    return;
+
+                $('html, body').animate({
+                    scrollTop: ($(validator.errorList[0].element).offset().top - 100)
+                }, 500);
+            },
+            ........
+            ........
+        });
+
+
+==> error div placement on checkbox or radio button in jquery form validation 
+
+	 		errorPlacement: function (error, element) {
+                if( element.attr( "type" ) === "checkbox") {
+                    element.parents('.form-group').append(error).css('display', 'block');
+                }else{
+                    $(error).insertAfter(element);
+                }
+            },
+
+
+    -> element.parents('.form-group').find('.focus-border').after(error); 
+
+
+==>  insertAfter()  use in jquery
+
+ $('<label class="error-msg font-size10 text-danger">'+resp.MESSAGE+'</label>').insertAfter("input[name='password']");
+
+
+===> jquery form validation | min property | min value
+
+	 $("#frmAddReceipt").validate({
+	 rules:{
+                receipt_amount: {
+                    required : true,
+                    number: true,
+                    min : 1,
+                },
+                 receipt_date: "required",
+            },
+    messages: {
+                receipt_date : 'select receipt date.',
+                receipt_amount: {
+                    min: 'Amount must be greater than Zero.',
+                },
+                receipt_no: {
+                    min : 'Invalid Receipt Number.',
+                },
+            },        
+
+
+==> get file ext in js
+
+	
+	this.files[0].name.split('.').pop();     //png
+
+
+==> get data attr in select tag on change in jquery 
+
+	$('.LOAN_PURPOSE').change(function(){ 
+		$("#LOAN_TYPE_OG_VAL_1").val($('option:selected', this).attr('data-org-val')); 
+	});			
+
+
+
+==> append one collection into another collection | use push()
+
+		
+	$transHistory = collect(data_get($transData, 'HISTORY'));
+
+    $transSummary = $transSummary->push([
+            'HEADS' => 'Total',
+            'DISP' => 'Y',
+            'OPENING_BALANCE' => $transSummary->sum('OPENING_BALANCE'),
+            'RECEIVABLE' => $transSummary->sum('RECEIVABLE'),
+            'RECEIVED' => $transSummary->sum('RECEIVED'),
+            'OUTSTANDING' => $transSummary->sum('OUTSTANDING'),
+    ]);
+
+
+    dd(transSummary);
+
+
+    Collection {#706
+		  #items: array:2 [
+		    0 => array:6 [
+		      "HEADS" => "EMI"
+		      "OUTSTANDING" => 14372
+		      "OPENING_BALANCE" => 14372
+		      "RECEIVABLE" => 100604
+		      "RECEIVED" => 100604
+		      "DISP" => "Y"
+		    ]
+		    1 => array:6 [
+		      "HEADS" => "Total"
+		      "DISP" => "Y"
+		      "OPENING_BALANCE" => 14372
+		      "RECEIVABLE" => 100604
+		      "RECEIVED" => 100604
+		      "OUTSTANDING" => 14372
+		    ]
+		  ]
+	}
+
+
+
+==> get unique values from collection
+
+Ex. 1 this will give values for respective custNo and also gives unique values
+
+		$paymode = collect(session()->get('postLogin.paymode'));
+        $custNo = request('custNo');
+
+        $paymode = $paymode->where('CUST_NUMBER', $custNo)->unique('CD_VAL');
+
+
+
+Ex. 2  this will not give unique values but only apply filter
+		
+	   $paymode = $paymode->filter(function($mode) use($custNo) {
+            return $mode['CUST_NUMBER'] == $custNo;
+        });
+
+Ex. 3
+
+	$stage = (session('sess_section') == "postSanction")
+                                    ? 'POST_SANCTION'
+                                    : ((session('sess_section') == "preSanction") ? 'PRE_SANCTION' : 'HOME');
+
+
+    $categories = $categories->filter(function($val) use($stage) {    //$stage is above variables
+     	  return $val['stage'] == $stage;
+    });
+
+
+==> chnage block ui default setting
+
+		
+	$.blockUI.defaults.message = '<img src="images/hdfc-loader.gif" />';
+	$.blockUI.defaults.css = { width: '4%', border:'0px solid #FFFFFF', top: '30%', cursor:'wait',backgroundColor:'#FFFFFF'};
+	$.blockUI.defaults.overlayCSS =  { backgroundColor: '#FFFFFF',opacity:0.9,cursor:'wait'}
+
+	$.blockUI();
+	$.unblockUI();
+
+
+==> enable disable svn | subversion in phpstrom
+
+	https://www.jetbrains.com/help/idea/enabling-and-disabling-plugins.html
+
+	Goto setting-> search (Plugins) ->  type subversion -> tick -> restart
+
+
+
+==>  deisable select (selector) | append option in select 
+
+	function changeStatusToLoading(selector) {
+     
+        let loadingOption = `<option value="" selected>Loading</option>`;
+        append(selector, loadingOption);
+        selector.prop('disabled', true);
+
+    }
+
+
+    // reset select option
+
+    function resetOption(selector) {
+        append(selector, `<option value="" selected>Select City</option>`);
+    }
+
+
+
+==> get city list in select dropdown list as a global | create on 1 place and use it on multiple places
+
+--> city.js
+
+
+			import $ from 'jquery';
+
+			export default (function () {
+
+			    let cachedCities = {};
+
+			    function get(stateCode, selector) {
+			        if (hasCachedCities(stateCode)) {
+			            append(selector, getCachedCities(stateCode));
+			            return;
+			        }
+
+			        changeStatusToLoading(selector);
+
+			        $.ajax({
+			            url: route('getCities'),
+			            type: 'GET',
+			            data: {
+			                state_code: stateCode
+			            },
+			            dataType: "json",
+			            success: function (data) {
+			                cacheCities(stateCode, data.cities);
+			                append(selector, data.cities);
+			                selector.prop('disabled', false);
+			            },
+			            error: function () {
+			                resetOption(selector);
+			            }
+			        });
+			    }
+
+			    function cacheCities(stateCode, html) {
+			        cachedCities[stateCode] = html;
+			    }
+
+			    function getCachedCities(stateCode) {
+			        return cachedCities[stateCode];
+			    }
+
+			    function hasCachedCities(stateCode) {
+			        return cachedCities[stateCode] !== undefined;
+			    }
+
+			    function isString(args) {
+			        return typeof args === 'string';
+			    }
+
+			    function isObject(args) {
+			        return typeof args === 'object';
+			    }
+
+			    function append(selector, html) {
+			        switch (true) {
+			            case isString(selector):
+			                $(selector).empty().append(html);
+			                break;
+			            case isObject(selector):
+			                selector.empty().append(html);
+			                break
+			        }
+			    }
+
+			    function changeStatusToLoading(selector) {
+			        let loadingOption = `<option value="" selected>Loading</option>`;
+			        append(selector, loadingOption);
+			        selector.prop('disabled', true);
+			    }
+
+			    function resetOption(selector) {
+			        append(selector, `<option value="" selected>Select City</option>`);
+			    }
+
+			    return {
+			        get: get,
+			    }
+			}());
+
+
+
+--> reference.js
+
+	import City from "../eligibility/js/New/Modules/City";
+
+export default (function () {
+
+    $(document).ready(function () {
+
+        $('.state').on('change', function () {
+            let target = $(this).data('target');
+            City.get($(this).val(), $(`select[name="${target}"]`));
+        });
+
+        $.validator.addMethod("email", function (value, element) {
+            return this.optional(element) || /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z.]{2,5}$/i.test(value);
+        }, "Please enter a valid email address.");
+
+        $.validator.addMethod("address", function (value, element) {
+            return this.optional(element) || /^[-,a-zA-Z0-9]+$/i.test(value);
+        }, "Please enter valid address.");
+
+        $("#frmReference").validate({
+            errorPlacement: function (error, element) {
+                $(error).insertAfter(element);
+            },
+            errorClass: 'error-msg font-size10 red-color',
+            highlight: function (element) {
+                $(element).removeClass('font-size10').css('border', '1px red solid');
+                $(element).prev().css('color', 'red');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('font-size10').css('border', '');
+                $(element).prev().css('color', '');
+            },
+            messages: {
+                subject: 'Select your option.',
+            },
+            submitHandler: function (form) {
+
+                let $save = $('.submit-btn');
+                $save.text('Please wait...').attr('disabled', true);
+
+                $.ajax({
+                    type: "POST",
+                    url: $(form).attr('action'),
+                    data: $(form).serialize(),
+                    dataType: 'json',
+                    success: function (response) {
+                        if(response.status){
+                            rescueSwal('', response.message, 'success');
+                            $save.text('Submitted').attr('disabled', true);
+                        }else{
+                            rescueSwal('', response.message, 'error');
+                            $save.text('Submit').attr('disabled', false);
+                        }
+                    },
+                    error: function (response) {
+                        rescueSwal('', 'Something went wrong!', 'error');
+                        $save.text('Submit').attr('disabled', false);
+                    }
+                });
+            }
+        });
+
+        collect({
+            ref_title: {
+                required: true,
+            },
+            ref_full_name: {
+                required: true,
+                lettersonly: true
+            },
+            ref_mobile_no: {
+                required: true,
+                number: true,
+                maxlength: 10,
+                minlength: 10,
+            },
+            ref_email_id: {
+                //required: true,
+                email: true
+            },
+            ref_addr_line1: {
+                required: true,
+                address: true
+            },
+            ref_addr_line2: {
+                required: true,
+                address: true
+            },
+            ref_state_ut: {
+                required: true
+            },
+            ref_city_dist: {
+                required: true,
+                lettersonly: true
+            },
+            ref_pin_code: {
+                required: true,
+                number: true,
+                maxlength: 6,
+                minlength: 6,
+            },
+        }).each(function (rule, name) {
+            $(`[name^="${name}"]`).each(function () {
+                $(this).rules('add', rule);
+            });
+        });
+
+    });
+})();
+
+
+
+==> each | array | visible error
+
+
+
+		function checkValidation()
+		{
+		    let selectorArr = ['document_type', 'additional_docs'];
+
+		    $.each(selectorArr, function (i, val) {
+
+		        let errSelector = $('select[name="'+val+'"]');
+
+		        $(errSelector).css('border','1px solid #dfdfdf').next().remove();
+
+		        if($(errSelector).is(':visible') &&  $(errSelector).val() == '')
+		        {
+		            $(errSelector).css('border','1px solid red').after('<i class="text-danger">This field is required.</i>');
+		        }
+		    });
+		}
+
+
+==> for readonly problem in IE
+
+
+		<input type='text' onkeydown="javascript: return false;" readonly  />
+
+
+		in js
+
+		/* for IE */
+		$(document).on('keydown',function(e){
+		    var $target = $(e.target||e.srcElement);
+		    if(e.keyCode == 8 && !$target.is('input,[contenteditable="true"],textarea'))
+		    {
+		        e.preventDefault();
+		    }
+		});
+
+
+==>  make custom message | msg in dropzone upload area
+
+	<form id="frm-document-upload" class="dropzone" action="{{url('uploadDocument')}}" method="post" enctype="multipart/form-data">
+
+		 <div class="dz-message needsclick">
+	            Drop files here or click to upload.<br>
+	            <span class="note needsclick"><i class="fa fa-cloud-upload upload-icon mt-2"></i></span><br>
+	            The file supported format type are JPEG, JPG, PNG or PDF.<br>
+	            The maximum uploadable file size is 15MB.
+	        </div>
+	</form>       
+
+
+==> change position of error msg in dropzone using css
+
+	 	.dz-error-message{
+            top: -69px !important;
+        }
+
+        .dz-error-message:after{
+            border-top: 6px solid #be2626 !important;
+            border-bottom: none !important;
+            top: 51px !important;
+        }
+
+==>  index of an element in jquery
+
+	function resetSrNo()
+    {
+        for(let i=0;i<$('.receiptSrNo').length;i++){
+            $(`.receiptSrNo:eq(${i})`).html(`${i+1}`);
+        }
+    }
+
+
+==> create API in laravel | route/api.php
+
+	Route::group(['prefix' => '/v1', 'namespace' => 'Api\V1', 'as' => 'api.'], function () {
+	    Route::resource('companies', 'CompaniesController', ['except' => ['create', 'edit']]);
+	});
+
+
+
+==>  validate multiple forms with class name | use each() method
+
+HTML
+
+	<form class='frmPassword' name='password'> 
+	</form> 
+	
+
+JS.
+
+	$('form.frmPassword').each(function () {
+        $(this).validate({
+            errorPlacement: function (error, element) {
+                $(error).insertAfter(element);
+            },
+            errorClass: 'error-msg font-size10 text-danger',
+            highlight: function (element) {
+                $(element).removeClass('font-size10').css('border', '1px red solid');
+                $(element).prev().css('color', 'red');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('font-size10').css('border', '');
+                $(element).prev().css('color', '');
+            },
+            rules: {
+                password: {
+                    required: true,
+                }
+            },
+            messages: {
+                password: {
+                    required: "Enter  password.",
+                    number: "Enter valid password."
+                },
+            },
+            submitHandler: function (form) {
+
+                let $save = $(form).find('.btn-save');
+            
+                $save.text('wait...').attr('disabled', true);
+                $('.msg').html('');
+
+                $.ajax({
+                    type: "POST",
+                    url: $(form).attr('action'),
+                    data: $(form).serialize(),
+                    dataType: 'json',
+                    success: function (resp) {
+                        if (resp) {
+                            if (resp.RETURN_CODE == '0') {
+                                window.location = app_path + 'home';
+                            } else {
+                                $('<label class="error-msg font-size10 text-danger">'+resp.MESSAGE+'</label>').insertAfter($(form).find('.password-input'));
+                                $save.text('Save').attr('disabled', false);
+                            }
+                        }
+                    },
+                    error: function (resp) {
+                        $save.text('Save').attr('disabled', false);
+                    }
+                });
+            }
+        });
+    });
+
+
+
+==> change dropzone default message | add in options 
+
+
+	let myDropzone = new Dropzone("#frm-document-upload", {
+		
+		dictInvalidFileType : "Invalid File type.",
+		           dictRemoveFile: '✘',
+            dictCancelUpload: '✘',
+
+
+		 init: function () {
+
+		 }
+	})	 
+
+
+
+	Dropzone.prototype.defaultOptions.dictDefaultMessage = "Drop files here to upload";
+	Dropzone.prototype.defaultOptions.dictFallbackMessage = "Your browser does not support drag'n'drop file uploads.";
+	Dropzone.prototype.defaultOptions.dictFallbackText = "Please use the fallback form below to upload your files like in the olden days.";
+	Dropzone.prototype.defaultOptions.dictFileTooBig = "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.";
+	Dropzone.prototype.defaultOptions.dictInvalidFileType = "You can't upload files of this type.";
+	Dropzone.prototype.defaultOptions.dictResponseError = "Server responded with {{statusCode}} code.";
+	Dropzone.prototype.defaultOptions.dictCancelUpload = "Cancel upload";
+	Dropzone.prototype.defaultOptions.dictCancelUploadConfirmation = "Are you sure you want to cancel this upload?";
+	Dropzone.prototype.defaultOptions.dictRemoveFile = "Remove file";
+	Dropzone.prototype.defaultOptions.dictMaxFilesExceeded = "You can not upload any more files.";
+
+
+
+==> Exceptions  types  |  ServerException | ClientException | \Exception | \Throwable
+	 
+
+	Methods:
+
+		getMessage()
+		getCode()
+		getFile()
+		getLine()
+
+
+	Ex. 1
+
+	
+		catch (ServerException | ClientException $e) {
+            return $response->withJson([
+                'status'  => false,
+                'message' => $e->getMessage(),
+            ], $e->getCode());
+        }	
+
+
+    Ex. 2
+    
+
+    	catch (ServerException | ClientException | \Exception | \Throwable $e) {          
+            return $response->withJson([
+                'status'  => false,
+                'message' => $e->getMessage(),
+            ], $e->getCode());
+        }    
+
+
+==> get MIMI content type in laravel or in PHP |  https://github.com/ralouphie/mimey
+
+  1 - install  -  composer require ralouphie/mimey
+
+  2 - get file extension
+
+  	 $ext = strtolower(pathinfo($result['FILE_NAME'], PATHINFO_EXTENSION));	
+
+  3 - pass file extension
+
+
+
+  		$mimes = new \Mimey\MimeTypes;
+
+		// Convert extension to MIME type:
+		$mimes->getMimeType('$ext'); // application/json
+
+
+  4 - also get file extension using Content-Type
+
+		// Convert MIME type to extension:
+		$mimes->getExtension('application/json'); // json
+
+
+==>  check if string exists in a string in laravel | 
+
+	
+				if(str_contains(strtolower($contentType), 'image'))
+                  {
+                        $disposition = 'inline';
+                  }
+
+
+                  if(str_contains(strtolower($contentType), 'pdf'))
+                  {
+                      $disposition = 'inline';
+                  }
+
+
+==> csrf-token   error in laravel while submiting a form
+
+
+	1 - header.blade.php
+
+		<meta name="csrf-token" content="{{ csrf_token() }}">
+
+	 Note : now csrf token also available in js files
+
+
+==> custom validation rule in jquery form validation
+
+	    $.validator.addMethod("email", function (value, element) {
+            return this.optional(element) || /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z.]{2,5}$/i.test(value);
+        }, "Please enter a valid email address.");
+
+
+        $.validator.addMethod("address", function (value, element) {
+            return this.optional(element) || /^[-,a-zA-Z0-9]+$/i.test(value);
+        }, "Please enter valid address.");
+
+
+        $.validator.addMethod("characterOnly", function (value, element) {
+            return this.optional(element) || /^[-,a-zA-Z ]+$/i.test(value);
+        }, "Enter characters only.");
+
+
+    validation :
+
+        ref_full_name: {
+                required: true,
+                characterOnly: true
+            },
+		ref_email_id: {
+		    //required: true,
+		    email: true
+		},
+		ref_addr_line1: {
+		    required: true,
+		    address: true
+		},
+		ref_addr_line2: {
+		    required: true,
+		    address: true
+		},
+
+
+
+==> how to add prefix in laravel 5
+
+
+	Ex. 1   
+	  
+    	Route::prefix('application-form')->name('applicationForm.')->group(function () {
+     		Route::post('/upload-document', 'DocumentController@uploadDocument')->name('uploadDocument');
+     	});
+
+     	Access link  ->  www.domian.com/application-form/upload-document
+
+
+    Ex. 2 with middleware also
+     	
+     // Vendor mobile pages
+		Route::middleware(['auth.token'])->prefix('m')->name('m.')->group(function () {
+		    Route::get('additional-disbursement', 'Mobile\AdditionalDisbursementController@index')->name('additionalDisbursement');
+		    Route::post('additional-disbursement-save', 'Request\AdditionalDisbursementController@save')->name('additionalDisbursementSave');
+		    Route::post('get-paymode', 'Request\AdditionalDisbursementController@getPaymode')->name('getPaymode');
+		});
+
+
+		Access link  ->  www.domian.com/m/additional-disbursement
+
+
+
+==> how to authenticate using token
+
+
+	1 - class file  ++++++++++++++++++++++++++++++++++
+
+			use App\Services\IsValidTokenService;
+
+
+			class AuthenticatesUsingToken {
+
+			    public function handle($request, Closure $next)
+			    {
+			        $header = $request->header('authorization');
+
+			        $token = trim(data_get(explode('Bearer', $header), '1'));
+
+			        if (is_null($header) || $token == '') {
+			            return $this->unauthenticated();
+			        }
+
+			        $tokenService = new IsValidTokenService(['token' => $token]);
+
+			        if ( !$tokenService->validate()) {
+			            return $this->unauthenticated();
+			        }
+
+			        $tokenService->loginViaToken();
+
+			        return $next($request);
+			    }
+
+			    private function unauthenticated()
+			    {
+			        return response()->json([
+			            'message' => 'Unauthenticated.',
+			        ], 401);
+			    }
+			}
+
+	2  - 	+++++++++++++++++++++++++++++++++++		
+
+
+			<?php
+
+				namespace App\Services;
+
+				use App\Exceptions\ApiRequestFailedException;
+				use App\Jobs\ApiJob;
+
+				class IsValidTokenService extends ApiJob {
+
+				    public function validate()
+				    {
+				        try {
+				            return $this->asAuthenticated()
+				                ->postJson('isTokenValid')->json();
+
+				        } catch (ApiRequestFailedException $e) {
+				            return false;
+				        }
+				    }
+
+				    public function asAuthenticated()
+				    {
+				        $this->headers = $this->headers + [
+				                'Authorization' => 'Bearer ' . $this->attributes['token'],
+				            ];
+
+				        return $this;
+				    }
+
+				    public function loginViaToken()
+				    {
+				        session()->put('access_token', $this->attributes['token']);
+				    }
+				}
+
+
+==> pin code range validation in jquery validation | custome rule and custom message
+	
+
+		import pinCode from '../../../application_form/js/Storage/PinCodesStorage';
+
+		$.validator.addMethod("isValidPin", function (value, element) {
+
+		    let pinCodeIndex = $(element).data('pincode');
+
+		    let pinRange;
+
+		    let stateCode = $(`[name='ref_state_ut[${pinCodeIndex}]']:enabled`).val();
+
+		    if (stateCode) {
+		        pinRange = pinCode.data.where('STATE_CD', stateCode).first();
+		    }
+
+		    let pinDigits = value.split('');
+
+		    if (!pinRange) {
+		        return value.length == 6;
+		    }
+
+		    if (pinRange.MIN === pinRange.MAX) {
+		        return (pinDigits[0] + pinDigits[1] == pinRange.MAX) && value.length == 6;
+		    }
+
+		    return ( pinDigits[0] + pinDigits[1] <= pinRange.MAX && pinDigits[0] + pinDigits[1] >= pinRange.MIN) && value.length == 6;
+
+		}, function (validated, element) {
+
+		    let pinCodeIndex = $(element).data('pincode');
+
+		    let pinRange;
+		    let stateCode = $(`[name='ref_state_ut[${pinCodeIndex}]']:enabled`).val();
+
+		    if (stateCode) {
+		        pinRange = pinCode.data.where('STATE_CD', stateCode).first();
+		    }
+		        if (!pinRange) {
+		            return "Please enter pincode length 6.";
+		        }
+
+		        if (pinRange.MIN === pinRange.MAX) {
+		            return `Please enter pincode length 6 and which is start with ${pinRange.MAX}.`;
+		        }
+
+		        return `Please enter pincode of length 6 and which is start with in ${pinRange.MAX} to ${pinRange.MIN}`;
+		});
+
+		
+
+
+==>  filter(), map(), reduce() | functions on array
+
+
+    filter() -> produce another (new) array (depends upon condition) | creates a new array with all elements that pass the test 
+
+    map() ->  creates same array but different values 
+
+    reduce() -> return in a single output value 
+
+
+
+==> how to use socialite in laravel
+
+
+	1 - install socialite 
+	    composer require laravel/socialite
+
+	2 - set config in config/services.php file for key facebook, twitter, linkedin, google, github or bitbucket
+
+	      'github' => [
+	          'client_id' => env('GITHUB_CLIENT_ID'),         // Your GitHub Client ID
+	          'client_secret' => env('GITHUB_CLIENT_SECRET'), // Your GitHub Client Secret
+	          'redirect' => 'http://your-callback-url',
+	      ],
+
+
+	3 - add in config/app.php
+
+	      add in providers array
+	            Laravel\Socialite\SocialiteServiceProvider::class,
+	            
+
+	      add in aliases array
+	            'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+
+
+
+==> guest middleware
+
+	Route::get('/login', 'Web\AppController@getLogin' )
+      ->name('login')
+      ->middleware('guest');
+
+      //guest -> logged in users  are auto re-directed to our app (dashboard)
+
+
+
+
+==>  view documents | 
+
+
+
+	$response = $viewDocuments->viewDocuments(request('sr_no'), request('insta_id'), request('serial_no'), request('applicant_id'));
+
+        $data = $response['data'];
+        $data = base64_decode($data);
+        $ext = strtolower(pathinfo($response['file_name'], PATHINFO_EXTENSION));
+
+        $contentType = '';
+        if ($ext == 'PDF' || $ext == 'pdf') {
+            $contentType = "Content-type: application/pdf";
+        }
+        if ($ext == 'jpeg' || $ext == 'jpg') {
+            $contentType = "Content-type: image/jpeg";
+        }
+        if ($ext == 'png') {
+            $contentType = "Content-type: image/png";
+        }
+
+        return response($data)
+                    ->header('Content-type', $contentType)
+                    ->header('Content-Length', strlen($data))
+                    ->header('Content-Disposition', 'inline; filename=' . $response['file_name']);
+
+
+
+
+==> typeof  for undefined in js 
+
+		if(typeof(APPLICANT_NAME_BANK) === 'undefined'){
+            continue;
+        }
+
+
+
+==> random string with length 10 |str_random(10)  
+
+			'email_code'           => str_random(10),
+            'password'             => bcrypt($this->data['password']),
+            'plain_password'       => $this->data['password'],
+            'mobile_code'           => mt_rand(1000, 9999),
+
+==>  random no with 4 digit
+
+	mt_rand(1000, 9999),
+
+
+
+
+==> this will not show column name in select * query using model name | UserMasterOtp
+
+	protected $hidden = [
+        'otp_code',
+    ];
+
+
+
+############################## elequontes queries start ############################################
+
+==> get specific columns from tabel 
+
+	User::select('id','user_id')->find(1)      // dont use here get() else we will get all record
+
+	User::select('id','user_id')->whereBetween('id',[1,3])->get()
+
+
+==> 
+
+	User::select('user_id')->whereMobileVerifiedFlag(null)->get();     		OR
+	User::select('user_id')->where('mobile_verified_flag','=',null)->get();
+
+
+
+==> use orderBy  
+
+		MyModel::orderBy('my_column', 'ASC')
+		MyModel::orderBy('my_column')         // same as above
+
+
+		MyModel::orderBy('my_column', 'DESC')
+		MyModel::orderByDesc('my_column')     // same as above
+
+
+==> pass multiple id in array  | return model not found exception with message 'no query result for model'
+
+	User::select('user_id')->findOrFail([1,2,3]);
+
+
+==>  findOrFail  vs  find
+
+	if fails 
+
+		find       -> null
+		findOrFail -> return model not found exception with message 'no query result for model'
+
+
+	$user = User::find($id);
+	if (!$user) { abort (404); }
+
+			OR   
+
+	$user = User::findOrFail($id);    // right way  if fails -> return model not found exception with message 'no query result for model'
+
+
+
+==> insert into table
+
+		// insert
+
+		$user = User::create([
+		    'first_name' => 'Chris',
+		    'email' => 'cmgmyr@gmail.com',
+		]);
+
+	OR	
+
+	// create
+	$user = new User();
+	$user->first_name = 'Chris';
+	$user->email = 'cmgmyr@gmail.com';
+	$user->save();
+
+
+==> update into table  | update specific records
+		
+		$user = User::find(1);
+		$user->email = 'me@chrisgmyr.com';
+		$user->save();
+
+		
+		OR
+
+
+		$user = User::find(1);
+		$user->update([
+		    'email' => 'me@chrisgmyr.com',
+		]);
+
+		Note: $fillable/$guarded properties
+
+
+
+==> delete from table
+
+	//single record
+
+		$user = User::find(1);   
+		$user->delete();
+
+
+
+	//multiple records
+
+		User::destroy(1);
+		User::destroy([1, 2, 3]);
+		User::destroy(1, 2, 3);
+
+
+
+
+==> how to check equality of password from database | Hash also use this in change password
+
+   check(request('password'), $user->password)     //1st para is user input & 2nd is password from db
+	
+
+	use Illuminate\Support\Facades\Hash;
+
+	Hash::check(request('password'), $user->password)     // true if matches
+
+
+
+==>   belongsTo()
+
+	model name -> UserMasterOtp 
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'unique_customer_id', 'unique_cust_id')->whereNotNull('unique_cust_id');
+    }
+
+
+
+
+==>
+
+
+	
+Ex. 1
+
+	User::find(1)->otp                  // here otp is a relationship method
+	User::find(1)->otp()->get()
+
+
+Ex. 2
+
+	User::find(1)->posts          		 same as below   (this is right way)
+	User::find(1)->posts()->get() 
+
+
+Ex. 3
+
+	User::find(1)->role->name;			// right
+	User::find(1)->role()->name;		// wrong
+
+
+
+
+
+
+
+// RIGHT
+// When you want to access the relationship values, use without function call
+User::find(1)->role->name;
+// Calling methods for shorthand checks
+//   Assuming `isAdmin() = return $this->name === 'admin'`
+User::find(1)->role->isAdmin();
+
+// WRONG
+// Throws "Undefined property: Illuminate\Database\Eloquent\Relations\BelongsTo::$name"
+User::find(1)->role()->name;
+// Throws "Call to undefined method Illuminate\Database\Query\Builder::isAdmin()"
+User::find(1)->role()->isAdmin();
+
+
+
+
+
+
+==> generate sql query |
+
+	php artisan tinker
+
+		App\Models\ApplLoanDetail::whereHas('instaApplication.instaDetail', function ($query) {$query->where('user_id', 'NITINKAWARE');})->forDashboard()->get()
+
+
+		App\Models\ApplLoanDetail::whereHas('instaApplication.instaDetail', function ($query) {$query->where('user_id', 'NITINKAWARE');})->forDashboard()->toSql()
+		
+		
+==>  generate raw sql query in laravel for relationship and for others also |  toRawSql()
+
+	
+	
+		App\Models\Menu::find(9)->children     		// collection
+
+		App\Models\Menu::find(9)->children()     		// Eloquent
+
+
+		App\Models\Menu::find(9)->children()->toRawSql()
+
+		App\Models\Menu::find(9)->hasMany()->toRawSql()
+
+
+
+
+
+		>>> App\Models\Menus::find(8)->hasMany('App\Models\Menus', 'parent_id', 'id')->toRawSql()
+		=> "select * from `Menus` where `Menus`.`parent_id` = 8 and `Menus`.`parent_id` is not null"
+
+
+		>>> App\Models\Menus::find(8)->hasone('App\Models\Menus', 'id', 'parent_id')->toRawSql()
+		=> "select * from `Menus` where `Menus`.`id` = 0 and `Menus`.`id` is not null"
+
+
+
+
+=> how to use relationship 
+
+  #### App\Models\Menus model
+
+  class Menus {
+
+	public function parent() {
+
+        return $this->hasOne('App\Models\Menus', 'id', 'parent_id')->orderBy('display_order');
+
+    }
+
+    public function children() {
+
+        return $this->hasMany('App\Models\Menus', 'parent_id', 'id')->where('menu_flag',1)->orderBy('display_order');
+
+    }
+ }
+
+Ex. 
+	hasOne('ModelName','Foreign_key','primary_key')
+	hasMany('ModelName','Foreign_key','primary_key')
+
+   --> how to access above methods
+
+   		App\Models\Menus::find(7)->parent 		// parent() method
+
+   		App\Models\Menus::find(7)->children     // children() method
+
+
+
+
+
+
+
+
+==> if no data available in tables | create object
+
+	below both function will do same thing
+	
+  	public function threads()
+    {
+        return $this->hasMany(Thread::class)->latest();
+    }
+
+      OR 
+
+    public function threads2()
+    {
+        return $this->hasMany(Threads::class, 'user_id', 'id');
+    }
+
+
+	$u = new user();
+	$u->threads()->toSql()
+
+
+
+$u->hasMany(Thread::class, 'user_id', 'id')->toSql()    // use this if changed default table ids   
+	OR (both are same)
+$u->hasMany(Thread::class)->toSql()
+
+
+
+
+
+//$books = App\Book::with('author')->get();
+
+
+
+
+############################  query end ##################################
+
+
+
+==> pass dynamic values in prefix() in group route
+
+	-- route.php
+
+		Route::prefix('/{user_master_otp_id}/')->group(function () {
+		            Route::post('otp/send')->name('otp.send');
+		            Route::post('otp/login')->name('otp.verify');
+		            Route::post('forgot/user_id')->name('forgot.user_id');
+        });
+
+   
+    -- call api   | NOTE : request('otp_id') is 2nd para
+        
+	$response = (new PendingZttpRequest())->post(api_route("api.auth.otp.send", request('otp_id')), [
+            'otp_id' => request('otp_id'),
+            'resend' => request('resend') ? true : false,   //request()->input('resend', false),
+        ]);
+
+
+
+    -- route.php    
+		Route::post('/signup/email/verify/{code}')->name('email.verify');
+
+
+	-- call api 	| NOTE : request()->route('code') is 2nd para  | compare with above
+
+        $response = Zttp::accept('application/json')->post(api_route('api.email.verify', request()->route('code')));
+        $isCodeVerified = $this->isCodeValid($response) ? true : false;
+        return view('mobile.auth.email_verification', compact('isCodeVerified'));
+
+
+
+==> custom 404 page
+
+    1 - app/Exceptions/Handler.php
+    2 -  add below code in render function
+
+    	public function render($request, Exception $exception)
+	    {
+	        if ($this->isHttpException($exception)) {
+	            if ($exception->getStatusCode() == 404) {
+
+	               $messages =  $exception->getMessage();
+	                return \Response::view('errors.404',['code' => $exception->getStatusCode(),'messages' => $messages],404);
+	                
+	            }
+
+	            if ($exception->getStatusCode() == 500) {
+	                return response()->view('errors.' . '500', [], 500);
+	            }
+	        }
+
+	        return parent::render($request, $exception);
+	    }	
+
+	3 - create errors/404.blade.php file in views folder  
+
+
+==>
+
+	 abort(404, 'This page is not available.');
+     abort(404);
+
+     abort(500);   
+     abort(500, 'sadsadsa');
+
+
+
+
+
+==>
+
+
+	  {{ csrf_field() }}
+
+
+
+
+
+
+==>
+
+			var __this = $(this);
+
+ 			if($(__this).hasClass('form-submitted') ){
+                e.preventDefault();
+                return;
+            }         
+
+            var form = $("#frmCreateCoupon");
+            $(this).find('button[type="submit"]').each(function (index) {
+                $(this).clone(false).removeAttr('id').prop('disabled', true).insertBefore($(this));
+                $(this).hide();
+                form.prepend($(this));
+            });            
+            
+            $("#frmCreateCoupon").submit();             
+            $(__this).addClass('form-submitted');            
+
+
+
+==>  submit() a form using submit() in jquery form validation | 
+
+		 submitHandler: function (form) {
+
+                form.submit();         // use this - will called only once
+                            
+                // $(form).submit();   // dont use this - will called multiple times
+
+		 }
+
+	
+==> link on mobile no in MS edge
+	
+	add this in element
+
+		x-ms-format-detection="none"
+
+
+
+==> mobile no validation in jquery validator
+
+	 mobile_no: {
+                    required: true,
+                    number: true,
+                    maxlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91' ? 10 : 15;
+                    },
+                    minlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91' ? 10 : 6;
+                    },
+                },
+
+                
+
+ 	messages: {
+                mobile_no: {
+                    maxlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91'
+                            ? 'Mobile number should be 10 digits.'
+                            : 'Mobile number should be min 6 and max 15 digits.';
+                    },
+                    minlength: function () {
+                        return $(`select[name="mobile_country_code"]`).val() === '91'
+                                    ? 'Mobile number should be 10 digits.'
+                                    : 'Mobile number should be min 6 and max 15 digits.';
+                    },
+                },
+                dob : 'Enter date Of birth',
+                name : 'Enter your name',
+            },
+
+
+==> form reset | 
+
+	$('#loginForm').validate().resetForm();
+    $("#loginForm")[0].reset();
+
+
+
+
+==> how to add projects on github | 
+
+
+	echo "# vue_validation" >> README.md 		//vue_validation   repo name
+	git init
+	git add README.md
+	git add .    // add all files
+	git commit -m "first commit"
+	git remote add origin https://github.com/kalim7rings/vue_validation.git    // link your local project to github repo
+	git push -u origin master 												  //push local project to github
+
+
+
+	Follow these steps to project to Github
+
+	1) git init
+	2) git add .
+	3) git commit -m "Add all my files"
+	4) git remote add origin https://github.com/yourusername/your-repo-name.git
+		Upload of project from scratch require git pull origin master.
+
+	5) git pull origin master
+	6) git push origin master
+
+
+
+	git init
+	git add .
+	git commit -m "Your_message"
+	git remote add origin @your_git_repository
+	git push -u origin master
+	Of course you have to install git
+
+
+
+	-----------  push updated files on git  ----------
+
+
+	git status    // will show changed files    red color
+	git add readme.md    // add chnaged files  
+	git commit -m "changes in readme "				//must give a message
+	git status    // will show changed files    green color (means added to git)
+	git push -u origin master
+	git commit	
+
+
+
+
+==> get status code from server to client side | use $response->status()
+
+
+	$response = Zttp::withHeaders(Token::header())->post(api_route('api.contactSendOtp'), request()->all());
+
+    return response()->json($response->json(), $response->status());
+
+
+
+
+==>  seeder from existing database or table
+
+
+	https://github.com/orangehill/iseed
+
